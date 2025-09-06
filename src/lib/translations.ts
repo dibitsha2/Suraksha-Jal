@@ -1,3 +1,4 @@
+
 export const translations = {
   en: {
     dashboard: 'Dashboard',
@@ -13,6 +14,7 @@ export const translations = {
     precautions: 'Precautions',
     medicationSuggester: 'Medication Suggester',
     healthReminders: 'Health Reminders',
+    reminders: 'Reminders',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -28,6 +30,7 @@ export const translations = {
     precautions: 'सावधानियां',
     medicationSuggester: 'दवाइयाँ सुझाएँ',
     healthReminders: 'स्वास्थ्य अनुस्मारक',
+    reminders: 'अनुस्मारक',
   },
   bn: {
     dashboard: 'ড্যাশবোর্ড',
@@ -43,6 +46,7 @@ export const translations = {
     precautions: 'সতর্কতা',
     medicationSuggester: 'ঔষধের পরামর্শ',
     healthReminders: 'স্বাস্থ্য অনুস্মারক',
+    reminders: 'অনুস্মারক',
   },
   as: {
     dashboard: 'ডেশ্বৰ্ড',
@@ -56,8 +60,9 @@ export const translations = {
     getStarted: 'আৰম্ভ কৰক',
     casesLast30Days: 'যোৱা ৩০ দিনত গোচৰ',
     precautions: 'সতৰ্কতামূলক ব্যৱস্থা',
-    medicationSuggester: 'ঔষধৰ পৰামৰ্শ',
+    medicationSuggester: 'ঔষধৰ পৰামৰ্श',
     healthReminders: 'স্বাস্থ্য স্মাৰক',
+    reminders: 'স্মাৰক',
   },
 };
 

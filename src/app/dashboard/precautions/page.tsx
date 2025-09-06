@@ -1,7 +1,7 @@
 
 'use client';
 import Image from 'next/image';
-import { Droplet, UtensilsCrossed, HandHeart, Bug, ShieldAlert, Archive } from 'lucide-react';
+import { Droplet, UtensilsCrossed, HandHeart, Bug, ShieldAlert, Archive, ShieldCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
 
@@ -35,6 +35,13 @@ const precautions = [
     icon: Archive,
     title: 'Cover Stored Water',
     description: 'Keep stored water in clean, covered containers to prevent contamination from insects and debris.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Prevent Mosquito Breeding',
+    description: 'Cover drains with grills and regularly spread bleaching powder to prevent mosquitoes from breeding.',
+    image: 'https://picsum.photos/600/400',
+    aiHint: 'covered drain',
   },
 ];
 

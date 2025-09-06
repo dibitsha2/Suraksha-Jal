@@ -4,7 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -32,6 +32,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
 import { Loader2, LocateFixed } from 'lucide-react';
+import { debounce } from 'lodash';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name is too short'),
@@ -49,6 +50,9 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
+
 
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
@@ -57,6 +61,40 @@ export default function ProfilePage() {
       email: 'demo@example.com',
     },
   });
+  
+  const fetchSuggestions = async (query: string) => {
+    if (query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`
+      );
+      const data = await response.json();
+      setSuggestions(data);
+      if (data.length > 0) {
+        setIsSuggestionsVisible(true);
+      }
+    } catch (error) {
+      console.error('Error fetching address suggestions:', error);
+      setSuggestions([]);
+    }
+  };
+
+  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 300), []);
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    form.setValue('address', value);
+    debouncedFetchSuggestions(value);
+  };
+  
+  const handleSuggestionClick = (suggestion: any) => {
+    form.setValue('address', suggestion.display_name, { shouldValidate: true });
+    setSuggestions([]);
+    setIsSuggestionsVisible(false);
+  };
 
   const handleGetLocation = () => {
     if (navigator.geolocation) {
@@ -166,9 +204,33 @@ export default function ProfilePage() {
                     <FormItem className="md:col-span-2">
                       <FormLabel>Address</FormLabel>
                       <div className="flex items-center gap-2">
-                        <FormControl>
-                          <Input placeholder="Your address or click the button to fetch it" {...field} />
-                        </FormControl>
+                         <div className="relative w-full">
+                          <FormControl>
+                            <Input
+                              placeholder="Start typing your address..."
+                              {...field}
+                              value={field.value ?? ''}
+                              onChange={handleAddressChange}
+                              onBlur={() => setTimeout(() => setIsSuggestionsVisible(false), 150)}
+                              autoComplete="off"
+                            />
+                          </FormControl>
+                          {isSuggestionsVisible && suggestions.length > 0 && (
+                            <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg">
+                              <ul className="py-1">
+                                {suggestions.map((suggestion) => (
+                                  <li
+                                    key={suggestion.place_id}
+                                    className="px-3 py-2 cursor-pointer hover:bg-accent"
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                  >
+                                    {suggestion.display_name}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                         <Button
                           type="button"
                           variant="outline"

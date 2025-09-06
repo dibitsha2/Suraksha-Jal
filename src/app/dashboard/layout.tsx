@@ -19,6 +19,7 @@ import {
   Bell,
   Info,
   Droplet,
+  Globe,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -65,6 +66,7 @@ function Sidebar() {
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
+    { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 
@@ -112,6 +114,7 @@ function Header() {
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
+    { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 

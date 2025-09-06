@@ -8,6 +8,7 @@ import { useLanguage } from '@/hooks/use-language';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { add } from 'date-fns';
 
 const dailyData = [
   { name: 'Today', cases: 30, recovered: 20, deaths: 2 },
@@ -32,10 +33,30 @@ export default function DashboardPage() {
   const { toast } = useToast();
 
   const handleReminderClick = () => {
-    toast({
-        title: "Reminder Set!",
-        description: "We'll remind you to change your plastic container in 5 months.",
-    })
+    try {
+        const newReminder = {
+            id: Date.now(),
+            title: 'Replace plastic water container',
+            startDate: new Date().toISOString(),
+            dueDate: add(new Date(), { months: 5 }).toISOString(),
+        };
+
+        const existingReminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+        const updatedReminders = [...existingReminders, newReminder];
+        localStorage.setItem('reminders', JSON.stringify(updatedReminders));
+        
+        toast({
+            title: "Reminder Set!",
+            description: "We'll remind you to change your plastic container in 5 months.",
+        });
+    } catch (error) {
+        console.error('Failed to save reminder:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Could not save your reminder. Please try again.',
+        });
+    }
   }
 
   return (

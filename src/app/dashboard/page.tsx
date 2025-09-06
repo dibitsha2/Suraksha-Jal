@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Stethoscope, Droplet, Shield, MapPin, LocateFixed, Loader2, AlertTriangle } from 'lucide-react';
+import { Stethoscope, Droplet, Shield, MapPin, LocateFixed, Loader2, AlertTriangle, Info } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getLocalReports, type GetLocalReportsOutput } from '@/ai/flows/get-local-reports';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type Report = {
   disease: string;
@@ -122,6 +123,14 @@ export default function DashboardPage() {
                 </form>
             </CardContent>
         </Card>
+        
+        <Alert className="mb-6">
+          <Info className="h-4 w-4" />
+          <AlertTitle>For Illustrative Purposes Only</AlertTitle>
+          <AlertDescription>
+            The reports generated below are based on AI-generated mock data and do not reflect real-time government health statistics. Always refer to official public health sources for accurate information.
+          </AlertDescription>
+        </Alert>
 
         {loading && (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

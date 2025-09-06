@@ -14,6 +14,7 @@ import {
   Settings,
   Shield,
   Pill,
+  HeartPulse,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -56,6 +57,7 @@ function Sidebar() {
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
+    { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 
@@ -68,7 +70,7 @@ function Sidebar() {
             <span className="">Suraksha Jal</span>
           </Link>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 overflow-auto">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             {navItems.map((item) => (
               <Link
@@ -99,6 +101,7 @@ function Header() {
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
+    { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 

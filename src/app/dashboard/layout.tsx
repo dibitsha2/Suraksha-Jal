@@ -7,10 +7,8 @@ import * as React from 'react';
 import {
   Home,
   Stethoscope,
-  MessageSquare,
   LogOut,
   User,
-  Languages,
   Menu,
   Settings,
   Shield,
@@ -59,7 +57,6 @@ function Sidebar() {
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
-    { href: '/dashboard/ai-chat', icon: MessageSquare, label: t('aiChat') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
@@ -108,7 +105,6 @@ function Header() {
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
-    { href: '/dashboard/ai-chat', icon: MessageSquare, label: t('aiChat') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },

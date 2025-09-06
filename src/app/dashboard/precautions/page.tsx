@@ -40,8 +40,6 @@ const precautions = [
     icon: ShieldCheck,
     title: 'Prevent Mosquito Breeding',
     description: 'Cover drains with grills and regularly spread bleaching powder to prevent mosquitoes from breeding.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'covered drain',
   },
 ];
 

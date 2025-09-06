@@ -119,7 +119,7 @@ export default function SymptomCheckerPage() {
                 ) : (
                   <>
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Check Symptoms
+                    Check Disease
                   </>
                 )}
               </Button>

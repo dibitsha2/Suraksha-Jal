@@ -16,8 +16,8 @@ import { Video } from 'lucide-react';
 export function WaterFilterVideoDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // A sample video URL. In a real application, you'd host this yourself.
-  const videoUrl = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4';
+  // YouTube embed URL
+  const videoUrl = 'https://www.youtube.com/embed/lHFElyiA2m8';
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -35,10 +35,14 @@ export function WaterFilterVideoDialog() {
           </DialogDescription>
         </DialogHeader>
         <div className="aspect-video">
-           <video className="w-full h-full rounded-lg" controls autoPlay>
-                <source src={videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-            </video>
+           <iframe 
+                className="w-full h-full rounded-lg"
+                src={videoUrl} 
+                title="YouTube video player" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowFullScreen
+            ></iframe>
         </div>
       </DialogContent>
     </Dialog>

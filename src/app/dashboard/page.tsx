@@ -2,11 +2,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Stethoscope, Shield, TrendingUp, Users, HeartCrack, TrendingDown, CalendarDays, BarChart } from 'lucide-react';
+import { Stethoscope, Shield, TrendingUp, Users, HeartCrack, TrendingDown, CalendarDays, BarChart, Bell, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/use-language';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
 
 const dailyData = [
   { name: 'Today', cases: 30, recovered: 20, deaths: 2 },
@@ -28,6 +29,15 @@ const yearlyData = [
 
 export default function DashboardPage() {
   const { t } = useLanguage();
+  const { toast } = useToast();
+
+  const handleReminderClick = () => {
+    toast({
+        title: "Reminder Set!",
+        description: "We'll remind you to change your plastic container in 5 months.",
+    })
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center">
@@ -89,6 +99,33 @@ export default function DashboardPage() {
                   </TabsContent>
               </Tabs>
           </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+            <div className="flex items-center gap-2">
+                <AlertTriangle className="h-6 w-6 text-primary" />
+                <CardTitle className="font-headline text-2xl">Water Storage Safety Tip</CardTitle>
+            </div>
+             <CardDescription>
+                  A small change for a healthier life.
+              </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
+                "Instead of using plastics to store water, use copper vessels."
+            </blockquote>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-muted/50 rounded-lg">
+                <div className="flex-1">
+                    <p className="font-semibold">Still using plastic containers?</p>
+                    <p className="text-sm text-muted-foreground">It's recommended to replace them periodically to avoid chemical leaching.</p>
+                </div>
+                 <Button onClick={handleReminderClick}>
+                    <Bell className="mr-2 h-4 w-4" />
+                    Remind me in 5 months
+                </Button>
+            </div>
+        </CardContent>
       </Card>
 
     </div>

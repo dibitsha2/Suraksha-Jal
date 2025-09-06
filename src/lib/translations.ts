@@ -17,6 +17,7 @@ export const translations = {
     reminders: 'Reminders',
     medicineChecker: 'Medicine Checker',
     waterQuality: 'Water Quality',
+    aiChat: 'AI Chat',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -35,6 +36,7 @@ export const translations = {
     reminders: 'अनुस्मारक',
     medicineChecker: 'दवा परीक्षक',
     waterQuality: 'पानी की गुणवत्ता',
+    aiChat: 'एआई चैट',
   },
   bn: {
     dashboard: 'ড্যাশবোর্ড',
@@ -53,6 +55,7 @@ export const translations = {
     reminders: 'অনুস্মারক',
     medicineChecker: 'ঔষধ পরীক্ষক',
     waterQuality: 'জলর গুণগত মান',
+    aiChat: 'এআই চ্যাট',
   },
   as: {
     dashboard: 'ডেশ্বৰ্ড',
@@ -71,6 +74,7 @@ export const translations = {
     reminders: 'স্মাৰক',
     medicineChecker: 'ঔষধ পৰীক্ষক',
     waterQuality: 'পানীৰ গুণগত মান',
+    aiChat: 'এআই চেট',
   },
 };
 

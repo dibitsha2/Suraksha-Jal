@@ -7,3 +7,4 @@ import '@/ai/flows/ai-powered-disease-information.ts';
 import '@/ai/flows/medication-suggester.ts';
 import '@/ai/flows/medicine-checker.ts';
 import '@/ai/flows/water-quality-checker.ts';
+import '@/ai/flows/health-chatbot.ts';

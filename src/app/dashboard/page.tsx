@@ -15,7 +15,10 @@ import {
   CornerDownLeft,
   Loader2,
   User,
-  Bot
+  Bot,
+  Users,
+  TrendingDown,
+  HeartCrack
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -379,3 +382,5 @@ const StatsCard = ({ title, value, icon: Icon, change, changeType }: { title: st
     </Card>
   )
 }
+
+    

@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/use-language';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bar, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-
 
 const dailyData = [
   { name: 'Today', cases: 30, recovered: 20, deaths: 2 },
@@ -137,30 +135,6 @@ function StatsView({ data, period }: { data: any[], period: string }) {
                     </CardContent>
                 </Card>
             </div>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">{period} Breakdown</CardTitle>
-                </CardHeader>
-                <CardContent className="pl-2">
-                    <ResponsiveContainer width="100%" height={350}>
-                        <RechartsBarChart data={data}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                            <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value.toLocaleString()}`} />
-                             <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'hsl(var(--background))',
-                                    borderColor: 'hsl(var(--border))',
-                                }}
-                            />
-                            <Legend wrapperStyle={{fontSize: "14px"}}/>
-                            <Bar dataKey="cases" fill="hsl(var(--primary))" name="Cases" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="recovered" fill="hsl(var(--chart-2))" name="Recovered" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="deaths" fill="hsl(var(--destructive))" name="Deaths" radius={[4, 4, 0, 0]} />
-                        </RechartsBarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
         </div>
     )
 }

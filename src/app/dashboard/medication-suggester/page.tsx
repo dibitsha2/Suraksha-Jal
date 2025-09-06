@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -40,6 +41,20 @@ export default function MedicationSuggesterPage() {
     resolver: zodResolver(symptomSchema),
     defaultValues: { symptoms: '' },
   });
+
+  useEffect(() => {
+    try {
+        const savedProfile = localStorage.getItem('userProfile');
+        if (savedProfile) {
+            const profile = JSON.parse(savedProfile);
+            if (profile.age) {
+                form.setValue('age', profile.age);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load user profile:', error);
+    }
+  }, [form]);
 
   const onSubmit: SubmitHandler<SymptomValues> = async (data) => {
     setLoading(true);

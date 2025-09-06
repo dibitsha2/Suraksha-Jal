@@ -4,7 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -61,6 +61,18 @@ export default function ProfilePage() {
       email: 'demo@example.com',
     },
   });
+
+  useEffect(() => {
+    try {
+        const savedProfile = localStorage.getItem('userProfile');
+        if (savedProfile) {
+            const profileData = JSON.parse(savedProfile);
+            form.reset(profileData);
+        }
+    } catch (error) {
+        console.error('Failed to load user profile:', error);
+    }
+  }, [form]);
   
   const fetchSuggestions = async (query: string) => {
     if (query.length < 3) {
@@ -150,11 +162,20 @@ export default function ProfilePage() {
   };
 
   const onSubmit = (data: ProfileValues) => {
-    console.log('Profile data:', data);
-    toast({
-      title: 'Profile Updated',
-      description: 'Your information has been saved successfully.',
-    });
+    try {
+      localStorage.setItem('userProfile', JSON.stringify(data));
+      toast({
+        title: 'Profile Updated',
+        description: 'Your information has been saved successfully.',
+      });
+    } catch (error) {
+       console.error('Failed to save profile:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Could not save your profile. Please try again.',
+        });
+    }
   };
 
   return (
@@ -291,7 +312,7 @@ export default function ProfilePage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Blood Group</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value ?? ''}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select your blood group" />

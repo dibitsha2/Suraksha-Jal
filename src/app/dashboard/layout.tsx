@@ -11,6 +11,7 @@ import {
   User,
   Languages,
   Menu,
+  Settings,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,7 @@ function Sidebar() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 
   return (
@@ -91,6 +93,7 @@ function Header() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 
   return (
@@ -157,9 +160,11 @@ function UserMenu() {
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('profile')}</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <Languages className="mr-2 h-4 w-4" />
-                    <Link href="/">{t('settings')}</Link>
+                <DropdownMenuItem asChild>
+                    <Link href="/dashboard/settings">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>{t('settings')}</span>
+                    </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="p-0">

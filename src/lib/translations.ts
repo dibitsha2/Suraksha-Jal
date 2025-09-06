@@ -18,6 +18,7 @@ export const translations = {
     medicineChecker: 'Medicine Checker',
     waterQuality: 'Water Quality',
     aiChat: 'AI Chat',
+    emergencyContacts: 'Emergency Contacts',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -37,6 +38,7 @@ export const translations = {
     medicineChecker: 'दवा परीक्षक',
     waterQuality: 'पानी की गुणवत्ता',
     aiChat: 'एआई चैट',
+    emergencyContacts: 'आपातकालीन संपर्क',
   },
   bn: {
     dashboard: 'ড্যাশবোর্ড',
@@ -56,6 +58,7 @@ export const translations = {
     medicineChecker: 'ঔষধ পরীক্ষক',
     waterQuality: 'জলর গুণগত মান',
     aiChat: 'এআই চ্যাট',
+    emergencyContacts: 'জরুরী যোগাযোগ',
   },
   as: {
     dashboard: 'ডেশ্বৰ্ড',
@@ -67,7 +70,7 @@ export const translations = {
     welcome: 'স্বাগতম',
     checkSymptomsPrompt: 'অসুস্থ অনুভৱ কৰিছে নেকি? এতিয়াই আপোনাৰ লক্ষণবোৰ পৰীক্ষা কৰক।',
     getStarted: 'আৰম্ভ কৰক',
-    casesLast30Days: 'যোৱা ৩০ দিনত গোচৰ',
+    casesLast30Days: 'যোৱa ৩০ দিনত গোচৰ',
     precautions: 'সতৰ্কতামূলক ব্যৱস্থা',
     medicationSuggester: 'ঔষধৰ পৰামৰ্শ',
     healthReminders: 'স্বাস্থ্য স্মাৰক',
@@ -75,6 +78,7 @@ export const translations = {
     medicineChecker: 'ঔষধ পৰীক্ষক',
     waterQuality: 'পানীৰ গুণগত মান',
     aiChat: 'এআই চেট',
+    emergencyContacts: 'জৰুৰীকালীন যোগাযোগ',
   },
 };
 

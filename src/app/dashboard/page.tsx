@@ -115,8 +115,6 @@ export default function DashboardPage() {
         </div>
       </div>
       
-      <AiChat />
-
       <Card>
           <CardHeader>
               <div className="flex items-center gap-2">
@@ -173,6 +171,8 @@ export default function DashboardPage() {
             </div>
         </CardContent>
       </Card>
+
+      <AiChat />
 
     </div>
   );
@@ -383,4 +383,3 @@ const StatsCard = ({ title, value, icon: Icon, change, changeType }: { title: st
   )
 }
 
-    

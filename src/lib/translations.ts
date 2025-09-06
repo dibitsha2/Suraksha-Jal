@@ -1,0 +1,53 @@
+export const translations = {
+  en: {
+    dashboard: 'Dashboard',
+    symptomChecker: 'Symptom Checker',
+    reports: 'Local Reports',
+    profile: 'Profile',
+    settings: 'Settings',
+    logout: 'Logout',
+    welcome: 'Welcome',
+    checkSymptomsPrompt: 'Feeling unwell? Check your symptoms now.',
+    getStarted: 'Get Started',
+    casesLast30Days: 'Cases in last 30 days',
+  },
+  hi: {
+    dashboard: 'डैशबोर्ड',
+    symptomChecker: 'लक्षण परीक्षक',
+    reports: 'स्थानीय रिपोर्ट',
+    profile: 'प्रोफ़ाइल',
+    settings: 'सेटिंग्स',
+    logout: 'लॉग आउट',
+    welcome: 'स्वागत है',
+    checkSymptomsPrompt: 'अस्वस्थ महसूस कर रहे हैं? अभी अपने लक्षणों की जाँच करें।',
+    getStarted: 'शुरू हो जाओ',
+    casesLast30Days: 'पिछले 30 दिनों में मामले',
+  },
+  bn: {
+    dashboard: 'ড্যাশবোর্ড',
+    symptomChecker: 'লক্ষণ পরীক্ষক',
+    reports: 'স্থানীয় প্রতিবেদন',
+    profile: 'প্রোফাইল',
+    settings: 'সেটিংস',
+    logout: 'লগ আউট',
+    welcome: 'স্বাগতম',
+    checkSymptomsPrompt: 'অসুস্থ বোধ করছেন? এখনই আপনার লক্ষণগুলি পরীক্ষা করুন।',
+    getStarted: 'এবার শুরু করা যাক',
+    casesLast30Days: 'গত ৩০ দিনে কেস',
+  },
+  as: {
+    dashboard: 'ডেশ্বৰ্ড',
+    symptomChecker: 'ৰোগৰ লক্ষণ পৰীক্ষক',
+    reports: 'স্থানীয় প্ৰতিবেদন',
+    profile: 'প্ৰফাইল',
+    settings: 'ছেটিংছ',
+    logout: 'লগ আউট',
+    welcome: 'স্বাগতম',
+    checkSymptomsPrompt: 'অসুস্থ অনুভৱ কৰিছে নেকি? এতিয়াই আপোনাৰ লক্ষণবোৰ পৰীক্ষা কৰক।',
+    getStarted: 'আৰম্ভ কৰক',
+    casesLast30Days: 'যোৱা ৩০ দিনত গোচৰ',
+  },
+};
+
+export type Translations = typeof translations;
+export type Language = keyof Translations;

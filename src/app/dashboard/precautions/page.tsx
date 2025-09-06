@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import { Droplet, UtensilsCrossed, HandHeart, Bug, ShieldAlert, Archive, ShieldCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -9,50 +8,36 @@ const precautions = [
     icon: Droplet,
     title: 'Drink Safe Water',
     description: 'Always drink boiled, filtered, or purified water. Avoid tap water or ice from unknown sources.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'clean water',
   },
   {
     icon: UtensilsCrossed,
     title: 'Safe Food Handling',
     description: 'Wash fruits and vegetables with clean water. Eat freshly cooked food and avoid raw or undercooked items.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'washing vegetables',
   },
   {
     icon: HandHeart,
     title: 'Practice Good Hygiene',
     description: 'Wash your hands frequently with soap and water, especially before eating and after using the toilet.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'washing hands',
   },
   {
     icon: Bug,
     title: 'Avoid Contaminated Water',
     description: 'Do not swim or bathe in ponds, rivers, or streams that might be contaminated.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'polluted water',
   },
    {
     icon: ShieldAlert,
     title: 'Get Vaccinated',
     description: 'Stay up-to-date with vaccinations for diseases like Typhoid and Hepatitis A, if available in your area.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'vaccine',
   },
   {
     icon: Archive,
     title: 'Cover Stored Water',
     description: 'Keep stored water in clean, covered containers to prevent contamination from insects and debris.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'water container',
   },
   {
     icon: ShieldCheck,
     title: 'Prevent Mosquito Breeding',
     description: 'Cover drains with grills and regularly spread bleaching powder to prevent mosquitoes from breeding.',
-    image: 'https://picsum.photos/600/400',
-    aiHint: 'drain cover',
   },
 ];
 
@@ -73,20 +58,8 @@ export default function PrecautionsPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {precautions.map((precaution: any, index: number) => (
               <Card key={index} className="flex flex-col overflow-hidden">
-                {precaution.image && (
-                    <div className="relative w-full h-48">
-                        <Image 
-                            src={precaution.image}
-                            alt={precaution.title}
-                            width={600}
-                            height={400}
-                            className="object-cover w-full h-full"
-                            data-ai-hint={precaution.aiHint}
-                        />
-                    </div>
-                )}
-                <div className={`flex flex-col items-center text-center p-6 flex-1 ${!precaution.image ? 'pt-12' : ''}`}>
-                    <div className={`p-4 bg-primary/10 rounded-full mb-4 ${precaution.image ? '-mt-12 bg-background border-4 border-background' : ''}`}>
+                <div className="flex flex-col items-center text-center p-6 flex-1 pt-12">
+                    <div className="p-4 bg-primary/10 rounded-full mb-4">
                         <precaution.icon className="h-8 w-8 text-primary" />
                     </div>
                     <h3 className="font-bold mb-2 text-lg">{precaution.title}</h3>

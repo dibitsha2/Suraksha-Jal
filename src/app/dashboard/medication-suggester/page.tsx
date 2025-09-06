@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import {
   getMedicationSuggestions,
   type MedicationSuggesterOutput,
@@ -24,6 +25,7 @@ import { useLanguage } from '@/hooks/use-language';
 
 const symptomSchema = z.object({
   symptoms: z.string().min(10, 'Please describe your symptoms in more detail.'),
+  age: z.coerce.number().min(1, 'Age must be a positive number').optional(),
 });
 
 type SymptomValues = z.infer<typeof symptomSchema>;
@@ -47,6 +49,7 @@ export default function MedicationSuggesterPage() {
     try {
       const response = await getMedicationSuggestions({
         symptoms: data.symptoms,
+        age: data.age,
       });
       setResult(response);
     } catch (e) {
@@ -72,7 +75,20 @@ export default function MedicationSuggesterPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="age"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Your Age (Optional)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="Enter your age for better suggestions" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="symptoms"
@@ -90,7 +106,7 @@ export default function MedicationSuggesterPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="justify-self-start">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

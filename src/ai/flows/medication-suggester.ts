@@ -13,6 +13,7 @@ import {z} from 'genkit';
 
 const MedicationSuggesterInputSchema = z.object({
   symptoms: z.string().describe('A description of the symptoms the user is experiencing.'),
+  age: z.number().optional().describe('The age of the user, if available.'),
 });
 export type MedicationSuggesterInput = z.infer<typeof MedicationSuggesterInputSchema>;
 
@@ -30,11 +31,14 @@ const medicationSuggesterPrompt = ai.definePrompt({
   name: 'medicationSuggesterPrompt',
   input: {schema: MedicationSuggesterInputSchema},
   output: {schema: MedicationSuggesterOutputSchema},
-  prompt: `You are a medical assistant. Based on the symptoms provided by the user, suggest some common over-the-counter medicines and home remedies that might help.
+  prompt: `You are a medical assistant. Based on the symptoms and age (if provided) by the user, suggest some common over-the-counter medicines and home remedies that might help. Tailor your suggestions to be appropriate for the user's age.
 
 You must always include a strong and clear disclaimer that the user should consult a doctor before taking any new medication or trying any remedies, as this is not professional medical advice.
 
 Symptoms: {{{symptoms}}}
+{{#if age}}
+Age: {{{age}}}
+{{/if}}
 `,
 });
 

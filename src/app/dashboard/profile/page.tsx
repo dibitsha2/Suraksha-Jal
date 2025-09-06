@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -29,7 +30,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
-import { Loader2 } from 'lucide-react';
+import { Loader2, LocateFixed } from 'lucide-react';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name is too short'),
@@ -54,6 +55,39 @@ export default function ProfilePage() {
       email: 'demo@example.com',
     },
   });
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const address = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
+          form.setValue('address', address, { shouldValidate: true });
+          toast({
+            title: 'Location Fetched',
+            description: 'Your coordinates have been set as your address.',
+          });
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          toast({
+            variant: 'destructive',
+            title: 'Location Error',
+            description:
+              error.code === error.PERMISSION_DENIED
+                ? 'You denied the request for Geolocation.'
+                : 'Could not get your location. Please try again.',
+          });
+        }
+      );
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Unsupported Browser',
+        description: 'Your browser does not support Geolocation.',
+      });
+    }
+  };
 
   const onSubmit = (data: ProfileValues) => {
     console.log('Profile data:', data);
@@ -109,9 +143,20 @@ export default function ProfilePage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your address" {...field} />
-                      </FormControl>
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input placeholder="Your address or coordinates" {...field} />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={handleGetLocation}
+                          aria-label="Use live location"
+                        >
+                          <LocateFixed className="h-4 w-4" />
+                        </Button>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}

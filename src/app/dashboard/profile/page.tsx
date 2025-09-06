@@ -34,6 +34,7 @@ import { Loader2 } from 'lucide-react';
 const profileSchema = z.object({
   name: z.string().min(2, 'Name is too short'),
   email: z.string().email(),
+  address: z.string().min(5, 'Address is too short').optional(),
   age: z.coerce.number().min(1, 'Age must be a positive number').optional(),
   weight: z.coerce.number().min(1, 'Weight must be a positive number').optional(),
   height: z.coerce.number().min(1, 'Height must be a positive number').optional(),
@@ -97,6 +98,19 @@ export default function ProfilePage() {
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
                         <Input placeholder="your.email@example.com" {...field} disabled />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your address" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

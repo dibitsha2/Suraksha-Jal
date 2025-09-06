@@ -16,6 +16,7 @@ export const translations = {
     healthReminders: 'Health Reminders',
     reminders: 'Reminders',
     medicineChecker: 'Medicine Checker',
+    waterQuality: 'Water Quality',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -33,6 +34,7 @@ export const translations = {
     healthReminders: 'स्वास्थ्य अनुस्मारक',
     reminders: 'अनुस्मारक',
     medicineChecker: 'दवा परीक्षक',
+    waterQuality: 'पानी की गुणवत्ता',
   },
   bn: {
     dashboard: 'ড্যাশবোর্ড',
@@ -50,6 +52,7 @@ export const translations = {
     healthReminders: 'স্বাস্থ্য অনুস্মারক',
     reminders: 'অনুস্মারক',
     medicineChecker: 'ঔষধ পরীক্ষক',
+    waterQuality: 'জলর গুণগত মান',
   },
   as: {
     dashboard: 'ডেশ্বৰ্ড',
@@ -63,10 +66,11 @@ export const translations = {
     getStarted: 'আৰম্ভ কৰক',
     casesLast30Days: 'যোৱা ৩০ দিনত গোচৰ',
     precautions: 'সতৰ্কতামূলক ব্যৱস্থা',
-    medicationSuggester: 'ঔষধৰ পৰামৰ্श',
+    medicationSuggester: 'ঔষধৰ পৰামৰ্শ',
     healthReminders: 'স্বাস্থ্য স্মাৰক',
     reminders: 'স্মাৰক',
     medicineChecker: 'ঔষধ পৰীক্ষক',
+    waterQuality: 'পানীৰ গুণগত মান',
   },
 };
 

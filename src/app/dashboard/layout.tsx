@@ -18,6 +18,7 @@ import {
   HeartPulse,
   Bell,
   Info,
+  Droplet,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -58,6 +59,7 @@ function Sidebar() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
     { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
@@ -104,6 +106,7 @@ function Header() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
     { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },

@@ -1,0 +1,175 @@
+'use client';
+
+import { useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Loader2, Sparkles, AlertTriangle, Pill, Home } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  getMedicationSuggestions,
+  type MedicationSuggesterOutput,
+} from '@/ai/flows/medication-suggester';
+import { useLanguage } from '@/hooks/use-language';
+
+const symptomSchema = z.object({
+  symptoms: z.string().min(10, 'Please describe your symptoms in more detail.'),
+});
+
+type SymptomValues = z.infer<typeof symptomSchema>;
+
+export default function MedicationSuggesterPage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<MedicationSuggesterOutput | null>(null);
+  const { t } = useLanguage();
+
+  const form = useForm<SymptomValues>({
+    resolver: zodResolver(symptomSchema),
+    defaultValues: { symptoms: '' },
+  });
+
+  const onSubmit: SubmitHandler<SymptomValues> = async (data) => {
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const response = await getMedicationSuggestions({
+        symptoms: data.symptoms,
+      });
+      setResult(response);
+    } catch (e) {
+      console.error(e);
+      setError('An error occurred while getting suggestions. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+       <div className="flex items-center">
+        <h1 className="text-lg font-semibold md:text-2xl font-headline">{t('medicationSuggester')}</h1>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline text-2xl">AI Medication Suggester</CardTitle>
+          <CardDescription>
+            Describe your symptoms, and our AI will suggest common medications and home remedies.
+            This is not a substitute for professional medical advice.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="symptoms"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Your Symptoms</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g., I have a cough, sore throat, and a slight fever..."
+                        className="min-h-[120px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Get Suggestions
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      {error && (
+        <Card className="border-destructive">
+          <CardHeader className="flex-row gap-4 items-center">
+            <AlertTriangle className="text-destructive" />
+            <div>
+              <CardTitle className="text-destructive">Error</CardTitle>
+              <CardDescription className="text-destructive/80">{error}</CardDescription>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
+
+      {result && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-headline text-xl">AI Suggestions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {result.suggestedMedicines && result.suggestedMedicines.length > 0 && (
+                <div>
+                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                        <Pill className="h-5 w-5 text-primary" />
+                        <span>Suggested Over-the-Counter Medicines</span>
+                    </h3>
+                    <div className="p-4 border rounded-md">
+                         <ul className="space-y-3">
+                            {result.suggestedMedicines.map((medicine, index) => (
+                                <li key={index} className="flex items-start">
+                                    <Pill className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
+                                    <span className="text-sm text-muted-foreground">{medicine}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
+
+            {result.homeRemedies && result.homeRemedies.length > 0 && (
+                <div>
+                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                        <Home className="h-5 w-5 text-primary" />
+                        <span>Suggested Home Remedies</span>
+                    </h3>
+                    <div className="p-4 border rounded-md">
+                         <ul className="space-y-3">
+                            {result.homeRemedies.map((remedy, index) => (
+                                <li key={index} className="flex items-start">
+                                    <Home className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
+                                    <span className="text-sm text-muted-foreground">{remedy}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
+            
+            <div className="p-4 bg-amber-100 dark:bg-amber-900/20 rounded-lg text-amber-800 dark:text-amber-300">
+                <p className="text-sm font-medium"><strong>Disclaimer:</strong> This tool is for informational purposes only and does not constitute medical advice. Please consult a healthcare professional for an accurate diagnosis and treatment plan before taking any medication or trying home remedies.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

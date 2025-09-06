@@ -11,6 +11,7 @@ export const translations = {
     getStarted: 'Get Started',
     casesLast30Days: 'Cases in last 30 days',
     precautions: 'Precautions',
+    medicationSuggester: 'Medication Suggester',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -24,6 +25,7 @@ export const translations = {
     getStarted: 'शुरू हो जाओ',
     casesLast30Days: 'पिछले 30 दिनों में मामले',
     precautions: 'सावधानियां',
+    medicationSuggester: 'दवाइयाँ सुझाएँ',
   },
   bn: {
     dashboard: 'ড্যাশবোর্ড',
@@ -37,6 +39,7 @@ export const translations = {
     getStarted: 'এবার শুরু করা যাক',
     casesLast30Days: 'গত ৩০ দিনে কেস',
     precautions: 'সতর্কতা',
+    medicationSuggester: 'ঔষধের পরামর্শ',
   },
   as: {
     dashboard: 'ডেশ্বৰ্ড',
@@ -50,6 +53,7 @@ export const translations = {
     getStarted: 'আৰম্ভ কৰক',
     casesLast30Days: 'যোৱা ৩০ দিনত গোচৰ',
     precautions: 'সতৰ্কতামূলক ব্যৱস্থা',
+    medicationSuggester: 'ঔষধৰ পৰামৰ্শ',
   },
 };
 

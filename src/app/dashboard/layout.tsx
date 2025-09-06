@@ -17,6 +17,7 @@ import {
   Pill,
   HeartPulse,
   Bell,
+  Info,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -58,6 +59,7 @@ function Sidebar() {
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
+    { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
@@ -103,6 +105,7 @@ function Header() {
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
+    { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },

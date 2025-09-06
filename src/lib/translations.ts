@@ -15,6 +15,7 @@ export const translations = {
     medicationSuggester: 'Medication Suggester',
     healthReminders: 'Health Reminders',
     reminders: 'Reminders',
+    medicineChecker: 'Medicine Checker',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -31,6 +32,7 @@ export const translations = {
     medicationSuggester: 'दवाइयाँ सुझाएँ',
     healthReminders: 'स्वास्थ्य अनुस्मारक',
     reminders: 'अनुस्मारक',
+    medicineChecker: 'दवा परीक्षक',
   },
   bn: {
     dashboard: 'ড্যাশবোর্ড',
@@ -47,6 +49,7 @@ export const translations = {
     medicationSuggester: 'ঔষধের পরামর্শ',
     healthReminders: 'স্বাস্থ্য অনুস্মারক',
     reminders: 'অনুস্মারক',
+    medicineChecker: 'ঔষধ পরীক্ষক',
   },
   as: {
     dashboard: 'ডেশ্বৰ্ড',
@@ -63,6 +66,7 @@ export const translations = {
     medicationSuggester: 'ঔষধৰ পৰামৰ্श',
     healthReminders: 'স্বাস্থ্য স্মাৰক',
     reminders: 'স্মাৰক',
+    medicineChecker: 'ঔষধ পৰীক্ষক',
   },
 };
 

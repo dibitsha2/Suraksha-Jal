@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -169,6 +169,23 @@ export default function SymptomCheckerPage() {
                   ))}
                 </Accordion>
             </div>
+
+            {result.suggestedMedicines && result.suggestedMedicines.length > 0 && (
+                <div>
+                    <h3 className="font-semibold mb-2">Suggested Medicines</h3>
+                    <div className="p-4 border rounded-md">
+                         <ul className="space-y-3">
+                            {result.suggestedMedicines.map((medicine, index) => (
+                                <li key={index} className="flex items-start">
+                                    <Pill className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
+                                    <span className="text-sm text-muted-foreground">{medicine}</span>
+                                </li>
+                            ))}
+                        </ul>
+                         <p className="text-xs text-amber-800 dark:text-amber-300 mt-4 p-2 bg-amber-100 dark:bg-amber-900/20 rounded-md"><strong>Important:</strong> Always consult a doctor before taking any new medication. These are only common suggestions and not a prescription.</p>
+                    </div>
+                </div>
+            )}
 
             <div>
               <h3 className="font-semibold mb-2">Recommended Preventive Measures</h3>

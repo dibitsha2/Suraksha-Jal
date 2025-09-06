@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Globe, MapPin, Search, Calendar, BarChart2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -32,7 +32,35 @@ export default function LocalReportsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredReports, setFilteredReports] = useState(mockReports);
 
+  useEffect(() => {
+    try {
+      const savedProfile = localStorage.getItem('userProfile');
+      if (savedProfile) {
+        const profile = JSON.parse(savedProfile);
+        if (profile.address) {
+            // Attempt to extract a city/state from the address to pre-filter
+            const locationParts = profile.address.split(',');
+            const primaryLocation = locationParts[0]?.trim().toLowerCase();
+            if (primaryLocation) {
+                 const userLocationReports = mockReports.filter(report => 
+                    report.location.toLowerCase().includes(primaryLocation)
+                );
+                if(userLocationReports.length > 0) {
+                    setFilteredReports(userLocationReports);
+                }
+            }
+        }
+      }
+    } catch (error) {
+        console.error('Failed to load user profile for local reports:', error);
+    }
+  }, []);
+
   const handleSearch = () => {
+    if (!searchQuery) {
+        setFilteredReports(mockReports);
+        return;
+    }
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = mockReports.filter(report => 
       report.disease.toLowerCase().includes(lowercasedQuery) ||
@@ -124,4 +152,3 @@ export default function LocalReportsPage() {
     </div>
   );
 }
-

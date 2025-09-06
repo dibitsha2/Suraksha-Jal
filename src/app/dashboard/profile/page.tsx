@@ -4,6 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -47,6 +48,7 @@ type ProfileValues = z.infer<typeof profileSchema>;
 export default function ProfilePage() {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
@@ -58,15 +60,34 @@ export default function ProfilePage() {
 
   const handleGetLocation = () => {
     if (navigator.geolocation) {
+      setIsFetchingLocation(true);
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           const { latitude, longitude } = position.coords;
-          const address = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
-          form.setValue('address', address, { shouldValidate: true });
-          toast({
-            title: 'Location Fetched',
-            description: 'Your coordinates have been set as your address.',
-          });
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+            );
+            const data = await response.json();
+            if (data && data.display_name) {
+              form.setValue('address', data.display_name, { shouldValidate: true });
+              toast({
+                title: 'Location Fetched',
+                description: 'Your address has been set.',
+              });
+            } else {
+                throw new Error('Could not parse address from API response.');
+            }
+          } catch(apiError) {
+             console.error('Reverse geocoding error:', apiError);
+             toast({
+                variant: 'destructive',
+                title: 'Address Error',
+                description: 'Could not fetch your address. Please enter it manually.',
+            });
+          } finally {
+            setIsFetchingLocation(false);
+          }
         },
         (error) => {
           console.error('Geolocation error:', error);
@@ -78,6 +99,7 @@ export default function ProfilePage() {
                 ? 'You denied the request for Geolocation.'
                 : 'Could not get your location. Please try again.',
           });
+          setIsFetchingLocation(false);
         }
       );
     } else {
@@ -141,20 +163,21 @@ export default function ProfilePage() {
                   control={form.control}
                   name="address"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="md:col-span-2">
                       <FormLabel>Address</FormLabel>
                       <div className="flex items-center gap-2">
                         <FormControl>
-                          <Input placeholder="Your address or coordinates" {...field} />
+                          <Input placeholder="Your address or click the button to fetch it" {...field} />
                         </FormControl>
                         <Button
                           type="button"
                           variant="outline"
                           size="icon"
                           onClick={handleGetLocation}
+                          disabled={isFetchingLocation}
                           aria-label="Use live location"
                         >
-                          <LocateFixed className="h-4 w-4" />
+                          {isFetchingLocation ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
                         </Button>
                       </div>
                       <FormMessage />
@@ -168,7 +191,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Age</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Your age" {...field} />
+                        <Input type="number" placeholder="Your age" {...field} value={field.value ?? ''}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -181,7 +204,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Weight (kg)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Your weight in kilograms" {...field} />
+                        <Input type="number" placeholder="Your weight in kilograms" {...field} value={field.value ?? ''}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -194,7 +217,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Height (cm)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Your height in centimeters" {...field} />
+                        <Input type="number" placeholder="Your height in centimeters" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

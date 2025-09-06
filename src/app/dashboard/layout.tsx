@@ -12,6 +12,7 @@ import {
   Languages,
   Menu,
   Settings,
+  Shield,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -52,6 +53,7 @@ function Sidebar() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 
@@ -93,6 +95,7 @@ function Header() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/settings', icon: Settings, label: t('settings') },
   ];
 

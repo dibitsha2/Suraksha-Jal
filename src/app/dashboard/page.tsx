@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Stethoscope, Droplet, Users, Activity } from 'lucide-react';
+import { Stethoscope, Droplet, Users, Activity, Shield } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -28,17 +28,25 @@ export default function DashboardPage() {
         style={{ backgroundImage: "url('https://picsum.photos/1200/400?blur=10')" }}
         data-ai-hint="water droplets"
       >
-        <div className="flex flex-col items-center gap-2 text-center bg-background/80 p-8 rounded-lg">
-          <Stethoscope className="h-16 w-16 text-primary" />
+        <div className="flex flex-col items-center gap-4 text-center bg-background/80 p-8 rounded-lg">
+          <div className="flex items-center gap-8">
+            <Stethoscope className="h-16 w-16 text-primary" />
+            <Shield className="h-16 w-16 text-primary" />
+          </div>
           <h3 className="text-2xl font-bold tracking-tight font-headline">
-            Feeling unwell?
+            Your Health is Our Priority
           </h3>
           <p className="text-sm text-muted-foreground max-w-sm">
-            Use our AI-powered symptom checker to identify potential waterborne diseases and learn about preventive measures.
+            Use our AI symptom checker or learn about how to prevent waterborne diseases.
           </p>
-          <Button className="mt-4" asChild>
-            <Link href="/dashboard/symptom-checker">Check Symptoms</Link>
-          </Button>
+          <div className="flex gap-4 mt-4">
+            <Button asChild>
+              <Link href="/dashboard/symptom-checker">Check Symptoms</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/dashboard/precautions">View Precautions</Link>
+            </Button>
+          </div>
         </div>
       </div>
       

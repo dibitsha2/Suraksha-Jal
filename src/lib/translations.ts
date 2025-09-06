@@ -10,6 +10,7 @@ export const translations = {
     checkSymptomsPrompt: 'Feeling unwell? Check your symptoms now.',
     getStarted: 'Get Started',
     casesLast30Days: 'Cases in last 30 days',
+    precautions: 'Precautions',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -22,6 +23,7 @@ export const translations = {
     checkSymptomsPrompt: 'अस्वस्थ महसूस कर रहे हैं? अभी अपने लक्षणों की जाँच करें।',
     getStarted: 'शुरू हो जाओ',
     casesLast30Days: 'पिछले 30 दिनों में मामले',
+    precautions: 'सावधानियां',
   },
   bn: {
     dashboard: 'ড্যাশবোর্ড',
@@ -34,6 +36,7 @@ export const translations = {
     checkSymptomsPrompt: 'অসুস্থ বোধ করছেন? এখনই আপনার লক্ষণগুলি পরীক্ষা করুন।',
     getStarted: 'এবার শুরু করা যাক',
     casesLast30Days: 'গত ৩০ দিনে কেস',
+    precautions: 'সতর্কতা',
   },
   as: {
     dashboard: 'ডেশ্বৰ্ড',
@@ -46,6 +49,7 @@ export const translations = {
     checkSymptomsPrompt: 'অসুস্থ অনুভৱ কৰিছে নেকি? এতিয়াই আপোনাৰ লক্ষণবোৰ পৰীক্ষা কৰক।',
     getStarted: 'আৰম্ভ কৰক',
     casesLast30Days: 'যোৱা ৩০ দিনত গোচৰ',
+    precautions: 'সতৰ্কতামূলক ব্যৱস্থা',
   },
 };
 

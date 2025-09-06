@@ -51,7 +51,7 @@ const userRegisterSchema = z.object({
 });
 
 const healthWorkerRegisterSchema = userRegisterSchema.extend({
-  govId: z.any(),
+  govId: z.any().refine(file => file?.name, 'Government ID is required.'),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -386,7 +386,7 @@ function HealthWorkerRegisterForm() {
                                             <Input
                                                 type="file"
                                                 accept="image/*"
-                                                className="pl-10"
+                                                className="pl-10 file:text-sm file:font-medium file:text-muted-foreground file:mr-4"
                                                 onChange={(e) => {
                                                     const file = e.target.files?.[0];
                                                     field.onChange(file);

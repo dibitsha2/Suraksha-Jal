@@ -17,7 +17,7 @@ export function WaterFilterVideoDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
   // A sample video URL. In a real application, you'd host this yourself.
-  const videoUrl = 'https://www.w3schools.com/html/mov_bbb.mp4';
+  const videoUrl = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4';
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -35,7 +35,7 @@ export function WaterFilterVideoDialog() {
           </DialogDescription>
         </DialogHeader>
         <div className="aspect-video">
-           <video className="w-full h-full rounded-lg" controls>
+           <video className="w-full h-full rounded-lg" controls autoPlay>
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>

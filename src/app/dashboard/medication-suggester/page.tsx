@@ -26,7 +26,7 @@ import { useLanguage } from '@/hooks/use-language';
 
 const symptomSchema = z.object({
   symptoms: z.string().min(10, 'Please describe your symptoms in more detail.'),
-  age: z.coerce.number().min(1, 'Age must be a positive number').optional(),
+  age: z.coerce.number().min(1, 'Age must be 1 or greater').optional(),
 });
 
 type SymptomValues = z.infer<typeof symptomSchema>;

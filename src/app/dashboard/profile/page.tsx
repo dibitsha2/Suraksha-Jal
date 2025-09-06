@@ -38,7 +38,7 @@ const profileSchema = z.object({
   name: z.string().min(2, 'Name is too short'),
   email: z.string().email(),
   address: z.string().min(5, 'Address is too short').optional(),
-  age: z.coerce.number().min(1, 'Age must be a positive number').optional(),
+  age: z.coerce.number().min(1, 'Age must be 1 or greater').optional(),
   weight: z.coerce.number().min(1, 'Weight must be a positive number').optional(),
   height: z.coerce.number().min(1, 'Height must be a positive number').optional(),
   bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),

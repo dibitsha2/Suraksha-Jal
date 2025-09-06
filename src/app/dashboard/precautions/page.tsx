@@ -35,8 +35,6 @@ const precautions = [
     icon: Archive,
     title: 'Cover Stored Water',
     description: 'Keep stored water in clean, covered containers to prevent contamination from insects and debris.',
-    image: 'https://picsum.photos/400/255',
-    aiHint: 'water storage',
   },
 ];
 

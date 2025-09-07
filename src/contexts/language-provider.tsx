@@ -1,10 +1,11 @@
+
 'use client';
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { translations, type Language, type Translations } from '@/lib/translations';
 
 interface LanguageContextType {
-  language: Language;
+  language: Language | null;
   setLanguage: (language: Language) => void;
   t: (key: keyof Translations[Language]) => string;
 }
@@ -12,13 +13,17 @@ interface LanguageContextType {
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguageState] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     const storedLanguage = localStorage.getItem('language') as Language;
     if (storedLanguage && translations[storedLanguage]) {
       setLanguageState(storedLanguage);
+    } else {
+      // If no language is stored, we don't set one,
+      // allowing the language selector to appear.
+      setLanguageState(null);
     }
     setIsMounted(true);
   }, []);
@@ -31,11 +36,14 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const t = (key: keyof Translations[Language]): string => {
-    return translations[language][key] || (translations.en[key] as string) || String(key);
+    // Default to english if language is not set, but use the selected one if it is.
+    const langKey = language || 'en';
+    return translations[langKey][key] || (translations.en[key] as string) || String(key);
   };
   
   if (!isMounted) {
-    return null; // or a loading spinner
+    // While hydrating, don't render anything to avoid mismatches
+    return null;
   }
 
   return (

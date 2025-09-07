@@ -95,6 +95,22 @@ function LoginForm() {
   const onSubmit: SubmitHandler<LoginValues> = async (data) => {
     // Mock login
     console.log('Login data:', data);
+
+    try {
+        const savedProfile = localStorage.getItem('userProfile');
+        let profile = savedProfile ? JSON.parse(savedProfile) : {};
+        profile.email = data.email;
+        // In a real app, you might only do this if the user is new or on first login after this feature is added.
+        if (!profile.name) {
+            profile.name = "Demo User";
+        }
+        localStorage.setItem('userProfile', JSON.stringify(profile));
+    } catch (error) {
+        console.error('Failed to save email to profile:', error);
+        // We can still proceed with login even if this fails.
+    }
+
+
     toast({
       title: 'Login Successful',
       description: 'Redirecting to dashboard...',

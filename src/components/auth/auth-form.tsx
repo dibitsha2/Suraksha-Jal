@@ -42,7 +42,7 @@ import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
 
 // Schemas
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  emailOrPhone: z.string().min(1, 'Email or phone number is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -94,13 +94,27 @@ function LoginForm() {
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { emailOrPhone: '', password: '' },
   });
+
+  const isEmail = (input: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
 
   const onSubmit: SubmitHandler<LoginValues> = async (data) => {
     setLoading(true);
+
+    if (!isEmail(data.emailOrPhone)) {
+        toast({
+            variant: 'destructive',
+            title: 'Login Method Not Supported',
+            description: 'Phone number login is not yet supported. Please use your email address.',
+        });
+        setLoading(false);
+        return;
+    }
+
+
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+        const userCredential = await signInWithEmailAndPassword(auth, data.emailOrPhone, data.password);
         const user = userCredential.user;
         
         let profile: any = {};
@@ -130,7 +144,7 @@ function LoginForm() {
                 break;
             case 'auth/wrong-password':
             case 'auth/invalid-credential':
-                description = 'Invalid email or password. Please try again.';
+                description = 'Invalid email/phone or password. Please try again.';
                 break;
             case 'auth/invalid-email':
                 description = 'The email address you entered is not valid.';
@@ -139,7 +153,7 @@ function LoginForm() {
                 description = 'Too many login attempts. Please try again later.';
                 break;
             case 'auth/operation-not-allowed':
-                description = 'Email/Password sign-in is not enabled. Please enable it in the Firebase console.';
+                description = 'Email/Password sign-in is not enabled in the Firebase console. Please contact support or the administrator for assistance.';
                 break;
         }
         toast({
@@ -163,14 +177,14 @@ function LoginForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
+              name="emailOrPhone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Email or Phone Number</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input placeholder="your.email@example.com" {...field} className="pl-10" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input placeholder="your.email@example.com or phone" {...field} className="pl-10" />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -498,3 +512,5 @@ function HealthWorkerRegisterForm() {
         </Card>
     );
 }
+
+    

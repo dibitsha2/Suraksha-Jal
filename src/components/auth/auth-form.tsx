@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -15,6 +16,8 @@ import {
   User,
   Lock,
 } from 'lucide-react';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -36,6 +39,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
+import { Separator } from '@/components/ui/separator';
 
 // Schemas
 const loginSchema = z.object({
@@ -87,35 +91,80 @@ export default function AuthForm() {
 function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit: SubmitHandler<LoginValues> = async (data) => {
-    // Mock login
-    console.log('Login data:', data);
-
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
     try {
-        const savedProfile = localStorage.getItem('userProfile');
-        let profile = savedProfile ? JSON.parse(savedProfile) : {};
-        profile.email = data.email;
-        // In a real app, you might only do this if the user is new or on first login after this feature is added.
-        if (!profile.name) {
-            profile.name = "Demo User";
-        }
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const profile = {
+            name: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+        };
         localStorage.setItem('userProfile', JSON.stringify(profile));
-    } catch (error) {
-        console.error('Failed to save email to profile:', error);
-        // We can still proceed with login even if this fails.
+        toast({
+            title: 'Login Successful',
+            description: 'Redirecting to dashboard...',
+        });
+        router.push('/dashboard');
+    } catch (error: any) {
+        console.error('Google sign-in error:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Google Sign-In Failed',
+            description: error.message,
+        });
+    } finally {
+        setLoading(false);
     }
+  }
 
+  const onSubmit: SubmitHandler<LoginValues> = async (data) => {
+    setLoading(true);
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+        const user = userCredential.user;
+        
+        let profile = { email: user.email, name: user.displayName || "Demo User" };
+        localStorage.setItem('userProfile', JSON.stringify(profile));
 
-    toast({
-      title: 'Login Successful',
-      description: 'Redirecting to dashboard...',
-    });
-    router.push('/dashboard');
+        toast({
+          title: 'Login Successful',
+          description: 'Redirecting to dashboard...',
+        });
+        router.push('/dashboard');
+    } catch (error: any) {
+        console.error('Login error:', error);
+        let description = 'An unexpected error occurred.';
+        switch (error.code) {
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential':
+                description = 'Invalid email or password. Please try again.';
+                break;
+            case 'auth/invalid-email':
+                description = 'The email address you entered is not valid.';
+                break;
+            case 'auth/too-many-requests':
+                description = 'Too many login attempts. Please try again later.';
+                break;
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Login Failed',
+            description: description,
+        });
+    } finally {
+        setLoading(false);
+    }
   };
 
   return (
@@ -159,12 +208,17 @@ function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
           </form>
         </Form>
+        <Separator className="my-4" />
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.5 173.5 58.1l-73.2 73.2C320.7 112.2 287.8 96 248 96c-88.8 0-160.1 72.1-160.1 160.1s71.3 160.1 160.1 160.1c98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>}
+            Sign in with Google
+        </Button>
       </CardContent>
     </Card>
   );
@@ -199,14 +253,35 @@ function UserRegisterForm() {
     });
 
     const onSubmit: SubmitHandler<UserRegisterValues> = async (data) => {
-        console.log('User registration data:', data);
-        toast({
-            title: 'Registration Successful',
-            description: "You can now log in.",
-        });
-        // In a real app, you would redirect to a login page or auto-login.
-        // For now, we simulate success and they can switch to login tab.
-        router.push('/auth');
+        try {
+            await createUserWithEmailAndPassword(auth, data.email, data.password);
+            
+            const profile = {
+                name: data.username,
+                email: data.email,
+                address: data.address,
+            };
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+
+            toast({
+                title: 'Registration Successful',
+                description: "You have been logged in automatically.",
+            });
+            router.push('/dashboard');
+        } catch (error: any) {
+            console.error('Registration error:', error);
+            let description = 'An unexpected error occurred.';
+            if (error.code === 'auth/email-already-in-use') {
+                description = 'This email is already registered. Please try logging in.';
+            } else if (error.code === 'auth/weak-password') {
+                description = 'The password is too weak. Please use at least 6 characters.';
+            }
+             toast({
+                variant: 'destructive',
+                title: 'Registration Failed',
+                description,
+            });
+        }
     };
 
     return (

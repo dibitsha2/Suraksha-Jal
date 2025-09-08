@@ -4,6 +4,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
+import Image from 'next/image';
 import {
   Home,
   Stethoscope,
@@ -33,6 +34,10 @@ import {
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useLanguage } from '@/hooks/use-language';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { auth } from '@/lib/firebase';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/hooks/use-toast';
+
 
 export default function DashboardLayout({
   children,
@@ -162,22 +167,67 @@ function Header() {
 function UserMenu() {
     const { t } = useLanguage();
     const router = useRouter();
+    const { toast } = useToast();
+    const [user, setUser] = React.useState<any>(null);
 
-    const handleLogout = () => {
-        // In a real app, clear session/token
-        router.push('/auth');
+    React.useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                // User is signed in.
+                const profile = {
+                    name: currentUser.displayName,
+                    email: currentUser.email,
+                    photoURL: currentUser.photoURL,
+                };
+                setUser(profile);
+                localStorage.setItem('userProfile', JSON.stringify(profile));
+            } else {
+                // User is signed out.
+                setUser(null);
+                // Try to get profile from local storage as a fallback
+                const storedProfile = localStorage.getItem('userProfile');
+                if (storedProfile) {
+                    setUser(JSON.parse(storedProfile));
+                }
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            localStorage.removeItem('userProfile');
+            router.push('/auth');
+            toast({
+                title: 'Logged Out',
+                description: 'You have been successfully logged out.',
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Logout Failed',
+                description: 'Could not log you out. Please try again.',
+            });
+        }
     }
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
-                     <User className="h-5 w-5" />
+                     <Avatar className="h-8 w-8">
+                        {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.name || 'User'} />}
+                        <AvatarFallback>
+                            {user?.name ? user.name.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
+                        </AvatarFallback>
+                     </Avatar>
                     <span className="sr-only">Toggle user menu</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/profile">

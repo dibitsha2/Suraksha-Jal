@@ -42,7 +42,7 @@ import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
 
 // Schemas
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -126,6 +126,8 @@ function LoginForm() {
         let description = 'An unexpected error occurred.';
         switch (error.code) {
             case 'auth/user-not-found':
+                description = 'Account not found. Please register first.';
+                break;
             case 'auth/wrong-password':
             case 'auth/invalid-credential':
                 description = 'Invalid email or password. Please try again.';

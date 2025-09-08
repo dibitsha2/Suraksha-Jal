@@ -16,7 +16,7 @@ import {
   User,
   Lock,
 } from 'lucide-react';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,6 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
-import { Separator } from '@/components/ui/separator';
 
 // Schemas
 const loginSchema = z.object({
@@ -98,42 +97,23 @@ function LoginForm() {
     defaultValues: { email: '', password: '' },
   });
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    const provider = new GoogleAuthProvider();
-    try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        const profile = {
-            name: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL,
-        };
-        localStorage.setItem('userProfile', JSON.stringify(profile));
-        toast({
-            title: 'Login Successful',
-            description: 'Redirecting to dashboard...',
-        });
-        router.push('/dashboard');
-    } catch (error: any) {
-        console.error('Google sign-in error:', error);
-        toast({
-            variant: 'destructive',
-            title: 'Google Sign-In Failed',
-            description: error.message,
-        });
-    } finally {
-        setLoading(false);
-    }
-  }
-
   const onSubmit: SubmitHandler<LoginValues> = async (data) => {
     setLoading(true);
     try {
         const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
         const user = userCredential.user;
         
-        let profile = { email: user.email, name: user.displayName || "Demo User" };
+        let profile: any = {};
+        const existingProfile = localStorage.getItem('userProfile');
+        if (existingProfile) {
+            profile = JSON.parse(existingProfile);
+        }
+        
+        profile.email = user.email;
+        if (!profile.name) {
+          profile.name = user.displayName || "Demo User"
+        }
+
         localStorage.setItem('userProfile', JSON.stringify(profile));
 
         toast({
@@ -214,11 +194,6 @@ function LoginForm() {
             </Button>
           </form>
         </Form>
-        <Separator className="my-4" />
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
-            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.5 173.5 58.1l-73.2 73.2C320.7 112.2 287.8 96 248 96c-88.8 0-160.1 72.1-160.1 160.1s71.3 160.1 160.1 160.1c98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>}
-            Sign in with Google
-        </Button>
       </CardContent>
     </Card>
   );

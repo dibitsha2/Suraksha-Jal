@@ -230,6 +230,7 @@ export default function ProfilePage() {
                             <Input
                               placeholder="Start typing your address..."
                               {...field}
+                              value={field.value ?? ''}
                               onChange={handleAddressChange}
                               onBlur={() => setTimeout(() => setIsSuggestionsVisible(false), 150)}
                               autoComplete="off"
@@ -273,7 +274,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Age</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Your age" {...field} />
+                        <Input type="number" placeholder="Your age" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -286,7 +287,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Weight (kg)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Your weight in kilograms" {...field} />
+                        <Input type="number" placeholder="Your weight in kilograms" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -299,7 +300,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Height (cm)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Your height in centimeters" {...field} />
+                        <Input type="number" placeholder="Your height in centimeters" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -311,7 +312,7 @@ export default function ProfilePage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Blood Group</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value ?? ''}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select your blood group" />

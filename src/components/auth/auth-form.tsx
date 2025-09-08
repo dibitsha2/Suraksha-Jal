@@ -138,6 +138,9 @@ function LoginForm() {
             case 'auth/too-many-requests':
                 description = 'Too many login attempts. Please try again later.';
                 break;
+            case 'auth/operation-not-allowed':
+                description = 'Email/Password sign-in is not enabled. Please enable it in the Firebase console.';
+                break;
         }
         toast({
             variant: 'destructive',

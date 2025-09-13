@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -10,20 +11,32 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { languages } from '@/lib/translations';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState(language ?? 'auto');
+  const { toast } = useToast();
 
   const filteredLanguages = languages.filter((lang) =>
     lang.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleSave = () => {
+    setLanguage(selectedLanguage);
+    toast({
+        title: "Language Updated",
+        description: `The application language has been changed.`,
+    });
+  }
+
   return (
     <div className="flex flex-col gap-6">
-       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl font-headline">{t('languageSettings')}</h1>
-      </div>
+       <div className="flex items-center justify-between">
+            <h1 className="text-lg font-semibold md:text-2xl font-headline">{t('languageSettings')}</h1>
+            <Button onClick={handleSave}>Save Changes</Button>
+        </div>
       <Card>
         <CardHeader>
           <CardTitle className="font-headline text-2xl">Language Settings</CardTitle>
@@ -40,7 +53,7 @@ export default function SettingsPage() {
             />
           </div>
 
-          <RadioGroup value={language ?? 'auto'} onValueChange={(value) => setLanguage(value as any)}>
+          <RadioGroup value={selectedLanguage} onValueChange={setSelectedLanguage}>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4">
                <div className="flex items-center space-x-2">
                   <RadioGroupItem value="auto" id="lang-auto" />

@@ -22,6 +22,7 @@ import {
   Globe,
   Siren,
   FilePlus,
+  Languages,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -172,7 +173,7 @@ function Header() {
 }
 
 function UserMenu() {
-    const { t } = useLanguage();
+    const { t, setLanguage } = useLanguage();
     const router = useRouter();
     const { toast } = useToast();
     const [user, setUser] = React.useState<any>(null);
@@ -259,6 +260,12 @@ function UserMenu() {
                     <span>{t('profile')}</span>
                   </Link>
                 </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                  <Link href="/dashboard/settings">
+                    <Languages className="mr-2 h-4 w-4" />
+                    <span>Change Language</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="p-0">
                     <div className="flex items-center justify-between w-full px-2 py-1.5">
@@ -275,5 +282,3 @@ function UserMenu() {
         </DropdownMenu>
     );
 }
-
-    

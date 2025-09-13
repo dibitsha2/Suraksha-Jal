@@ -57,8 +57,13 @@ export default function ProfilePage() {
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: 'Demo User',
-      email: 'demo@example.com',
+      name: '',
+      email: '',
+      address: '',
+      age: undefined,
+      weight: undefined,
+      height: undefined,
+      bloodGroup: undefined,
     },
   });
 

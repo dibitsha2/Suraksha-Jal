@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Globe, MapPin, Search, Calendar, BarChart2 as BarChart2Icon, FilePlus, Loader2, Trash2, AlertTriangle } from 'lucide-react';
+import { Globe, MapPin, Search, Calendar, BarChart2 as BarChart2Icon, FilePlus, Loader2, Trash2, AlertTriangle, LineChart, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table"
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { format, subDays } from 'date-fns';
+import { format, subDays, parseISO } from 'date-fns';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +28,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
-import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, Cell, CartesianGrid } from 'recharts';
+import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, Cell, CartesianGrid, Line } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 
@@ -82,9 +82,23 @@ export default function ViewReportsPage() {
         acc[disease] += report.cases;
         return acc;
     }, {} as Record<string, number>);
+
+    const timeData = filteredReports.reduce((acc, report) => {
+        const reportDate = format(parseISO(report.date), 'yyyy-MM-dd');
+        if (!acc[reportDate]) {
+            acc[reportDate] = 0;
+        }
+        acc[reportDate] += report.cases;
+        return acc;
+    }, {} as Record<string, number>);
     
     const barChartData = Object.entries(locationData).map(([location, cases]) => ({ location, cases }));
     const pieChartData = Object.entries(diseaseData).map(([name, value]) => ({ name, value }));
+
+    const lineChartData = Object.entries(timeData)
+        .map(([date, cases]) => ({ date, cases }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
 
     const pieChartConfig = pieChartData.reduce((acc, data, index) => {
         acc[data.name] = {
@@ -94,7 +108,7 @@ export default function ViewReportsPage() {
         return acc;
     }, {} as ChartConfig);
 
-    return { barChartData, pieChartData, pieChartConfig };
+    return { barChartData, pieChartData, lineChartData, pieChartConfig };
   }, [filteredReports]);
 
   const loadReports = () => {
@@ -173,26 +187,27 @@ export default function ViewReportsPage() {
         </div>
 
         {filteredReports.length > 0 && (
+            <>
              <Card>
                 <CardHeader>
                     <CardTitle className="font-headline text-2xl">Report Statistics</CardTitle>
                     <CardDescription>Visual summary of the reports shown below.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
+                <CardContent className="grid md:grid-cols-2 gap-8">
                     <div>
-                        <h3 className="font-semibold mb-2 text-center">Cases by Location</h3>
+                        <h3 className="font-semibold mb-4 text-center">Cases by Location</h3>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={chartData.barChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="location" />
-                                <YAxis />
+                                <XAxis dataKey="location" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis fontSize={12} tickLine={false} axisLine={false} />
                                 <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))' }}/>
                                 <Bar dataKey="cases" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                      <div>
-                        <h3 className="font-semibold mb-2 text-center">Cases by Disease</h3>
+                        <h3 className="font-semibold mb-4 text-center">Cases by Disease</h3>
                         <ResponsiveContainer width="100%" height={300}>
                             <ChartContainer config={chartData.pieChartConfig}>
                                <PieChart>
@@ -227,6 +242,34 @@ export default function ViewReportsPage() {
                     </div>
                 </CardContent>
             </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline text-xl flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        Trend of Reported Cases
+                    </CardTitle>
+                    <CardDescription>Total cases reported per day based on current filter.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={chartData.lineChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                dataKey="date" 
+                                tickFormatter={(str) => format(parseISO(str), 'MMM d')}
+                                fontSize={12} 
+                                tickLine={false}
+                                axisLine={false}
+                            />
+                            <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))' }} />
+                            <Legend />
+                            <Line type="monotone" dataKey="cases" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
+            </>
         )}
 
         <Card>
@@ -370,3 +413,4 @@ export default function ViewReportsPage() {
     
 
     
+

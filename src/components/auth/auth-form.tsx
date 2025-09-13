@@ -100,20 +100,15 @@ function LoginForm() {
         const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
         const user = userCredential.user;
         
-        let profile: any = {};
         // Retrieve all profiles from local storage
         const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
         const existingProfile = allProfiles[user.email!];
 
-        if (existingProfile) {
-            profile = existingProfile;
-        }
-        
         const updatedProfile = {
-            ...profile,
-            name: profile.name || user.displayName,
+            ...(existingProfile || {}),
+            name: existingProfile?.name || user.displayName,
             email: user.email,
-            photoURL: profile.photoURL || user.photoURL,
+            photoURL: existingProfile?.photoURL || user.photoURL,
         };
 
         // Save the current user's profile to a separate key for easy access
@@ -144,9 +139,6 @@ function LoginForm() {
                 break;
             case 'auth/too-many-requests':
                 description = 'Too many login attempts. Please try again later.';
-                break;
-            case 'auth/operation-not-allowed':
-                description = 'Email/Password sign-in is not enabled. Please contact an administrator.';
                 break;
         }
         toast({
@@ -248,10 +240,6 @@ function UserRegisterForm() {
                 name: data.username,
                 email: data.email,
                 address: data.address,
-                age: undefined,
-                weight: undefined,
-                height: undefined,
-                bloodGroup: undefined,
                 isHealthWorker: false,
             };
             
@@ -557,9 +545,3 @@ function HealthWorkerRegisterForm() {
         </Card>
     );
 }
-
-    
-
-    
-
-    

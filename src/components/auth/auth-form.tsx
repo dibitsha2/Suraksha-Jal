@@ -16,7 +16,7 @@ import {
   User,
   Lock,
 } from 'lucide-react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 import { Button } from '@/components/ui/button';
@@ -106,14 +106,18 @@ function LoginForm() {
         let profile: any = {};
         const existingProfile = localStorage.getItem('userProfile');
         if (existingProfile) {
-            profile = JSON.parse(existingProfile);
+            try {
+                profile = JSON.parse(existingProfile);
+            } catch (e) {
+                console.error("Error parsing user profile from local storage", e);
+            }
         }
         
         // Ensure email from auth is the source of truth, but keep other profile data
         profile.email = user.email; 
         
         // If there's no name in the stored profile, try to get it from Firebase auth
-        if (!profile.name) {
+        if (!profile.name && user.displayName) {
           profile.name = user.displayName;
         }
 
@@ -237,8 +241,9 @@ function UserRegisterForm() {
 
     const onSubmit: SubmitHandler<UserRegisterValues> = async (data) => {
         try {
-            await createUserWithEmailAndPassword(auth, data.email, data.password);
-            
+            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+            await updateProfile(userCredential.user, { displayName: data.username });
+
             const profile = {
                 name: data.username,
                 email: data.email,
@@ -507,3 +512,4 @@ function HealthWorkerRegisterForm() {
     
 
     
+

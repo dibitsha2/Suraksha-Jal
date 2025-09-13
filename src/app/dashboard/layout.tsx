@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -179,30 +180,48 @@ function UserMenu() {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
                 // User is signed in.
-                const profile = {
-                    name: currentUser.displayName,
-                    email: currentUser.email,
-                    photoURL: currentUser.photoURL,
-                };
+                let profile: any = {};
+                const storedProfile = localStorage.getItem('userProfile');
+                if (storedProfile) {
+                    try {
+                        profile = JSON.parse(storedProfile);
+                    } catch (e) {
+                        console.error("Error parsing user profile", e);
+                    }
+                }
+                
+                profile.name = profile.name || currentUser.displayName;
+                profile.email = currentUser.email;
+                profile.photoURL = profile.photoURL || currentUser.photoURL;
+
                 setUser(profile);
                 localStorage.setItem('userProfile', JSON.stringify(profile));
+
             } else {
                 // User is signed out.
                 setUser(null);
-                // Try to get profile from local storage as a fallback
-                const storedProfile = localStorage.getItem('userProfile');
-                if (storedProfile) {
-                    setUser(JSON.parse(storedProfile));
-                }
+                // We don't clear the profile here so that on next login, we can retrieve it.
             }
         });
+        
+        // Also set user from local storage on initial load
+        const storedProfile = localStorage.getItem('userProfile');
+        if (storedProfile) {
+            try {
+                setUser(JSON.parse(storedProfile));
+            } catch (e) {
+                 console.error("Error parsing user profile on initial load", e);
+            }
+        }
+
         return () => unsubscribe();
     }, []);
 
     const handleLogout = async () => {
         try {
             await auth.signOut();
-            localStorage.removeItem('userProfile');
+            // We don't remove userProfile from localStorage on logout
+            // so the name/address can be remembered on next login.
             router.push('/auth');
             toast({
                 title: 'Logged Out',

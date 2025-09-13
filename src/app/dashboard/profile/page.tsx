@@ -4,7 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -31,10 +31,14 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
-import { Loader2, LocateFixed } from 'lucide-react';
+import { Loader2, LocateFixed, Upload } from 'lucide-react';
 import { debounce } from 'lodash';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { User } from 'lucide-react';
+
 
 const profileSchema = z.object({
+  photoURL: z.string().optional(),
   name: z.string().min(2, 'Name is too short'),
   email: z.string().email(),
   address: z.string().min(5, 'Address is too short').optional(),
@@ -52,11 +56,13 @@ export default function ProfilePage() {
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
+      photoURL: '',
       name: '',
       email: '',
       address: '',
@@ -168,11 +174,15 @@ export default function ProfilePage() {
 
   const onSubmit = (data: ProfileValues) => {
     try {
-      localStorage.setItem('userProfile', JSON.stringify(data));
+      const currentProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const updatedProfile = { ...currentProfile, ...data };
+      localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
       toast({
         title: 'Profile Updated',
         description: 'Your information has been saved successfully.',
       });
+      // Force a reload of the page to update the user menu avatar
+      window.location.reload();
     } catch (error) {
        console.error('Failed to save profile:', error);
         toast({
@@ -182,6 +192,18 @@ export default function ProfilePage() {
         });
     }
   };
+
+  const handlePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue('photoURL', reader.result as string, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -196,6 +218,38 @@ export default function ProfilePage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+               <FormField
+                control={form.control}
+                name="photoURL"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Profile Picture</FormLabel>
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-24 w-24">
+                        <AvatarImage src={field.value ?? undefined} alt="Profile Picture" />
+                        <AvatarFallback>
+                          <User className="h-12 w-12" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload Picture
+                      </Button>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          className="hidden"
+                          ref={fileInputRef}
+                          onChange={handlePictureUpload}
+                          accept="image/png, image/jpeg, image/gif"
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -347,3 +401,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

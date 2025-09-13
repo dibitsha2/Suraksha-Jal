@@ -107,8 +107,8 @@ function Sidebar() {
 
 function Header() {
   const { t } = useLanguage();
-  const router = useRouter();
   const pathname = usePathname();
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
@@ -123,10 +123,14 @@ function Header() {
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
     { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
   ];
+  
+  const handleLinkClick = () => {
+    setIsSheetOpen(false);
+  };
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
-      <Sheet>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
             <Menu className="h-5 w-5" />
@@ -143,6 +147,7 @@ function Header() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={handleLinkClick}
                 className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground ${
                   pathname === item.href ? 'bg-muted text-foreground' : 'text-muted-foreground'
                 }`}

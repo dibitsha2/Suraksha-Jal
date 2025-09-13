@@ -42,8 +42,8 @@ import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
 
 // Schemas
 const loginSchema = z.object({
-  email: z.string().min(1, 'Email is required'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 const userRegisterSchema = z.object({
@@ -139,7 +139,7 @@ function LoginForm() {
                 description = 'Too many login attempts. Please try again later.';
                 break;
             case 'auth/operation-not-allowed':
-                description = 'Email/Password sign-in is not enabled in the Firebase console. Please contact support or the administrator for assistance.';
+                description = 'Email/Password sign-in is not enabled. Please contact an administrator.';
                 break;
         }
         toast({
@@ -254,7 +254,7 @@ function UserRegisterForm() {
             if (error.code === 'auth/email-already-in-use') {
                 description = 'This email is already registered. Please try logging in.';
             } else if (error.code === 'auth/weak-password') {
-                description = 'The password is too weak. Please use at least 6 characters.';
+                description = 'The password is too weak. Please use at least 8 characters.';
             }
              toast({
                 variant: 'destructive',
@@ -498,6 +498,8 @@ function HealthWorkerRegisterForm() {
         </Card>
     );
 }
+
+    
 
     
 

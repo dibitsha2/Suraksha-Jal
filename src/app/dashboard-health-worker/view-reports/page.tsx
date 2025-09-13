@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Globe, MapPin, Search, Calendar, BarChart2, Info, FilePlus, Loader2 } from 'lucide-react';
+import { Globe, MapPin, Search, Calendar, BarChart2, FilePlus, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -15,8 +16,17 @@ import {
 } from "@/components/ui/table"
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import type { Report } from '@/ai/flows/generate-reports-flow';
 
+interface Report {
+    id: number;
+    disease: string;
+    location: string;
+    cases: number;
+    date: string;
+    severity: 'low' | 'medium' | 'high';
+    notes?: string;
+    source: string;
+}
 
 export default function ViewReportsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,11 +38,7 @@ export default function ViewReportsPage() {
     setLoading(true);
     try {
       const storedReports = JSON.parse(localStorage.getItem('mockReports') || '[]');
-      
-      const processedStoredReports = storedReports.map((r: any) => ({...r, source: r.source || 'Health Worker'}));
-      
-      setAllReports(processedStoredReports as any);
-
+      setAllReports(storedReports as Report[]);
     } catch (e) {
       console.error(e);
       setAllReports([]);
@@ -133,8 +139,8 @@ export default function ViewReportsPage() {
                       <TableCell>{report.location}</TableCell>
                       <TableCell className="text-center font-bold text-primary">{report.cases}</TableCell>
                       <TableCell>
-                        <Badge variant={report.source === 'Health Worker' ? 'default' : report.source === 'AI' ? 'outline' : 'secondary'}>
-                          {report.source}
+                        <Badge variant={'default'}>
+                          {report.source || 'Health Worker'}
                         </Badge>
                       </TableCell>
                       <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>

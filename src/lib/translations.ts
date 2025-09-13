@@ -47,6 +47,7 @@ const generateTranslations = () => {
         waterQuality: 'Water Quality',
         aiChat: 'AI Chat',
         emergencyContacts: 'Emergency Contacts',
+        viewReports: 'View Reports',
     };
 
     for (const lang of languages) {
@@ -73,6 +74,7 @@ const generateTranslations = () => {
         waterQuality: 'पानी की गुणवत्ता',
         aiChat: 'एआई चैट',
         emergencyContacts: 'आपातकालीन संपर्क',
+        viewReports: 'रिपोर्ट देखें',
     };
     translations.bn = {
         dashboard: 'ড্যাশবোর্ড',
@@ -93,6 +95,7 @@ const generateTranslations = () => {
         waterQuality: 'জলর গুণগত মান',
         aiChat: 'এআই চ্যাট',
         emergencyContacts: 'জরুরী যোগাযোগ',
+        viewReports: 'রিপোর্ট দেখুন',
     };
     translations.as = {
         dashboard: 'ডেশ্বৰ্ড',
@@ -104,7 +107,7 @@ const generateTranslations = () => {
         welcome: 'স্বাগতম',
         checkSymptomsPrompt: 'অসুস্থ অনুভৱ কৰিছে নেকি? এতিয়াই আপোনাৰ লক্ষণবোৰ পৰীক্ষা কৰক।',
         getStarted: 'আৰম্ভ কৰক',
-        casesLast30Days: 'যোৱা ৩০ দিনত গোচৰ',
+        casesLast30Days: 'যোৱا ৩০ দিনত গোচৰ',
         precautions: 'সতৰ্কতামূলক ব্যৱস্থা',
         medicationSuggester: 'ঔষধৰ পৰামৰ্শ',
         healthReminders: 'স্বাস্থ্য স্মাৰক',
@@ -113,6 +116,7 @@ const generateTranslations = () => {
         waterQuality: 'পানীৰ গুণগত মান',
         aiChat: 'এআই চেট',
         emergencyContacts: 'জৰুৰীকালীন যোগাযোগ',
+        viewReports: 'প্ৰতিবেদন চাওক',
     };
     translations.gu = {
         dashboard: 'ડેશબોર્ડ',
@@ -133,6 +137,7 @@ const generateTranslations = () => {
         waterQuality: 'પાણીની ગુણવત્તા',
         aiChat: 'AI ચેટ',
         emergencyContacts: 'ઇમરજન્સી સંપર્કો',
+        viewReports: 'અહેવાલો જુઓ',
     };
      translations.ta = {
         dashboard: 'แดชบอร์ด',
@@ -153,6 +158,7 @@ const generateTranslations = () => {
         waterQuality: 'நீரின் தரம்',
         aiChat: 'AI அரட்டை',
         emergencyContacts: 'அவசர தொடர்புகள்',
+        viewReports: 'அறிக்கைகளைப் பார்க்கவும்',
     };
     translations.te = {
         dashboard: 'డాష్‌బోర్డ్',
@@ -173,6 +179,7 @@ const generateTranslations = () => {
         waterQuality: 'నీటి నాణ్యత',
         aiChat: 'AI చాట్',
         emergencyContacts: 'అత్యవసర పరిచయాలు',
+        viewReports: 'నివేదికలను వీక్షించండి',
     };
     translations.kn = {
         dashboard: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
@@ -193,6 +200,7 @@ const generateTranslations = () => {
         waterQuality: 'ನೀರಿನ ಗುಣಮಟ್ಟ',
         aiChat: 'AI ಚಾಟ್',
         emergencyContacts: 'ತುರ್ತು ಸಂಪರ್ಕಗಳು',
+        viewReports: 'ವರದಿಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
     };
      translations.ml = {
         dashboard: 'ഡാഷ്ബോർഡ്',
@@ -213,6 +221,7 @@ const generateTranslations = () => {
         waterQuality: 'വെള്ളത്തിന്റെ ഗുണനിലവാരം',
         aiChat: 'AI ചാറ്റ്',
         emergencyContacts: 'അടിയന്തര കോൺടാക്റ്റുകൾ',
+        viewReports: 'റിപ്പോർട്ടുകൾ കാണുക',
     };
     translations.mr = {
         dashboard: 'डॅशबोर्ड',
@@ -233,6 +242,7 @@ const generateTranslations = () => {
         waterQuality: 'पाण्याची गुणवत्ता',
         aiChat: 'AI चॅट',
         emergencyContacts: 'आपत्कालीन संपर्क',
+        viewReports: 'अहवाल पहा',
     };
      translations.pa = {
         dashboard: 'ਡੈਸ਼ਬੋਰਡ',
@@ -253,6 +263,7 @@ const generateTranslations = () => {
         waterQuality: 'ਪਾਣੀ ਦੀ ਗੁਣਵੱਤਾ',
         aiChat: 'ਏਆਈ ਚੈਟ',
         emergencyContacts: 'ਐਮਰਜੈਂਸੀ ਸੰਪਰਕ',
+        viewReports: 'ਰਿਪੋਰਟਾਂ ਵੇਖੋ',
     };
     translations.ur = {
         dashboard: 'ڈیش بورڈ',
@@ -273,6 +284,7 @@ const generateTranslations = () => {
         waterQuality: 'پانی کا معیار',
         aiChat: 'اے آئی چیٹ',
         emergencyContacts: 'ہنگامی رابطے',
+        viewReports: 'رپورٹس دیکھیں',
     };
 
 

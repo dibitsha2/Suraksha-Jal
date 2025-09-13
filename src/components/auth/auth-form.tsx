@@ -489,7 +489,7 @@ function HealthWorkerRegisterForm() {
                                     <FormControl>
                                         <div className="space-y-4">
                                             <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
-                                                <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+                                                <video ref={videoRef} className="w-full h-full object-cover transform -scale-x-100" autoPlay muted playsInline />
                                                 <canvas ref={canvasRef} className="hidden" />
                                                 {hasCameraPermission === false && (
                                                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white p-4">
@@ -538,5 +538,3 @@ function HealthWorkerRegisterForm() {
         </Card>
     );
 }
-
-    

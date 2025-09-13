@@ -41,7 +41,7 @@ import Link from 'next/link';
 // Schemas
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().optional(),
 });
 
 const userRegisterSchema = z.object({
@@ -54,7 +54,7 @@ const userRegisterSchema = z.object({
 const healthWorkerRegisterSchema = z.object({
     username: z.string().min(2, 'Username is too short'),
     email: z.string().email('Invalid email address'),
-    workerId: z.string().min(4, 'Health worker ID is required'),
+    workerId: z.string().optional(),
     password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
@@ -105,15 +105,20 @@ function LoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: U
   const onSubmit: SubmitHandler<LoginValues> = async (data) => {
     setLoading(true);
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-        const user = userCredential.user;
-        
+        // Simplified login for demo
         const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-        const existingProfile = allProfiles[user.email!];
+        let existingProfile = allProfiles[data.email];
+
+        if (!existingProfile) {
+            existingProfile = {
+                name: data.email.split('@')[0],
+                email: data.email,
+                role: userType,
+            };
+        }
         
         // IMPORTANT: Check if the user role matches the portal type
         if (userType === 'health-worker' && existingProfile?.role !== 'health-worker') {
-            await auth.signOut(); // Log them out immediately
             toast({
                 variant: 'destructive',
                 title: 'Access Denied',
@@ -123,7 +128,6 @@ function LoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: U
             return;
         }
          if (userType === 'user' && existingProfile?.role === 'health-worker') {
-            await auth.signOut(); // Log them out immediately
             toast({
                 variant: 'destructive',
                 title: 'Access Denied',
@@ -134,14 +138,13 @@ function LoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: U
         }
 
         const updatedProfile = {
-            ...(existingProfile || {}),
-            name: existingProfile?.name || user.displayName,
-            email: user.email,
-            photoURL: existingProfile?.photoURL || user.photoURL,
+            ...existingProfile,
+            name: existingProfile.name || data.email.split('@')[0],
+            email: data.email,
         };
 
         localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-        allProfiles[user.email!] = updatedProfile;
+        allProfiles[data.email] = updatedProfile;
         localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
 
 
@@ -154,24 +157,10 @@ function LoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: U
 
     } catch (error: any) {
         console.error('Login error:', error);
-        let description = 'An unexpected error occurred.';
-        switch (error.code) {
-            case 'auth/user-not-found':
-            case 'auth/wrong-password':
-            case 'auth/invalid-credential':
-                description = 'Invalid email or password. Please try again.';
-                break;
-            case 'auth/invalid-email':
-                description = 'The email address you entered is not valid.';
-                break;
-            case 'auth/too-many-requests':
-                description = 'Too many login attempts. Please try again later.';
-                break;
-        }
         toast({
             variant: 'destructive',
             title: 'Login Failed',
-            description: description,
+            description: 'An unexpected error occurred.',
         });
     } finally {
         setLoading(false);
@@ -208,7 +197,7 @@ function LoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: U
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Password (optional)</FormLabel>
                   <FormControl>
                     <div className="relative">
                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -241,9 +230,6 @@ function UserRegisterForm({ redirectUrl }: { redirectUrl: string }) {
 
     const onSubmit: SubmitHandler<UserRegisterValues> = async (data) => {
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-            await updateProfile(userCredential.user, { displayName: data.username });
-
             const profile = {
                 name: data.username,
                 email: data.email,
@@ -356,9 +342,6 @@ function HealthWorkerRegisterForm({ redirectUrl }: { redirectUrl: string }) {
 
     const onSubmit: SubmitHandler<HealthWorkerRegisterValues> = async (data) => {
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-            await updateProfile(userCredential.user, { displayName: data.username });
-
             const profile = {
                 name: data.username,
                 email: data.email,
@@ -369,9 +352,6 @@ function HealthWorkerRegisterForm({ redirectUrl }: { redirectUrl: string }) {
             const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
             allProfiles[data.email] = profile;
             localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
-            
-            // Don't auto-login, redirect to login page
-             await auth.signOut();
             
             toast({
                 title: 'Registration Successful',
@@ -430,7 +410,7 @@ function HealthWorkerRegisterForm({ redirectUrl }: { redirectUrl: string }) {
                         )} />
                          <FormField control={form.control} name="workerId" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Health Worker ID</FormLabel>
+                                <FormLabel>Health Worker ID (optional)</FormLabel>
                                 <FormControl>
                                     <div className="relative">
                                         <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

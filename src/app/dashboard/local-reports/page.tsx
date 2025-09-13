@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Globe, MapPin, Search, Calendar, BarChart2, Info } from 'lucide-react';
+import { Globe, MapPin, Search, Calendar, BarChart2, Info, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -28,8 +28,6 @@ interface Report {
     severity?: 'low' | 'medium' | 'high';
 }
 
-// This is mock data. In a real app, this would come from a database
-// filled with reports from verified health workers.
 const generateMockReports = (): Report[] => {
     const today = new Date();
     return [
@@ -41,15 +39,14 @@ const generateMockReports = (): Report[] => {
     ];
 }
 
-const initialMockReports = generateMockReports();
-
 
 export default function LocalReportsPage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
-  const [allReports, setAllReports] = useState<Report[]>(initialMockReports);
-  const [filteredReports, setFilteredReports] = useState<Report[]>(initialMockReports);
+  const [allReports, setAllReports] = useState<Report[]>([]);
+  const [filteredReports, setFilteredReports] = useState<Report[]>([]);
   const [userLocation, setUserLocation] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
@@ -63,21 +60,41 @@ export default function LocalReportsPage() {
     } catch (error) {
         console.error('Failed to load user profile for local reports:', error);
     }
-  }, []);
-
-  useEffect(() => {
-    // Combine initial reports with any from local storage
+    
+    setLoading(true);
     try {
+        const lastFetchStr = localStorage.getItem('reportsLastFetch');
+        const lastFetch = lastFetchStr ? new Date(lastFetchStr) : null;
+        const now = new Date();
+
+        let initialMockReports: Report[] = [];
+        // Cache for 30 minutes
+        if (!lastFetch || (now.getTime() - lastFetch.getTime() > 30 * 60 * 1000)) {
+            console.log("Generating new mock reports.");
+            initialMockReports = generateMockReports();
+            localStorage.setItem('initialMockReports', JSON.stringify(initialMockReports));
+            localStorage.setItem('reportsLastFetch', now.toISOString());
+        } else {
+            console.log("Using cached mock reports.");
+            const cachedReports = localStorage.getItem('initialMockReports');
+            initialMockReports = cachedReports ? JSON.parse(cachedReports) : generateMockReports();
+        }
+
         const storedReports: Report[] = JSON.parse(localStorage.getItem('mockReports') || '[]');
         const combined = [...storedReports, ...initialMockReports];
-        // Simple deduplication based on id
         const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
             .map(id => combined.find(a => a.id === id)!)
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            .sort((a, b) => {
+                if (a.source === 'Health Worker' && b.source !== 'Health Worker') return -1;
+                if (a.source !== 'Health Worker' && b.source === 'Health Worker') return 1;
+                return new Date(b.date).getTime() - new Date(a.date).getTime()
+            });
         setAllReports(uniqueReports);
     } catch(e) {
         console.error("Failed to load reports:", e);
-        setAllReports(initialMockReports);
+        setAllReports(generateMockReports());
+    } finally {
+        setLoading(false);
     }
   }, []);
 
@@ -167,7 +184,16 @@ export default function LocalReportsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredReports.length > 0 ? (
+                {loading ? (
+                    <TableRow>
+                        <TableCell colSpan={5} className="h-24 text-center">
+                           <div className="flex justify-center items-center gap-2">
+                             <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                             <p className="text-muted-foreground">Loading reports...</p>
+                           </div>
+                        </TableCell>
+                    </TableRow>
+                ) : filteredReports.length > 0 ? (
                   filteredReports.map((report) => (
                     <TableRow key={report.id}>
                       <TableCell className="font-medium">{report.disease}</TableCell>
@@ -199,5 +225,3 @@ export default function LocalReportsPage() {
     </div>
   );
 }
-
-    

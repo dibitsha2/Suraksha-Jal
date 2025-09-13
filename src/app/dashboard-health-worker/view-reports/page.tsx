@@ -40,30 +40,46 @@ const generateMockReports = (): Report[] => {
     ];
 }
 
-const initialMockReports = generateMockReports();
-
-
 export default function ViewReportsPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [allReports, setAllReports] = useState<Report[]>(initialMockReports);
-  const [filteredReports, setFilteredReports] = useState<Report[]>(initialMockReports);
+  const [allReports, setAllReports] = useState<Report[]>([]);
+  const [filteredReports, setFilteredReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     try {
+        const lastFetchStr = localStorage.getItem('reportsLastFetch');
+        const lastFetch = lastFetchStr ? new Date(lastFetchStr) : null;
+        const now = new Date();
+
+        let initialMockReports: Report[] = [];
+        // Cache for 30 minutes
+        if (!lastFetch || (now.getTime() - lastFetch.getTime() > 30 * 60 * 1000)) {
+            console.log("Generating new mock reports for worker.");
+            initialMockReports = generateMockReports();
+            localStorage.setItem('initialMockReports', JSON.stringify(initialMockReports));
+            localStorage.setItem('reportsLastFetch', now.toISOString());
+        } else {
+             console.log("Using cached mock reports for worker.");
+            const cachedReports = localStorage.getItem('initialMockReports');
+            initialMockReports = cachedReports ? JSON.parse(cachedReports) : generateMockReports();
+        }
+
       const storedReports: Report[] = JSON.parse(localStorage.getItem('mockReports') || '[]');
-      // Combine initial reports with any from local storage
       const combined = [...storedReports, ...initialMockReports];
-      // Simple deduplication based on id
       const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
           .map(id => combined.find(a => a.id === id)!)
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          .sort((a, b) => {
+                if (a.source === 'Health Worker' && b.source !== 'Health Worker') return -1;
+                if (a.source !== 'Health Worker' && b.source === 'Health Worker') return 1;
+                return new Date(b.date).getTime() - new Date(a.date).getTime()
+            });
 
       setAllReports(uniqueReports);
     } catch (e) {
       console.error(e);
-      setAllReports(initialMockReports); // fallback to initial mocks on error
+      setAllReports(generateMockReports()); // fallback to initial mocks on error
     } finally {
       setLoading(false);
     }

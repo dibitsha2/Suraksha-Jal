@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Pill } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill, Mic, Square, Volume2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,9 @@ import {
 } from '@/ai/flows/symptom-based-disease-checker';
 import { getDiseaseInformation, type DiseaseInformationOutput } from '@/ai/flows/ai-powered-disease-information';
 import { useLanguage } from '@/hooks/use-language';
+import { speechToText } from '@/ai/flows/speech-to-text';
+import { textToSpeech } from '@/ai/flows/text-to-speech';
+import { useToast } from '@/hooks/use-toast';
 
 const symptomSchema = z.object({
   symptoms: z.string().min(10, 'Please describe your symptoms in more detail.'),
@@ -43,11 +46,75 @@ export default function SymptomCheckerPage() {
   const [result, setResult] = useState<SymptomBasedDiseaseCheckerOutput | null>(null);
   const [detailedInfo, setDetailedInfo] = useState<DetailedInfoState>({});
   const { effectiveLanguage } = useLanguage();
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const { toast } = useToast();
+  const [isSpeaking, setIsSpeaking] = useState<Record<string, boolean>>({});
 
   const form = useForm<SymptomValues>({
     resolver: zodResolver(symptomSchema),
     defaultValues: { symptoms: '' },
   });
+
+  const handleStartRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+      
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+      
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Audio = reader.result as string;
+          try {
+            setLoading(true);
+            const { transcription } = await speechToText({ audioDataUri: base64Audio });
+            form.setValue('symptoms', transcription);
+            setLoading(false);
+          } catch (e) {
+            console.error(e);
+            toast({ variant: 'destructive', title: 'Transcription Error', description: 'Could not transcribe audio. Please try again or type your symptoms.'});
+            setLoading(false);
+          }
+        };
+      };
+      
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      toast({ variant: 'destructive', title: 'Microphone Error', description: 'Could not access the microphone. Please check your browser permissions.'});
+    }
+  };
+
+  const handleStopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const handlePlayback = async (id: string, text: string) => {
+      setIsSpeaking(prev => ({ ...prev, [id]: true }));
+      try {
+        const { audioDataUri } = await textToSpeech({ text });
+        const audio = new Audio(audioDataUri);
+        audio.play();
+        audio.onended = () => setIsSpeaking(prev => ({ ...prev, [id]: false }));
+      } catch (e) {
+        console.error(e);
+        toast({ variant: 'destructive', title: 'Playback Error', description: 'Could not play the audio response.'});
+        setIsSpeaking(prev => ({ ...prev, [id]: false }));
+      }
+  }
+
 
   const onSubmit: SubmitHandler<SymptomValues> = async (data) => {
     setLoading(true);
@@ -56,11 +123,9 @@ export default function SymptomCheckerPage() {
     setDetailedInfo({});
 
     try {
-      // For location, we would normally use navigator.geolocation
-      // but for this example, we'll pass a mock location.
       const response = await symptomBasedDiseaseChecker({
         symptoms: data.symptoms,
-        location: 'Mumbai, India', // Mock location
+        location: 'Mumbai, India',
         language: effectiveLanguage,
       });
       setResult(response);
@@ -89,7 +154,7 @@ export default function SymptomCheckerPage() {
         <CardHeader>
           <CardTitle className="font-headline text-2xl">AI Symptom Checker</CardTitle>
           <CardDescription>
-            Describe your symptoms below, and our AI will provide potential waterborne disease matches and advice.
+            Describe your symptoms by typing or using your voice. Our AI will provide potential waterborne disease matches and advice.
             This is not a substitute for professional medical advice.
           </CardDescription>
         </CardHeader>
@@ -103,21 +168,34 @@ export default function SymptomCheckerPage() {
                   <FormItem>
                     <FormLabel>Your Symptoms</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="e.g., I have a high fever, headache, and stomach pain..."
-                        className="min-h-[120px]"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Textarea
+                          placeholder="e.g., I have a high fever, headache, and stomach pain..."
+                          className="min-h-[120px] pr-12"
+                          {...field}
+                        />
+                        <div className="absolute top-3 right-3">
+                          {!isRecording ? (
+                              <Button type="button" variant="ghost" size="icon" onClick={handleStartRecording} aria-label="Start recording">
+                                  <Mic className="h-5 w-5" />
+                              </Button>
+                          ) : (
+                              <Button type="button" variant="destructive" size="icon" onClick={handleStopRecording} aria-label="Stop recording">
+                                  <Square className="h-5 w-5" />
+                              </Button>
+                          )}
+                        </div>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button type="submit" disabled={loading}>
-                {loading ? (
+                {loading || isRecording ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Analyzing...
+                    {isRecording ? 'Recording...' : 'Analyzing...'}
                   </>
                 ) : (
                   <>
@@ -163,8 +241,18 @@ export default function SymptomCheckerPage() {
                             Get More Information
                         </Button>
                         {detailedInfo[disease]?.data && (
-                            <div className="prose prose-sm dark:prose-invert mt-4 p-4 border rounded-md">
+                            <div className="prose prose-sm dark:prose-invert mt-4 p-4 border rounded-md relative">
                                 <p>{detailedInfo[disease]?.data?.diseaseInfo}</p>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="absolute top-2 right-2"
+                                  onClick={() => handlePlayback(`detail-${index}`, detailedInfo[disease]!.data!.diseaseInfo)}
+                                  disabled={isSpeaking[`detail-${index}`]}
+                                  aria-label="Read details aloud"
+                                >
+                                    {isSpeaking[`detail-${index}`] ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                                </Button>
                             </div>
                         )}
                       </AccordionContent>
@@ -191,12 +279,32 @@ export default function SymptomCheckerPage() {
             )}
 
             <div>
-              <h3 className="font-semibold mb-2">Recommended Preventive Measures</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold">Recommended Preventive Measures</h3>
+                <Button
+                    variant="ghost" size="icon"
+                    onClick={() => handlePlayback('preventive', result.preventiveMeasures)}
+                    disabled={isSpeaking['preventive']}
+                    aria-label="Read preventive measures aloud"
+                >
+                    {isSpeaking['preventive'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                </Button>
+              </div>
               <p className="text-sm text-muted-foreground whitespace-pre-line">{result.preventiveMeasures}</p>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-2">Additional Information</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold">Additional Information</h3>
+                 <Button
+                    variant="ghost" size="icon"
+                    onClick={() => handlePlayback('additional', result.additionalInformation)}
+                    disabled={isSpeaking['additional']}
+                    aria-label="Read additional information aloud"
+                >
+                    {isSpeaking['additional'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                </Button>
+              </div>
               <p className="text-sm text-muted-foreground whitespace-pre-line">{result.additionalInformation}</p>
             </div>
             

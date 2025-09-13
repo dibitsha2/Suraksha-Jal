@@ -35,6 +35,7 @@ import { Loader2, LocateFixed, Upload } from 'lucide-react';
 import { debounce } from 'lodash';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User } from 'lucide-react';
+import { auth } from '@/lib/firebase';
 
 
 const profileSchema = z.object({
@@ -174,9 +175,19 @@ export default function ProfilePage() {
 
   const onSubmit = (data: ProfileValues) => {
     try {
-      const currentProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("User not authenticated.");
+      }
+      
+      const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+      const currentProfile = allProfiles[currentUser.email!] || {};
       const updatedProfile = { ...currentProfile, ...data };
+      
+      allProfiles[currentUser.email!] = updatedProfile;
+      localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
       localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+
       toast({
         title: 'Profile Updated',
         description: 'Your information has been saved successfully.',
@@ -401,5 +412,7 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    
 
     

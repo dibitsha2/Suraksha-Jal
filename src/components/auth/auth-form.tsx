@@ -39,7 +39,6 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Schemas
 const loginSchema = z.object({
@@ -102,13 +101,12 @@ function LoginForm() {
         const user = userCredential.user;
         
         let profile: any = {};
-        const existingProfile = localStorage.getItem('userProfile');
+        // Retrieve all profiles from local storage
+        const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+        const existingProfile = allProfiles[user.email!];
+
         if (existingProfile) {
-            try {
-                profile = JSON.parse(existingProfile);
-            } catch (e) {
-                console.error("Error parsing user profile from local storage", e);
-            }
+            profile = existingProfile;
         }
         
         const updatedProfile = {
@@ -118,7 +116,12 @@ function LoginForm() {
             photoURL: profile.photoURL || user.photoURL,
         };
 
+        // Save the current user's profile to a separate key for easy access
         localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+        // Update the collection of all profiles
+        allProfiles[user.email!] = updatedProfile;
+        localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+
 
         toast({
           title: 'Login Successful',
@@ -255,7 +258,14 @@ function UserRegisterForm() {
                 bloodGroup: undefined,
                 isHealthWorker: false,
             };
+            
+            // Set current user profile
             localStorage.setItem('userProfile', JSON.stringify(profile));
+            // Add to all profiles object, keyed by email
+            const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+            allProfiles[data.email] = profile;
+            localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+
 
             toast({
                 title: 'Registration Successful',
@@ -446,7 +456,13 @@ function HealthWorkerRegisterForm() {
                 isHealthWorker: true,
                 photoURL: data.faceId // Save face capture as profile picture
             };
+            
+            // Set current user profile
             localStorage.setItem('userProfile', JSON.stringify(profile));
+            // Add to all profiles object, keyed by email
+            const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+            allProfiles[data.email] = profile;
+            localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
 
             toast({
                 title: 'Registration Successful',
@@ -545,5 +561,7 @@ function HealthWorkerRegisterForm() {
         </Card>
     );
 }
+
+    
 
     

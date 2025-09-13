@@ -23,14 +23,12 @@ export default function LanguageSelector() {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
         // If user is logged in, redirect to the correct dashboard
-        const userProfile = localStorage.getItem('userProfile');
+        const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+        const userProfile = allProfiles[user.email!];
+        
         let isHealthWorker = false;
         if (userProfile) {
-            try {
-                isHealthWorker = JSON.parse(userProfile).isHealthWorker;
-            } catch(e) {
-                console.error("Could not parse user profile", e);
-            }
+            isHealthWorker = userProfile.isHealthWorker;
         }
         router.push(isHealthWorker ? '/dashboard-health-worker' : '/dashboard');
       } else if (language) {
@@ -91,5 +89,7 @@ export default function LanguageSelector() {
     </div>
   );
 }
+
+    
 
     

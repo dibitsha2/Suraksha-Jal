@@ -158,26 +158,21 @@ function UserMenu() {
     React.useEffect(() => {
         const handleAuthChange = (currentUser: any) => {
             if (currentUser) {
-                // User is signed in.
-                let profile: any = {};
-                const storedProfile = localStorage.getItem('userProfile');
-                if (storedProfile) {
-                    try {
-                        profile = JSON.parse(storedProfile);
-                    } catch (e) {
-                        console.error("Error parsing user profile", e);
-                    }
-                }
+                 // User is signed in.
+                const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+                const storedProfile = allProfiles[currentUser.email!];
                 
                 const updatedProfile = {
-                    ...profile,
-                    name: profile.name || currentUser.displayName,
+                    ...(storedProfile || {}),
+                    name: storedProfile?.name || currentUser.displayName,
                     email: currentUser.email,
-                    photoURL: profile.photoURL || currentUser.photoURL,
+                    photoURL: storedProfile?.photoURL || currentUser.photoURL,
                 };
                 
                 setUser(updatedProfile);
                 localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+                allProfiles[currentUser.email!] = updatedProfile;
+                localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
 
             } else {
                 // User is signed out.
@@ -203,8 +198,7 @@ function UserMenu() {
     const handleLogout = async () => {
         try {
             await auth.signOut();
-            // We don't remove userProfile from localStorage on logout
-            // so the profile data can be remembered on next login.
+            localStorage.removeItem('userProfile');
             router.push('/auth');
             toast({
                 title: 'Logged Out',
@@ -259,5 +253,7 @@ function UserMenu() {
     );
 }
 
+
+    
 
     

@@ -4,11 +4,12 @@
  * @fileOverview Transcribes audio to text.
  *
  * - speechToText - A function to transcribe audio.
- * - SpeechToTextInput - The input type for the speechToText function.
+ * - SpeechToTextInput - The input type for the speechToToxtext function.
  * - SpeechToTextOutput - The return type for the speechToText function.
  */
 
 import { ai } from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/googleai';
 import { z } from 'genkit';
 
 const SpeechToTextInputSchema = z.object({
@@ -30,19 +31,6 @@ export async function speechToText(input: SpeechToTextInput): Promise<SpeechToTe
   return speechToTextFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'speechToTextPrompt',
-  input: { schema: SpeechToTextInputSchema },
-  output: { schema: SpeechToTextOutputSchema },
-  prompt: `Transcribe the following audio.
-{{#if language}}
-The user is speaking in {{language}}.
-{{/if}}
-
-Audio: {{media url=audioDataUri}}
-`,
-});
-
 const speechToTextFlow = ai.defineFlow(
   {
     name: 'speechToTextFlow',
@@ -50,7 +38,20 @@ const speechToTextFlow = ai.defineFlow(
     outputSchema: SpeechToTextOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const { text } = await ai.generate({
+      model: googleAI.model('gemini-1.5-flash-latest-stt'),
+      prompt: [
+        {
+          media: {
+            url: input.audioDataUri,
+          },
+        },
+        {
+          text: `Transcribe the audio. The user is speaking in ${input.language || 'the auto-detected language'}.`,
+        }
+      ],
+    });
+    
+    return { transcription: text };
   }
 );

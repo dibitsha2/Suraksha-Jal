@@ -1,6 +1,7 @@
+
 'use client';
 
-import { Languages } from 'lucide-react';
+import { Languages, MapPin } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -28,8 +29,15 @@ export default function SettingsPage() {
           <CardDescription>Choose the language for the application interface.</CardDescription>
         </CardHeader>
         <CardContent>
-          <RadioGroup value={language} onValueChange={(value) => setLanguage(value as any)}>
+          <RadioGroup value={language ?? 'auto'} onValueChange={(value) => setLanguage(value as any)}>
             <div className="space-y-4">
+               <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="auto" id="lang-auto" />
+                  <Label htmlFor="lang-auto" className="text-lg flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <span>Auto-detect based on location</span>
+                  </Label>
+                </div>
               {languages.map((lang) => (
                 <div key={lang.code} className="flex items-center space-x-2">
                   <RadioGroupItem value={lang.code} id={`lang-${lang.code}`} />

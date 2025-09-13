@@ -53,9 +53,14 @@ const userRegisterSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
+const healthWorkerRegisterSchema = userRegisterSchema.extend({
+    healthId: z.any().refine(file => file instanceof File, 'ID card image is required.'),
+});
+
 
 type LoginValues = z.infer<typeof loginSchema>;
 type UserRegisterValues = z.infer<typeof userRegisterSchema>;
+type HealthWorkerRegisterValues = z.infer<typeof healthWorkerRegisterSchema>;
 
 
 // Main Component
@@ -203,9 +208,22 @@ function LoginForm() {
 
 // Register Form Component
 function RegisterForm() {
-  return (
-    <UserRegisterForm />
-  );
+    const [activeTab, setActiveTab] = useState('user');
+
+    return (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="user">General User</TabsTrigger>
+                <TabsTrigger value="health-worker">Health Worker</TabsTrigger>
+            </TabsList>
+            <TabsContent value="user">
+                <UserRegisterForm />
+            </TabsContent>
+            <TabsContent value="health-worker">
+                <HealthWorkerRegisterForm />
+            </TabsContent>
+        </Tabs>
+    );
 }
 
 function UserRegisterForm() {
@@ -225,6 +243,10 @@ function UserRegisterForm() {
                 name: data.username,
                 email: data.email,
                 address: data.address,
+                age: undefined,
+                weight: undefined,
+                height: undefined,
+                bloodGroup: undefined,
             };
             localStorage.setItem('userProfile', JSON.stringify(profile));
 
@@ -316,3 +338,163 @@ function UserRegisterForm() {
         </Card>
     );
 }
+
+function HealthWorkerRegisterForm() {
+    const router = useRouter();
+    const { toast } = useToast();
+    const [idStatus, setIdStatus] = useState<'idle' | 'verifying' | 'valid' | 'invalid'>('idle');
+    const [verificationReason, setVerificationReason] = useState('');
+    const [filePreview, setFilePreview] = useState<string | null>(null);
+
+
+    const form = useForm<HealthWorkerRegisterValues>({
+        resolver: zodResolver(healthWorkerRegisterSchema),
+        defaultValues: { username: '', email: '', address: '', password: '' },
+    });
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            form.setValue('healthId', file);
+            setFilePreview(URL.createObjectURL(file));
+            setIdStatus('verifying');
+            setVerificationReason('');
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = async () => {
+                const base64String = reader.result as string;
+                try {
+                    const result = await verifyHealthWorkerId({ idDataUri: base64String });
+                    if (result.isValid) {
+                        setIdStatus('valid');
+                    } else {
+                        setIdStatus('invalid');
+                        setVerificationReason(result.reason || 'The provided ID could not be verified.');
+                    }
+                } catch (error) {
+                    console.error("ID verification error:", error);
+                    setIdStatus('invalid');
+                    setVerificationReason('An error occurred during verification. Please try again.');
+                }
+            };
+        }
+    };
+
+    const onSubmit: SubmitHandler<HealthWorkerRegisterValues> = async (data) => {
+        if (idStatus !== 'valid') {
+            toast({
+                variant: 'destructive',
+                title: 'ID Not Verified',
+                description: 'Please upload and verify your health worker ID before registering.',
+            });
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+            await updateProfile(userCredential.user, { displayName: data.username });
+            
+            const profile = {
+                name: data.username,
+                email: data.email,
+                address: data.address,
+                age: undefined,
+                weight: undefined,
+                height: undefined,
+                bloodGroup: undefined,
+                isHealthWorker: true,
+            };
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+
+            toast({
+                title: 'Registration Successful',
+                description: 'Your health worker account has been created.',
+            });
+            router.push('/dashboard');
+        } catch (error: any) {
+             console.error('Health worker registration error:', error);
+             toast({
+                variant: 'destructive',
+                title: 'Registration Failed',
+                description: 'An unexpected error occurred. Please try again.',
+            });
+        }
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Health Worker Registration</CardTitle>
+                <CardDescription>Verify your ID to get started.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        {/* Basic fields from User form */}
+                        <FormField control={form.control} name="username" render={({ field }) => (
+                            <FormItem><FormLabel>Username</FormLabel><FormControl><div className="relative"><User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="your_username" {...field} className="pl-10" /></div></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="email" render={({ field }) => (
+                           <FormItem><FormLabel>Email</FormLabel><FormControl><div className="relative"><Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="your.email@example.com" {...field} className="pl-10" /></div></FormControl><FormMessage /></FormItem>
+                        )} />
+                         <FormField control={form.control} name="address" render={({ field }) => (
+                            <FormItem><FormLabel>Address</FormLabel><FormControl><div className="relative"><MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="Your city, state" {...field} className="pl-10" /></div></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="password" render={({ field }) => (
+                           <FormItem><FormLabel>Password</FormLabel><FormControl><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input type="password" placeholder="Choose a strong password" {...field} className="pl-10" /></div></FormControl><FormMessage /></FormItem>
+                        )} />
+                        
+                        {/* Health Worker ID Field */}
+                        <FormField
+                            control={form.control}
+                            name="healthId"
+                            render={() => (
+                                <FormItem>
+                                    <FormLabel>Health Worker ID</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <ScanLine className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input 
+                                                type="file" 
+                                                accept="image/*"
+                                                className="pl-10 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                                                onChange={handleFileChange}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Verification Status */}
+                        {idStatus !== 'idle' && (
+                            <div className="p-3 rounded-md flex items-center gap-3 text-sm
+                                bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 data-[status=valid]:bg-green-100 data-[status=valid]:dark:bg-green-900/20 data-[status=valid]:text-green-800 data-[status=valid]:dark:text-green-300
+                                data-[status=invalid]:bg-red-100 data-[status=invalid]:dark:bg-red-900/20 data-[status=invalid]:text-red-800 data-[status=invalid]:dark:text-red-300"
+                                data-status={idStatus}
+                            >
+                                {idStatus === 'verifying' && <Loader2 className="h-4 w-4 animate-spin" />}
+                                {idStatus === 'valid' && <FileCheck2 className="h-4 w-4" />}
+                                {idStatus === 'invalid' && <FileX2 className="h-4 w-4" />}
+                                <div>
+                                    {idStatus === 'verifying' && 'Verifying your ID, please wait...'}
+                                    {idStatus === 'valid' && 'ID verified successfully!'}
+                                    {idStatus === 'invalid' && `Verification Failed: ${verificationReason}`}
+                                </div>
+                            </div>
+                        )}
+                        
+                        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || idStatus !== 'valid'}>
+                            {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Create Health Worker Account
+                        </Button>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    );
+}
+
+    

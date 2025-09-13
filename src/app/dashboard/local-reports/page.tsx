@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Globe, MapPin, Search, Calendar, BarChart2 } from 'lucide-react';
+import { Globe, MapPin, Search, Calendar, BarChart2, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,7 @@ export default function LocalReportsPage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredReports, setFilteredReports] = useState(mockReports);
+  const [userLocation, setUserLocation] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -46,6 +47,7 @@ export default function LocalReportsPage() {
       if (savedProfile) {
         const profile = JSON.parse(savedProfile);
         if (profile.address) {
+            setUserLocation(profile.address);
             // Attempt to extract a city/state from the address to pre-filter
             const locationParts = profile.address.split(',');
             const primaryLocation = locationParts[0]?.trim().toLowerCase();
@@ -53,9 +55,7 @@ export default function LocalReportsPage() {
                  const userLocationReports = mockReports.filter(report => 
                     report.location.toLowerCase().includes(primaryLocation)
                 );
-                if(userLocationReports.length > 0) {
-                    setFilteredReports(userLocationReports);
-                }
+                setFilteredReports(userLocationReports);
             }
         }
       }
@@ -110,6 +110,12 @@ export default function LocalReportsPage() {
           </div>
         </CardHeader>
         <CardContent>
+          {userLocation && (
+              <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg text-sm text-blue-800 dark:text-blue-300 flex items-center gap-3">
+                  <Info className="h-5 w-5" />
+                  <p>Showing reports initially filtered for your location: <strong>{userLocation.split(',')[0]}</strong>. Clear the search to see all reports.</p>
+              </div>
+          )}
           <div className="border rounded-lg">
             <Table>
               <TableHeader>
@@ -145,7 +151,7 @@ export default function LocalReportsPage() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={4} className="h-24 text-center">
-                      No reports found for your query.
+                      No reports found for your current filter or location.
                     </TableCell>
                   </TableRow>
                 )}
@@ -160,3 +166,4 @@ export default function LocalReportsPage() {
     </div>
   );
 }
+

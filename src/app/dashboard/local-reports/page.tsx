@@ -73,7 +73,15 @@ export default function LocalReportsPage() {
         // Simple deduplication based on id
         const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
             .map(id => combined.find(a => a.id === id)!)
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            .sort((a, b) => {
+                // Prioritize health worker reports
+                const aIsWorker = a.source === 'Health Worker';
+                const bIsWorker = b.source === 'Health Worker';
+                if (aIsWorker && !bIsWorker) return -1;
+                if (!aIsWorker && bIsWorker) return 1;
+                // Otherwise, sort by date
+                return new Date(b.date).getTime() - new Date(a.date).getTime()
+            });
         setAllReports(uniqueReports);
     } catch(e) {
         console.error("Failed to load reports:", e);
@@ -193,3 +201,5 @@ export default function LocalReportsPage() {
     </div>
   );
 }
+
+    

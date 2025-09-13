@@ -25,6 +25,7 @@ interface Report {
     cases: number;
     date: string;
     source: string;
+    severity?: 'low' | 'medium' | 'high';
 }
 
 // This is mock data. In a real app, this would come from a database
@@ -32,11 +33,11 @@ interface Report {
 const generateMockReports = (): Report[] => {
     const today = new Date();
     return [
-        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 1500, date: format(today, 'yyyy-MM-dd'), source: 'System' },
-        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 850, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
-        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 520, date: format(subDays(today, 2), 'yyyy-MM-dd'), source: 'System' },
-        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 1230, date: format(subDays(today, 3), 'yyyy-MM-dd'), source: 'System' },
-        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 680, date: format(subDays(today, 4), 'yyyy-MM-dd'), source: 'System' },
+        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 1500, date: format(today, 'yyyy-MM-dd'), severity: 'high', source: 'System' },
+        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 850, date: format(subDays(today, 1), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
+        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 520, date: format(subDays(today, 2), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
+        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 1230, date: format(subDays(today, 3), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
+        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 680, date: format(subDays(today, 4), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
     ];
 }
 
@@ -72,15 +73,7 @@ export default function LocalReportsPage() {
         // Simple deduplication based on id
         const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
             .map(id => combined.find(a => a.id === id)!)
-            .sort((a, b) => {
-                // Prioritize health worker reports
-                const aIsWorker = a.source === 'Health Worker';
-                const bIsWorker = b.source === 'Health Worker';
-                if (aIsWorker && !bIsWorker) return -1;
-                if (!aIsWorker && bIsWorker) return 1;
-                // Otherwise, sort by date
-                return new Date(b.date).getTime() - new Date(a.date).getTime()
-            });
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         setAllReports(uniqueReports);
     } catch(e) {
         console.error("Failed to load reports:", e);

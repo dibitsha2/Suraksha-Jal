@@ -124,7 +124,7 @@ function LoginForm() {
           description: 'Redirecting to health worker dashboard...',
         });
 
-        router.push('/dashboard');
+        router.push('/dashboard-health-worker');
 
     } catch (error: any) {
         console.error('Login error:', error);
@@ -316,13 +316,13 @@ function HealthWorkerRegisterForm() {
             // Add to all profiles object, keyed by email
             const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
             allProfiles[data.email] = profile;
-            localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
 
             toast({
                 title: 'Registration Successful',
                 description: 'Your health worker account has been created.',
             });
-            router.push('/dashboard');
+            router.push('/dashboard-health-worker');
         } catch (error: any) {
              console.error('Health worker registration error:', error);
              let description = 'An unexpected error occurred. Please try again.';

@@ -22,7 +22,7 @@ const ReportSchema = z.object({
     id: z.number().describe('A unique ID for the report.'),
     disease: z.string().describe('The name of the waterborne disease.'),
     location: z.string().describe('The location of the outbreak (e.g., City, State).'),
-    cases: z.number().int().positive().describe('The number of reported cases.'),
+    cases: z.number().int().describe('The number of reported cases.'),
     date: z.string().describe('The date of the report in YYYY-MM-DD format.'),
     source: z.enum(['AI', 'Health Worker', 'Community']).describe('The source of the report.'),
 });

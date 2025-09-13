@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Globe, MapPin, Search, Calendar, BarChart2 as BarChart2Icon, FilePlus, Loader2, Trash2, AlertTriangle, LineChart, TrendingUp } from 'lucide-react';
+import { Globe, MapPin, Search, Calendar, BarChart2 as BarChart2Icon, FilePlus, Loader2, Trash2, AlertTriangle, LineChart as LineChartIcon, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
-import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, Cell, CartesianGrid, Line } from 'recharts';
+import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, Cell, CartesianGrid, Line, LineChart } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 
@@ -55,6 +55,13 @@ const generateMockReports = (): Report[] => {
 }
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"];
+
+const chartConfig = {
+  cases: {
+    label: "Cases",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig
 
 export default function ViewReportsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -196,49 +203,47 @@ export default function ViewReportsPage() {
                 <CardContent className="grid md:grid-cols-2 gap-8">
                     <div>
                         <h3 className="font-semibold mb-4 text-center">Cases by Location</h3>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={chartData.barChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="location" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))' }}/>
-                                <Bar dataKey="cases" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                          <BarChart accessibilityLayer data={chartData.barChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="location" fontSize={12} tickLine={false} axisLine={false} />
+                              <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                              <Tooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
+                              <Bar dataKey="cases" fill="var(--color-cases)" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ChartContainer>
                     </div>
                      <div>
                         <h3 className="font-semibold mb-4 text-center">Cases by Disease</h3>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <ChartContainer config={chartData.pieChartConfig}>
-                               <PieChart>
-                                    <Tooltip content={<ChartTooltipContent nameKey="value" hideLabel />} />
-                                    <Pie 
-                                        data={chartData.pieChartData} 
-                                        dataKey="value"
-                                        nameKey="name"
-                                        cx="50%" 
-                                        cy="50%" 
-                                        outerRadius={110}
-                                        labelLine={false}
-                                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-                                            const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                                            const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
-                                            const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
-                                            return (
-                                                <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central">
-                                                    {`${(percent * 100).toFixed(0)}%`}
-                                                </text>
-                                            );
-                                        }}
-                                    >
-                                        {chartData.pieChartData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                     <Legend />
-                                </PieChart>
-                            </ChartContainer>
-                        </ResponsiveContainer>
+                         <ChartContainer config={chartData.pieChartConfig} className="mx-auto aspect-square max-h-[300px]">
+                           <PieChart>
+                                <Tooltip content={<ChartTooltipContent nameKey="value" hideLabel />} />
+                                <Pie 
+                                    data={chartData.pieChartData} 
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%" 
+                                    cy="50%" 
+                                    outerRadius={110}
+                                    labelLine={false}
+                                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                                        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                                        const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+                                        const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+                                        return (
+                                            <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central">
+                                                {`${(percent * 100).toFixed(0)}%`}
+                                            </text>
+                                        );
+                                    }}
+                                >
+                                    {chartData.pieChartData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                 <Legend />
+                            </PieChart>
+                        </ChartContainer>
                     </div>
                 </CardContent>
             </Card>
@@ -251,8 +256,8 @@ export default function ViewReportsPage() {
                     <CardDescription>Total cases reported per day based on current filter.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={chartData.lineChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                        <LineChart accessibilityLayer data={chartData.lineChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis 
                                 dataKey="date" 
@@ -262,11 +267,11 @@ export default function ViewReportsPage() {
                                 axisLine={false}
                             />
                             <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))' }} />
+                            <Tooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
                             <Legend />
-                            <Line type="monotone" dataKey="cases" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                            <Line type="monotone" dataKey="cases" stroke="var(--color-cases)" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                         </LineChart>
-                    </ResponsiveContainer>
+                    </ChartContainer>
                 </CardContent>
             </Card>
             </>
@@ -409,8 +414,6 @@ export default function ViewReportsPage() {
       </AlertDialog>
     </>
   );
+}
 
     
-
-    
-

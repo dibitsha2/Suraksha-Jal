@@ -6,7 +6,7 @@ import { translations, type Language, type Translations } from '@/lib/translatio
 
 interface LanguageContextType {
   language: Language | 'auto' | null;
-  setLanguage: (language: Language | 'auto') => void;
+  setLanguage: (language: string) => void;
   t: (key: keyof Translations[Language]) => string;
 }
 
@@ -59,15 +59,15 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [language]);
 
-  const setLanguage = (lang: Language | 'auto') => {
+  const setLanguage = (lang: string) => {
     if (translations[lang as Language] || lang === 'auto') {
       localStorage.setItem('language', lang);
-      setLanguageState(lang);
+      setLanguageState(lang as Language | 'auto');
     }
   };
   
   const t = (key: keyof Translations[Language]): string => {
-    return translations[effectiveLanguage][key] || (translations.en[key] as string) || String(key);
+    return translations[effectiveLanguage]?.[key] || (translations.en[key] as string) || String(key);
   };
   
   if (!isMounted) {

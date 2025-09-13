@@ -1,27 +1,16 @@
 
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
-import Image from 'next/image';
 import {
   Home,
-  Stethoscope,
   LogOut,
   User,
   Menu,
-  Settings,
-  Shield,
-  Pill,
-  HeartPulse,
-  Bell,
-  Info,
-  Droplet,
-  Globe,
-  Siren,
   FilePlus,
+  BarChart2,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -34,14 +23,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { useLanguage } from '@/hooks/use-language';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { auth } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 
 
-export default function DashboardLayout({
+export default function DashboardHealthWorkerLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -60,30 +48,21 @@ export default function DashboardLayout({
 }
 
 function Sidebar() {
-  const { t } = useLanguage();
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/dashboard', icon: Home, label: t('dashboard') },
-    { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
-    { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
-    { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
-    { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker') },
-    { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
-    { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
-    { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
-    { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
-    { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
+    { href: '/dashboard-health-worker', icon: Home, label: 'Dashboard' },
+    { href: '/dashboard-health-worker/submit-report', icon: FilePlus, label: 'Submit Report' },
+    { href: '/dashboard-health-worker/view-reports', icon: BarChart2, label: 'View Reports' },
   ];
 
   return (
     <div className="hidden border-r bg-background md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <Link href="/dashboard" className="flex items-center gap-2 font-semibold font-headline">
+          <Link href="/dashboard-health-worker" className="flex items-center gap-2 font-semibold font-headline">
             <SurakshaJalLogo className="h-6 w-6 text-primary" />
-            <span className="">Suraksha Jal</span>
+            <span className="">Suraksha Jal (Worker)</span>
           </Link>
         </div>
         <div className="flex-1 overflow-auto">
@@ -108,22 +87,13 @@ function Sidebar() {
 }
 
 function Header() {
-  const { t } = useLanguage();
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
 
   const navItems = [
-    { href: '/dashboard', icon: Home, label: t('dashboard') },
-    { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
-    { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
-    { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
-    { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker') },
-    { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
-    { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
-    { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
-    { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
-    { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
+    { href: '/dashboard-health-worker', icon: Home, label: 'Dashboard' },
+    { href: '/dashboard-health-worker/submit-report', icon: FilePlus, label: 'Submit Report' },
+    { href: '/dashboard-health-worker/view-reports', icon: BarChart2, label: 'View Reports' },
   ];
   
   const handleLinkClick = () => {
@@ -143,7 +113,7 @@ function Header() {
           <nav className="grid gap-2 text-lg font-medium">
             <Link href="#" className="flex items-center gap-2 text-lg font-semibold mb-4">
               <SurakshaJalLogo className="h-6 w-6 text-primary" />
-              <span className="font-headline">Suraksha Jal</span>
+              <span className="font-headline">Suraksha Jal (Worker)</span>
             </Link>
             {navItems.map((item) => (
               <Link
@@ -172,7 +142,6 @@ function Header() {
 }
 
 function UserMenu() {
-    const { t } = useLanguage();
     const router = useRouter();
     const { toast } = useToast();
     const [user, setUser] = React.useState<any>(null);
@@ -180,7 +149,6 @@ function UserMenu() {
     React.useEffect(() => {
         const handleAuthChange = (currentUser: any) => {
             if (currentUser) {
-                // User is signed in.
                 const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
                 const storedProfile = allProfiles[currentUser.email!];
                 
@@ -193,28 +161,13 @@ function UserMenu() {
                 
                 setUser(updatedProfile);
                 localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-                allProfiles[currentUser.email!] = updatedProfile;
-                localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
-
-
             } else {
-                // User is signed out.
                 setUser(null);
             }
         };
 
         const unsubscribe = auth.onAuthStateChanged(handleAuthChange);
         
-        // Also set user from local storage on initial load
-        const storedProfile = localStorage.getItem('userProfile');
-        if (storedProfile) {
-            try {
-                setUser(JSON.parse(storedProfile));
-            } catch (e) {
-                 console.error("Error parsing user profile on initial load", e);
-            }
-        }
-
         return () => unsubscribe();
     }, []);
 
@@ -251,14 +204,7 @@ function UserMenu() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/profile">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>{t('profile')}</span>
-                  </Link>
-                </DropdownMenuItem>
+                <DropdownMenuLabel>{user?.name || 'Health Worker'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="p-0">
                     <div className="flex items-center justify-between w-full px-2 py-1.5">
@@ -269,11 +215,9 @@ function UserMenu() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>{t('logout')}</span>
+                    <span>Logout</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
 }
-
-    

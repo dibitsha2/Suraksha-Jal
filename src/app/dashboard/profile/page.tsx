@@ -45,6 +45,7 @@ const profileSchema = z.object({
   weight: z.coerce.number().min(1, 'Weight must be a positive number').optional(),
   height: z.coerce.number().min(1, 'Height must be a positive number').optional(),
   bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+  role: z.string().optional(), // Keep track of role
 });
 
 type ProfileValues = z.infer<typeof profileSchema>;
@@ -69,6 +70,7 @@ export default function ProfilePage() {
       weight: undefined,
       height: undefined,
       bloodGroup: undefined,
+      role: 'user',
     },
   });
 

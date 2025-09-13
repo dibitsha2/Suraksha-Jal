@@ -22,6 +22,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const reportSchema = z.object({
   disease: z.string().min(2, 'Disease name is required.'),
@@ -30,6 +32,8 @@ const reportSchema = z.object({
   date: z.date({
     required_error: 'A date for the report is required.',
   }),
+  severity: z.enum(['low', 'medium', 'high']),
+  notes: z.string().optional(),
 });
 
 type ReportValues = z.infer<typeof reportSchema>;
@@ -45,6 +49,8 @@ export default function SubmitReportPage() {
       location: '',
       cases: 1,
       date: new Date(),
+      severity: 'low',
+      notes: '',
     },
   });
 
@@ -59,14 +65,15 @@ export default function SubmitReportPage() {
         ...data,
         id: Date.now(),
         date: format(data.date, 'yyyy-MM-dd'),
+        source: 'Health Worker'
       };
       
       const existingReports = JSON.parse(localStorage.getItem('mockReports') || '[]');
       localStorage.setItem('mockReports', JSON.stringify([newReport, ...existingReports]));
 
       toast({
-        title: 'Report Submitted',
-        description: 'Thank you for your contribution to public health.',
+        title: 'Report Submitted Successfully',
+        description: 'Thank you for your contribution to public health data.',
       });
       form.reset();
 
@@ -89,9 +96,9 @@ export default function SubmitReportPage() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Report Disease Outbreak</CardTitle>
+          <CardTitle className="font-headline text-2xl">Official Disease Outbreak Report</CardTitle>
           <CardDescription>
-            Use this form to report a new waterborne disease case or outbreak in your area.
+            This form is for authorized health workers to report verified cases or outbreaks.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -119,11 +126,11 @@ export default function SubmitReportPage() {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel>Location (City, State)</FormLabel>
                       <FormControl>
                          <div className="relative">
                             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="City, State" {...field} className="pl-10" />
+                            <Input placeholder="e.g., Mumbai, Maharashtra" {...field} className="pl-10" />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -135,7 +142,7 @@ export default function SubmitReportPage() {
                   name="cases"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Number of Cases</FormLabel>
+                      <FormLabel>Number of Verified Cases</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -174,7 +181,7 @@ export default function SubmitReportPage() {
                             selected={field.value}
                             onSelect={field.onChange}
                             disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
+                              date > new Date() || date < new Date("2020-01-01")
                             }
                             initialFocus
                           />
@@ -184,13 +191,53 @@ export default function SubmitReportPage() {
                     </FormItem>
                   )}
                 />
+                 <FormField
+                  control={form.control}
+                  name="severity"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormLabel>Outbreak Severity</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select the severity level" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectItem value="low">Low</SelectItem>
+                                <SelectItem value="medium">Medium</SelectItem>
+                                <SelectItem value="high">High</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="notes"
+                    render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                            <FormLabel>Additional Notes</FormLabel>
+                            <FormControl>
+                                <Textarea
+                                placeholder="Include any additional details, such as water source, patient demographics, etc."
+                                className="min-h-[100px]"
+                                {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
               </div>
 
               <div className="p-4 bg-amber-100 dark:bg-amber-900/20 rounded-lg text-amber-800 dark:text-amber-300 flex items-start gap-4">
                 <AlertTriangle className="h-6 w-6 mt-0.5 flex-shrink-0" />
                 <div>
-                    <h4 className="font-bold">Important Note</h4>
-                    <p className="text-sm">Please submit accurate information. All reports may be subject to verification by health officials.</p>
+                    <h4 className="font-bold">Verification Notice</h4>
+                    <p className="text-sm">Please ensure all information is accurate and verified. This data directly impacts public health alerts and responses.</p>
                 </div>
               </div>
 
@@ -203,7 +250,7 @@ export default function SubmitReportPage() {
                 ) : (
                   <>
                     <FilePlus className="mr-2 h-4 w-4" />
-                    Submit Report
+                    Submit Official Report
                   </>
                 )}
               </Button>
@@ -214,5 +261,3 @@ export default function SubmitReportPage() {
     </div>
   );
 }
-
-    

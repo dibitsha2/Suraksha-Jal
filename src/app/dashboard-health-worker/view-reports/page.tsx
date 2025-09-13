@@ -49,23 +49,7 @@ export default function ViewReportsPage() {
   useEffect(() => {
     setLoading(true);
     try {
-        const lastFetchStr = localStorage.getItem('reportsLastFetch');
-        const lastFetch = lastFetchStr ? new Date(lastFetchStr) : null;
-        const now = new Date();
-
-        let initialMockReports: Report[] = [];
-        // Cache for 30 minutes
-        if (!lastFetch || (now.getTime() - lastFetch.getTime() > 30 * 60 * 1000)) {
-            console.log("Generating new mock reports for worker.");
-            initialMockReports = generateMockReports();
-            localStorage.setItem('initialMockReports', JSON.stringify(initialMockReports));
-            localStorage.setItem('reportsLastFetch', now.toISOString());
-        } else {
-             console.log("Using cached mock reports for worker.");
-            const cachedReports = localStorage.getItem('initialMockReports');
-            initialMockReports = cachedReports ? JSON.parse(cachedReports) : generateMockReports();
-        }
-
+      const initialMockReports = generateMockReports();
       const storedReports: Report[] = JSON.parse(localStorage.getItem('mockReports') || '[]');
       const combined = [...storedReports, ...initialMockReports];
       const uniqueReports = Array.from(new Set(combined.map(a => a.id)))

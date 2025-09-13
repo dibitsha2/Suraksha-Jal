@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { subDays, format } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
 
 interface Report {
     id: number;
@@ -36,8 +37,6 @@ const generateMockReports = (): Report[] => {
         { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 520, date: format(subDays(today, 2), 'yyyy-MM-dd'), source: 'System' },
         { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 1230, date: format(subDays(today, 3), 'yyyy-MM-dd'), source: 'System' },
         { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 680, date: format(subDays(today, 4), 'yyyy-MM-dd'), source: 'System' },
-        { id: 6, disease: 'Giardiasis', location: 'Pune, Maharashtra', cases: 710, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
-        { id: 7, disease: 'Dysentery', location: 'Jaipur, Rajasthan', cases: 940, date: format(today, 'yyyy-MM-dd'), source: 'System' },
     ];
 }
 
@@ -166,6 +165,7 @@ export default function LocalReportsPage() {
                     </div>
                   </TableHead>
                   <TableHead className="text-center">Reported Cases</TableHead>
+                   <TableHead>Source</TableHead>
                   <TableHead>
                      <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" /> Date Reported
@@ -180,12 +180,17 @@ export default function LocalReportsPage() {
                       <TableCell className="font-medium">{report.disease}</TableCell>
                       <TableCell>{report.location}</TableCell>
                       <TableCell className="text-center font-bold text-primary">{report.cases.toLocaleString()}</TableCell>
+                       <TableCell>
+                        <Badge variant={report.source === 'System' ? 'secondary' : 'default'}>
+                          {report.source || 'Health Worker'}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-24 text-center">
                       No reports found for your current filter or location.
                     </TableCell>
                   </TableRow>

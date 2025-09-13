@@ -112,13 +112,17 @@ export default function EmergencyContactsPage() {
                     <CardDescription>Nearby hospitals based on your location: <strong>{location}</strong></CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4 md:grid-cols-2">
-                    {result.suggestedHospitals.map((hospital, index) => (
-                        <Card key={index} className="p-4">
-                            <h3 className="font-semibold">{hospital.name}</h3>
-                            <p className="text-sm text-muted-foreground flex items-start gap-2 mt-2"><MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" /> {hospital.address}</p>
-                            {hospital.phone && <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1"><Phone className="h-4 w-4" /> {hospital.phone}</p>}
-                        </Card>
-                    ))}
+                    {result.suggestedHospitals.length > 0 ? (
+                        result.suggestedHospitals.map((hospital, index) => (
+                            <Card key={index} className="p-4">
+                                <h3 className="font-semibold">{hospital.name}</h3>
+                                <p className="text-sm text-muted-foreground flex items-start gap-2 mt-2"><MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" /> {hospital.address}</p>
+                                {hospital.phone && <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1"><Phone className="h-4 w-4" /> {hospital.phone}</p>}
+                            </Card>
+                        ))
+                    ) : (
+                        <p className="text-muted-foreground col-span-full text-center">No suggested hospitals found for your location.</p>
+                    )}
                 </CardContent>
             </Card>
             
@@ -128,13 +132,17 @@ export default function EmergencyContactsPage() {
                      <CardDescription>Nearby clinics based on your location: <strong>{location}</strong></CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4 md:grid-cols-2">
-                    {result.suggestedClinics.map((clinic, index) => (
-                        <Card key={index} className="p-4">
-                            <h3 className="font-semibold">{clinic.name}</h3>
-                            <p className="text-sm text-muted-foreground flex items-start gap-2 mt-2"><MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" /> {clinic.address}</p>
-                            {clinic.phone && <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1"><Phone className="h-4 w-4" /> {clinic.phone}</p>}
-                        </Card>
-                    ))}
+                    {result.suggestedClinics.length > 0 ? (
+                        result.suggestedClinics.map((clinic, index) => (
+                            <Card key={index} className="p-4">
+                                <h3 className="font-semibold">{clinic.name}</h3>
+                                <p className="text-sm text-muted-foreground flex items-start gap-2 mt-2"><MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" /> {clinic.address}</p>
+                                {clinic.phone && <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1"><Phone className="h-4 w-4" /> {clinic.phone}</p>}
+                            </Card>
+                        ))
+                    ) : (
+                         <p className="text-muted-foreground col-span-full text-center">No suggested clinics found for your location.</p>
+                    )}
                 </CardContent>
             </Card>
 

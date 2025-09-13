@@ -261,12 +261,6 @@ function UserMenu() {
                     <span>{t('profile')}</span>
                   </Link>
                 </DropdownMenuItem>
-                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="p-0">
                     <div className="flex items-center justify-between w-full px-2 py-1.5">

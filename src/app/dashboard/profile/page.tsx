@@ -303,9 +303,9 @@ export default function ProfilePage() {
                   name="height"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Height (cm)</FormLabel>
+                      <FormLabel>Height (ft)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Your height in centimeters" {...field} value={field.value ?? ''} />
+                        <Input type="number" placeholder="Your height in feet" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

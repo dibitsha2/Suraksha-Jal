@@ -124,7 +124,13 @@ function LoginForm() {
           title: 'Login Successful',
           description: 'Redirecting to dashboard...',
         });
-        router.push('/dashboard');
+
+        if (updatedProfile.isHealthWorker) {
+            router.push('/dashboard-health-worker');
+        } else {
+            router.push('/dashboard');
+        }
+
     } catch (error: any) {
         console.error('Login error:', error);
         let description = 'An unexpected error occurred.';
@@ -247,6 +253,7 @@ function UserRegisterForm() {
                 weight: undefined,
                 height: undefined,
                 bloodGroup: undefined,
+                isHealthWorker: false,
             };
             localStorage.setItem('userProfile', JSON.stringify(profile));
 
@@ -445,7 +452,7 @@ function HealthWorkerRegisterForm() {
                 title: 'Registration Successful',
                 description: 'Your health worker account has been created.',
             });
-            router.push('/dashboard');
+            router.push('/dashboard-health-worker');
         } catch (error: any) {
              console.error('Health worker registration error:', error);
              toast({
@@ -538,3 +545,5 @@ function HealthWorkerRegisterForm() {
         </Card>
     );
 }
+
+    

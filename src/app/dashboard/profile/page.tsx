@@ -204,7 +204,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Your full name" {...field} />
+                        <Input placeholder="Your full name" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -217,7 +217,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="your.email@example.com" {...field} disabled />
+                        <Input placeholder="your.email@example.com" {...field} value={field.value ?? ''} disabled />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

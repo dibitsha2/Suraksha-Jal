@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Pill, Mic, Square, Volume2 } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill, Mic, Square, Volume2, ShieldCheck, Info } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -272,55 +272,98 @@ export default function SymptomCheckerPage() {
                 </Accordion>
             </div>
 
-            {result.suggestedMedicines && result.suggestedMedicines.length > 0 && (
-                <div>
-                    <h3 className="font-semibold mb-2">Suggested Medicines</h3>
-                    <div className="p-4 border rounded-md">
-                         <ul className="space-y-3">
-                            {result.suggestedMedicines.map((medicine, index) => (
-                                <li key={index} className="flex items-start">
-                                    <Pill className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-                                    <span className="text-sm text-muted-foreground">{medicine}</span>
+            <div className="grid md:grid-cols-2 gap-6">
+                {result.suggestedMedicines && result.suggestedMedicines.length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg flex items-center gap-2">
+                                <Pill className="h-5 w-5 text-primary" />
+                                Suggested Medicines
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                             <ul className="space-y-3">
+                                {result.suggestedMedicines.map((medicine, index) => (
+                                    <li key={index} className="flex items-start text-sm text-muted-foreground">
+                                        <Pill className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
+                                        <span>{medicine}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                             <p className="text-xs text-amber-800 dark:text-amber-300 mt-4 p-2 bg-amber-100 dark:bg-amber-900/20 rounded-md"><strong>Important:</strong> Always consult a doctor before taking any new medication. These are only common suggestions and not a prescription.</p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {result.preventiveMeasures && result.preventiveMeasures.length > 0 && (
+                    <Card>
+                         <CardHeader>
+                            <CardTitle className="text-lg flex items-center justify-between">
+                                <span className="flex items-center gap-2">
+                                    <ShieldCheck className="h-5 w-5 text-primary" />
+                                    Preventive Measures
+                                </span>
+                                <Button
+                                    variant="ghost" size="icon"
+                                    onClick={() => handlePlayback('preventive', result.preventiveMeasures.join('. '))}
+                                    disabled={isSpeaking['preventive']}
+                                    aria-label="Read preventive measures aloud"
+                                >
+                                    {isSpeaking['preventive'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                                </Button>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                             <ul className="space-y-3">
+                                {result.preventiveMeasures.map((measure, index) => (
+                                    <li key={index} className="flex items-start text-sm text-muted-foreground">
+                                         <ShieldCheck className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
+                                         <span>{measure}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
+
+            {result.additionalInformation && result.additionalInformation.length > 0 && (
+                 <Card>
+                     <CardHeader>
+                        <CardTitle className="text-lg flex items-center justify-between">
+                             <span className="flex items-center gap-2">
+                                <Info className="h-5 w-5 text-primary" />
+                                Additional Information
+                            </span>
+                             <Button
+                                variant="ghost" size="icon"
+                                onClick={() => handlePlayback('additional', result.additionalInformation.join('. '))}
+                                disabled={isSpeaking['additional']}
+                                aria-label="Read additional information aloud"
+                            >
+                                {isSpeaking['additional'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                            </Button>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-3">
+                            {result.additionalInformation.map((info, index) => (
+                                <li key={index} className="flex items-start text-sm text-muted-foreground">
+                                    <Info className="h-4 w-4 text-primary mr-3 mt-1 flex-shrink-0" />
+                                    <span>{info}</span>
                                 </li>
                             ))}
                         </ul>
-                         <p className="text-xs text-amber-800 dark:text-amber-300 mt-4 p-2 bg-amber-100 dark:bg-amber-900/20 rounded-md"><strong>Important:</strong> Always consult a doctor before taking any new medication. These are only common suggestions and not a prescription.</p>
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
             )}
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">Recommended Preventive Measures</h3>
-                <Button
-                    variant="ghost" size="icon"
-                    onClick={() => handlePlayback('preventive', result.preventiveMeasures)}
-                    disabled={isSpeaking['preventive']}
-                    aria-label="Read preventive measures aloud"
-                >
-                    {isSpeaking['preventive'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground whitespace-pre-line">{result.preventiveMeasures}</p>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">Additional Information</h3>
-                 <Button
-                    variant="ghost" size="icon"
-                    onClick={() => handlePlayback('additional', result.additionalInformation)}
-                    disabled={isSpeaking['additional']}
-                    aria-label="Read additional information aloud"
-                >
-                    {isSpeaking['additional'] ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground whitespace-pre-line">{result.additionalInformation}</p>
-            </div>
             
-            <div className="p-4 bg-amber-100 dark:bg-amber-900/20 rounded-lg text-amber-800 dark:text-amber-300">
-                <p className="text-sm font-medium"><strong>Disclaimer:</strong> This tool is for informational purposes only and does not constitute medical advice. Please consult a healthcare professional for an accurate diagnosis and treatment plan.</p>
+            <div className="p-4 bg-amber-100 dark:bg-amber-900/20 rounded-lg text-amber-800 dark:text-amber-300 flex items-start gap-4">
+                <AlertTriangle className="h-6 w-6 mt-0.5 flex-shrink-0" />
+                <div>
+                    <h4 className="font-bold">Disclaimer</h4>
+                    <p className="text-sm">This tool is for informational purposes only and does not constitute medical advice. Please consult a healthcare professional for an accurate diagnosis and treatment plan.</p>
+                </div>
             </div>
           </CardContent>
         </Card>

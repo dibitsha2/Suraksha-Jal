@@ -58,15 +58,18 @@ export default function LocalReportsPage() {
 
   useEffect(() => {
     // Combine initial reports with any from local storage
-    const storedReports = JSON.parse(localStorage.getItem('mockReports') || '[]');
-    const combined = [...storedReports, ...initialMockReports];
-    // Simple deduplication
-    const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
-        .map(id => {
-            return combined.find(a => a.id === id)
-        })
-    
-    setAllReports(uniqueReports as any);
+    try {
+        const storedReports = JSON.parse(localStorage.getItem('mockReports') || '[]');
+        const combined = [...storedReports, ...initialMockReports];
+        // Simple deduplication based on id
+        const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
+            .map(id => combined.find(a => a.id === id)!)
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setAllReports(uniqueReports);
+    } catch(e) {
+        console.error("Failed to load reports:", e);
+        setAllReports(initialMockReports);
+    }
   }, []);
 
   useEffect(() => {

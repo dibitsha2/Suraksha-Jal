@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Globe, MapPin, Search, Calendar, BarChart2, FilePlus, Loader2, Trash2, AlertTriangle } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Globe, MapPin, Search, Calendar, BarChart2 as BarChart2Icon, FilePlus, Loader2, Trash2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
+import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, Cell } from 'recharts';
+import { ChartConfig, ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 
 interface Report {
@@ -52,6 +54,8 @@ const generateMockReports = (): Report[] => {
     ];
 }
 
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"];
+
 export default function ViewReportsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [allReports, setAllReports] = useState<Report[]>([]);
@@ -59,6 +63,39 @@ export default function ViewReportsPage() {
   const [loading, setLoading] = useState(true);
   const [reportToDelete, setReportToDelete] = useState<Report | null>(null);
   const { toast } = useToast();
+
+  const chartData = useMemo(() => {
+    const locationData = filteredReports.reduce((acc, report) => {
+        const location = report.location.split(',')[0].trim();
+        if (!acc[location]) {
+            acc[location] = 0;
+        }
+        acc[location] += report.cases;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const diseaseData = filteredReports.reduce((acc, report) => {
+        const disease = report.disease;
+        if (!acc[disease]) {
+            acc[disease] = 0;
+        }
+        acc[disease] += report.cases;
+        return acc;
+    }, {} as Record<string, number>);
+    
+    const barChartData = Object.entries(locationData).map(([location, cases]) => ({ location, cases }));
+    const pieChartData = Object.entries(diseaseData).map(([name, value]) => ({ name, value }));
+
+    const pieChartConfig = pieChartData.reduce((acc, data, index) => {
+        acc[data.name] = {
+            label: data.name,
+            color: COLORS[index % COLORS.length]
+        };
+        return acc;
+    }, {} as ChartConfig);
+
+    return { barChartData, pieChartData, pieChartConfig };
+  }, [filteredReports]);
 
   const loadReports = () => {
     setLoading(true);
@@ -134,6 +171,64 @@ export default function ViewReportsPage() {
         <div className="flex items-center">
           <h1 className="text-lg font-semibold md:text-2xl font-headline">View Health Reports</h1>
         </div>
+
+        {filteredReports.length > 0 && (
+             <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl">Report Statistics</CardTitle>
+                    <CardDescription>Visual summary of the reports shown below.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 className="font-semibold mb-2 text-center">Cases by Location</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={chartData.barChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="location" />
+                                <YAxis />
+                                <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))' }}/>
+                                <Bar dataKey="cases" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                     <div>
+                        <h3 className="font-semibold mb-2 text-center">Cases by Disease</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <ChartContainer config={chartData.pieChartConfig}>
+                               <PieChart>
+                                    <Tooltip content={<ChartTooltipContent nameKey="value" hideLabel />} />
+                                    <Pie 
+                                        data={chartData.pieChartData} 
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%" 
+                                        cy="50%" 
+                                        outerRadius={110}
+                                        labelLine={false}
+                                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                                            const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                                            const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+                                            const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+                                            return (
+                                                <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central">
+                                                    {`${(percent * 100).toFixed(0)}%`}
+                                                </text>
+                                            );
+                                        }}
+                                    >
+                                        {chartData.pieChartData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                     <Legend />
+                                </PieChart>
+                            </ChartContainer>
+                        </ResponsiveContainer>
+                    </div>
+                </CardContent>
+            </Card>
+        )}
+
         <Card>
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -173,7 +268,7 @@ export default function ViewReportsPage() {
                   <TableRow>
                     <TableHead>
                       <div className="flex items-center gap-2">
-                        <BarChart2 className="h-4 w-4" /> Disease
+                        <BarChart2Icon className="h-4 w-4" /> Disease
                       </div>
                     </TableHead>
                     <TableHead>
@@ -271,5 +366,7 @@ export default function ViewReportsPage() {
       </AlertDialog>
     </>
   );
+
+    
 
     

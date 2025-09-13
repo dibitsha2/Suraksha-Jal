@@ -239,6 +239,7 @@ function AiChat() {
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { effectiveLanguage } = useLanguage();
 
 
   const form = useForm<ChatValues>({
@@ -269,6 +270,7 @@ function AiChat() {
       const response = await healthChat({
         message: data.message,
         history: history,
+        language: effectiveLanguage,
       });
       const modelMessage: Message = { role: 'model', content: response.response };
       setMessages((prev) => [...prev, modelMessage]);
@@ -383,3 +385,4 @@ const StatsCard = ({ title, value, icon: Icon, change, changeType }: { title: st
   )
 }
 
+    

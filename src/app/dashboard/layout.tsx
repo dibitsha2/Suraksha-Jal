@@ -21,7 +21,6 @@ import {
   Droplet,
   Globe,
   Siren,
-  FilePlus,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -62,21 +61,6 @@ export default function DashboardLayout({
 function Sidebar() {
   const { t } = useLanguage();
   const pathname = usePathname();
-   const [isHealthWorker, setIsHealthWorker] = React.useState(false);
-
-  React.useEffect(() => {
-    try {
-        const savedProfile = localStorage.getItem('userProfile');
-        if (savedProfile) {
-            const profile = JSON.parse(savedProfile);
-            if (profile.isHealthWorker) {
-                setIsHealthWorker(true);
-            }
-        }
-    } catch (e) {
-        console.error('Could not check health worker status', e);
-    }
-  }, []);
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
@@ -89,7 +73,6 @@ function Sidebar() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    ...(isHealthWorker ? [{ href: '/dashboard/submit-report', icon: FilePlus, label: 'Submit Report' }] : []),
     { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
   ];
 
@@ -127,21 +110,6 @@ function Header() {
   const { t } = useLanguage();
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
-  const [isHealthWorker, setIsHealthWorker] = React.useState(false);
-
-  React.useEffect(() => {
-    try {
-        const savedProfile = localStorage.getItem('userProfile');
-        if (savedProfile) {
-            const profile = JSON.parse(savedProfile);
-            if (profile.isHealthWorker) {
-                setIsHealthWorker(true);
-            }
-        }
-    } catch (e) {
-        console.error('Could not check health worker status', e);
-    }
-  }, []);
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
@@ -154,7 +122,6 @@ function Header() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-     ...(isHealthWorker ? [{ href: '/dashboard/submit-report', icon: FilePlus, label: 'Submit Report' }] : []),
     { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
   ];
   

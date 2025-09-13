@@ -2,7 +2,6 @@
 'use client';
 import AuthForm from '@/components/auth/auth-form';
 import { SurakshaJalLogo } from '@/components/icons';
-import Link from 'next/link';
 
 export default function LoginPage() {
   return (
@@ -16,12 +15,6 @@ export default function LoginPage() {
           </p>
         </div>
         <AuthForm initialTab="login" userType="user" />
-         <p className="mt-4 text-center text-sm text-muted-foreground">
-            Are you a health worker?{' '}
-            <Link href="/health-worker/login" className="underline hover:text-primary">
-                Login Here
-            </Link>
-        </p>
       </div>
     </div>
   );

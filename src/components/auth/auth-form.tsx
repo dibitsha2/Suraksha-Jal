@@ -55,9 +55,9 @@ type UserRegisterValues = z.infer<typeof userRegisterSchema>;
 
 
 // Main Component
-export default function AuthForm({ initialTab = 'login', userType = 'user' }: { initialTab?: 'login' | 'register', userType?: 'user' | 'health-worker' }) {
+export default function AuthForm({ initialTab = 'login' }: { initialTab?: 'login' | 'register', userType?: 'user' }) {
   
-  const redirectUrl = userType === 'health-worker' ? 'https://9000-firebase-studio-1757768442875.cluster-y3k7ko3fang56qzieg3trwgyfg.cloudworkstations.dev' : '/dashboard';
+  const redirectUrl = '/dashboard';
 
   return (
     <Tabs defaultValue={initialTab} className="w-full">
@@ -66,17 +66,17 @@ export default function AuthForm({ initialTab = 'login', userType = 'user' }: { 
         <TabsTrigger value="register">Register</TabsTrigger>
       </TabsList>
       <TabsContent value="login">
-        <LoginForm userType={userType} redirectUrl={redirectUrl} />
+        <LoginForm redirectUrl={redirectUrl} />
       </TabsContent>
       <TabsContent value="register">
-        <UserRegisterForm userType={userType} redirectUrl={redirectUrl} />
+        <UserRegisterForm redirectUrl={redirectUrl} />
       </TabsContent>
     </Tabs>
   );
 }
 
 // Login Form Component
-function LoginForm({ userType, redirectUrl }: { userType: 'user' | 'health-worker', redirectUrl: string }) {
+function LoginForm({ redirectUrl }: { redirectUrl: string }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -95,13 +95,6 @@ function LoginForm({ userType, redirectUrl }: { userType: 'user' | 'health-worke
         const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
         const existingProfile = allProfiles[user.email!];
         
-        // Role check
-        const isHealthWorker = existingProfile?.isHealthWorker ?? false;
-        if ((userType === 'health-worker' && !isHealthWorker) || (userType === 'user' && isHealthWorker)) {
-            await auth.signOut();
-            throw new Error('role-mismatch');
-        }
-
         const updatedProfile = {
             ...(existingProfile || {}),
             name: existingProfile?.name || user.displayName,
@@ -119,31 +112,23 @@ function LoginForm({ userType, redirectUrl }: { userType: 'user' | 'health-worke
           description: 'Redirecting...',
         });
 
-        if (userType === 'health-worker') {
-            window.location.href = redirectUrl;
-        } else {
-            router.push(redirectUrl);
-        }
+        router.push(redirectUrl);
 
     } catch (error: any) {
         console.error('Login error:', error);
         let description = 'An unexpected error occurred.';
-        if (error.message === 'role-mismatch') {
-            description = `You are trying to log in through the wrong portal. Please use the ${userType === 'user' ? 'Health Worker' : 'User'} portal.`;
-        } else {
-            switch (error.code) {
-                case 'auth/user-not-found':
-                case 'auth/wrong-password':
-                case 'auth/invalid-credential':
-                    description = 'Invalid email or password. Please try again.';
-                    break;
-                case 'auth/invalid-email':
-                    description = 'The email address you entered is not valid.';
-                    break;
-                case 'auth/too-many-requests':
-                    description = 'Too many login attempts. Please try again later.';
-                    break;
-            }
+        switch (error.code) {
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential':
+                description = 'Invalid email or password. Please try again.';
+                break;
+            case 'auth/invalid-email':
+                description = 'The email address you entered is not valid.';
+                break;
+            case 'auth/too-many-requests':
+                description = 'Too many login attempts. Please try again later.';
+                break;
         }
         toast({
             variant: 'destructive',
@@ -208,7 +193,7 @@ function LoginForm({ userType, redirectUrl }: { userType: 'user' | 'health-worke
 }
 
 
-function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'health-worker', redirectUrl: string }) {
+function UserRegisterForm({ redirectUrl }: { redirectUrl: string }) {
     const router = useRouter();
     const { toast } = useToast();
     const form = useForm<UserRegisterValues>({
@@ -221,32 +206,22 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             await updateProfile(userCredential.user, { displayName: data.username });
 
-            const isHealthWorker = userType === 'health-worker';
             const profile = {
                 name: data.username,
                 email: data.email,
                 address: data.address,
-                isHealthWorker,
             };
             
             const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
             allProfiles[data.email] = profile;
             localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
             
-            if (isHealthWorker) {
-                 toast({
-                    title: 'Registration Successful',
-                    description: "Please log in with your new account.",
-                });
-                router.push('/health-worker/login');
-            } else {
-                localStorage.setItem('userProfile', JSON.stringify(profile));
-                toast({
-                    title: 'Registration Successful',
-                    description: "You have been logged in automatically.",
-                });
-                router.push(redirectUrl);
-            }
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+            toast({
+                title: 'Registration Successful',
+                description: "You have been logged in automatically.",
+            });
+            router.push(redirectUrl);
 
         } catch (error: any) {
             console.error('Registration error:', error);
@@ -331,9 +306,3 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
         </Card>
     );
 }
-
-    
-
-    
-
-    

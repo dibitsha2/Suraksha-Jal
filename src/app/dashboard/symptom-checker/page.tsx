@@ -59,6 +59,7 @@ export default function SymptomCheckerPage() {
   });
 
   const handleStartRecording = async () => {
+    form.setValue('symptoms', '');
     setIsRecording(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -98,7 +99,9 @@ export default function SymptomCheckerPage() {
       };
       mediaRecorderRef.current.stop();
       // Stop media tracks after stopping recording
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      if (mediaRecorderRef.current.stream) {
+        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      }
       setIsRecording(false);
     }
   };
@@ -371,5 +374,7 @@ export default function SymptomCheckerPage() {
     </div>
   );
 }
+
+    
 
     

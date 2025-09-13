@@ -97,9 +97,9 @@ export default function SymptomCheckerPage() {
         };
       };
       mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      // Stop media tracks
+      // Stop media tracks after stopping recording
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      setIsRecording(false);
     }
   };
 
@@ -371,3 +371,5 @@ export default function SymptomCheckerPage() {
     </div>
   );
 }
+
+    

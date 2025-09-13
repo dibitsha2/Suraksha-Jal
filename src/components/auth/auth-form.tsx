@@ -128,11 +128,7 @@ function LoginForm() {
           description: 'Redirecting to dashboard...',
         });
 
-        if (updatedProfile.isHealthWorker) {
-            router.push('/dashboard-health-worker');
-        } else {
-            router.push('/dashboard');
-        }
+        router.push('/dashboard');
 
     } catch (error: any) {
         console.error('Login error:', error);
@@ -468,7 +464,7 @@ function HealthWorkerRegisterForm() {
                 title: 'Registration Successful',
                 description: 'Your health worker account has been created.',
             });
-            router.push('/dashboard-health-worker');
+            router.push('/dashboard');
         } catch (error: any) {
              console.error('Health worker registration error:', error);
              toast({
@@ -561,6 +557,8 @@ function HealthWorkerRegisterForm() {
         </Card>
     );
 }
+
+    
 
     
 

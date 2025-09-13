@@ -22,15 +22,8 @@ export default function LanguageSelector() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        // If user is logged in, redirect to the correct dashboard
-        const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-        const userProfile = allProfiles[user.email!];
-        
-        let isHealthWorker = false;
-        if (userProfile) {
-            isHealthWorker = userProfile.isHealthWorker;
-        }
-        router.push(isHealthWorker ? '/dashboard-health-worker' : '/dashboard');
+        // If user is logged in, redirect to the dashboard
+        router.push('/dashboard');
       } else if (language) {
         // If language is set but user is not logged in, go to auth
         router.push('/auth');
@@ -89,6 +82,8 @@ export default function LanguageSelector() {
     </div>
   );
 }
+
+    
 
     
 

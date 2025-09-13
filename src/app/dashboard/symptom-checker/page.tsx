@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -51,129 +52,22 @@ export default function SymptomCheckerPage() {
   const audioChunksRef = useRef<Blob[]>([]);
   const { toast } = useToast();
   const [isSpeaking, setIsSpeaking] = useState<Record<string, boolean>>({});
-  
-  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const dataArrayRef = useRef<Uint8Array | null>(null);
-  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-
 
   const form = useForm<SymptomValues>({
     resolver: zodResolver(symptomSchema),
     defaultValues: { symptoms: '' },
   });
-  
-  const stopRecordingAndCleanup = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-        mediaRecorderRef.current.stop();
-    }
-    if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-        streamRef.current = null;
-    }
-    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close();
-        audioContextRef.current = null;
-    }
-    if (silenceTimerRef.current) {
-        clearTimeout(silenceTimerRef.current);
-        silenceTimerRef.current = null;
-    }
-    setIsRecording(false);
-  }
 
   const handleStartRecording = async () => {
-    if (isRecording) {
-      handleStopRecording();
-      return;
-    }
-
+    setIsRecording(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
-      
       mediaRecorderRef.current.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
       };
-      
-      mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        if (audioBlob.size === 0) {
-            console.log("Empty recording, not processing.");
-            return;
-        }
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = async () => {
-          const base64Audio = reader.result as string;
-          try {
-            setLoading(true);
-            const { transcription } = await speechToText({ audioDataUri: base64Audio });
-            const currentSymptoms = form.getValues('symptoms');
-            form.setValue('symptoms', currentSymptoms ? `${currentSymptoms} ${transcription}` : transcription);
-            
-            // Automatically submit the form after successful transcription
-            if(transcription) {
-              await form.handleSubmit(onSubmit)();
-            } else {
-              setLoading(false);
-            }
-
-          } catch (e) {
-            console.error(e);
-            toast({ variant: 'destructive', title: 'Transcription Error', description: 'Could not transcribe audio. Please try again or type your symptoms.'});
-            setLoading(false);
-          }
-        };
-      };
-      
       mediaRecorderRef.current.start();
-      setIsRecording(true);
-
-      // Silence detection
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
-      
-      sourceRef.current.connect(analyserRef.current);
-      analyserRef.current.fftSize = 2048;
-      const bufferLength = analyserRef.current.frequencyBinCount;
-      dataArrayRef.current = new Uint8Array(bufferLength);
-
-      const checkSilence = () => {
-        if (!analyserRef.current || !dataArrayRef.current || !mediaRecorderRef.current || mediaRecorderRef.current.state !== 'recording') return;
-
-        analyserRef.current.getByteTimeDomainData(dataArrayRef.current);
-        let sum = 0;
-        for(let i = 0; i < dataArrayRef.current.length; i++) {
-          sum += Math.abs(dataArrayRef.current[i] - 128);
-        }
-        const avg = sum / dataArrayRef.current.length;
-
-        if (avg < 2.5) { // Threshold for silence
-          if (!silenceTimerRef.current) {
-            silenceTimerRef.current = setTimeout(() => {
-              handleStopRecording();
-            }, 3000); // 3 seconds of silence
-          }
-        } else {
-          if (silenceTimerRef.current) {
-            clearTimeout(silenceTimerRef.current);
-            silenceTimerRef.current = null;
-          }
-        }
-
-        if (isRecording) {
-            requestAnimationFrame(checkSilence);
-        }
-      };
-      requestAnimationFrame(checkSilence);
-
-
     } catch (err) {
       console.error("Error accessing microphone:", err);
       toast({ variant: 'destructive', title: 'Microphone Error', description: 'Could not access the microphone. Please check your browser permissions.'});
@@ -182,7 +76,31 @@ export default function SymptomCheckerPage() {
   };
 
   const handleStopRecording = () => {
-    stopRecordingAndCleanup();
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Audio = reader.result as string;
+          setLoading(true);
+          try {
+            const { transcription } = await speechToText({ audioDataUri: base64Audio });
+            const currentSymptoms = form.getValues('symptoms');
+            form.setValue('symptoms', currentSymptoms ? `${currentSymptoms} ${transcription}` : transcription);
+          } catch (e) {
+            console.error(e);
+            toast({ variant: 'destructive', title: 'Transcription Error', description: 'Could not transcribe audio. Please try again.'});
+          } finally {
+            setLoading(false);
+          }
+        };
+      };
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      // Stop media tracks
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
   };
 
   const handlePlayback = async (id: string, text: string) => {
@@ -232,10 +150,12 @@ export default function SymptomCheckerPage() {
     }
   }
   
-    useEffect(() => {
-    // Cleanup on unmount
+  useEffect(() => {
     return () => {
-      stopRecordingAndCleanup();
+      // Ensure media stream is stopped on component unmount
+      if (mediaRecorderRef.current && mediaRecorderRef.current.stream) {
+        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      }
     };
   }, []);
 
@@ -270,7 +190,7 @@ export default function SymptomCheckerPage() {
                             type="button" 
                             variant={isRecording ? 'destructive' : 'ghost'} 
                             size="icon" 
-                            onClick={handleStartRecording} 
+                            onClick={isRecording ? handleStopRecording : handleStartRecording}
                             aria-label={isRecording ? 'Stop recording' : 'Start recording'}
                           >
                             {isRecording ? <Square className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
@@ -283,10 +203,10 @@ export default function SymptomCheckerPage() {
                 )}
               />
               <Button type="submit" disabled={loading || isRecording}>
-                {loading || isRecording ? (
+                {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {isRecording ? 'Recording...' : 'Analyzing...'}
+                    Analyzing...
                   </>
                 ) : (
                   <>

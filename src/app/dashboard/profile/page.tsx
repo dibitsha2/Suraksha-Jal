@@ -45,8 +45,6 @@ const profileSchema = z.object({
   weight: z.coerce.number().min(1, 'Weight must be a positive number').optional(),
   height: z.coerce.number().min(1, 'Height must be a positive number').optional(),
   bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
-  role: z.string().optional(), // Keep track of role
-  workerId: z.string().optional(), // For health workers
 });
 
 type ProfileValues = z.infer<typeof profileSchema>;
@@ -71,7 +69,6 @@ export default function ProfilePage() {
       weight: undefined,
       height: undefined,
       bloodGroup: undefined,
-      role: 'user',
     },
   });
 
@@ -279,72 +276,55 @@ export default function ProfilePage() {
                     </FormItem>
                   )}
                 />
-                {form.getValues('role') === 'user' && (
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-2">
-                        <FormLabel>Address</FormLabel>
-                        <div className="flex items-center gap-2">
-                          <div className="relative w-full">
-                            <FormControl>
-                              <Input
-                                placeholder="Start typing your address..."
-                                {...field}
-                                value={field.value ?? ''}
-                                onChange={handleAddressChange}
-                                onBlur={() => setTimeout(() => setIsSuggestionsVisible(false), 150)}
-                                autoComplete="off"
-                              />
-                            </FormControl>
-                            {isSuggestionsVisible && suggestions.length > 0 && (
-                              <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg">
-                                <ul className="py-1">
-                                  {suggestions.map((suggestion) => (
-                                    <li
-                                      key={suggestion.place_id}
-                                      className="px-3 py-2 cursor-pointer hover:bg-accent"
-                                      onClick={() => handleSuggestionClick(suggestion)}
-                                    >
-                                      {suggestion.display_name}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={handleGetLocation}
-                            disabled={isFetchingLocation}
-                            aria-label="Use live location"
-                          >
-                            {isFetchingLocation ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
-                          </Button>
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>Address</FormLabel>
+                      <div className="flex items-center gap-2">
+                        <div className="relative w-full">
+                          <FormControl>
+                            <Input
+                              placeholder="Start typing your address..."
+                              {...field}
+                              value={field.value ?? ''}
+                              onChange={handleAddressChange}
+                              onBlur={() => setTimeout(() => setIsSuggestionsVisible(false), 150)}
+                              autoComplete="off"
+                            />
+                          </FormControl>
+                          {isSuggestionsVisible && suggestions.length > 0 && (
+                            <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg">
+                              <ul className="py-1">
+                                {suggestions.map((suggestion) => (
+                                  <li
+                                    key={suggestion.place_id}
+                                    className="px-3 py-2 cursor-pointer hover:bg-accent"
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                  >
+                                    {suggestion.display_name}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-                 {form.getValues('role') === 'health-worker' && (
-                    <FormField
-                    control={form.control}
-                    name="workerId"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Health Worker ID</FormLabel>
-                        <FormControl>
-                            <Input placeholder="Your worker ID" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-                )}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={handleGetLocation}
+                          disabled={isFetchingLocation}
+                          aria-label="Use live location"
+                        >
+                          {isFetchingLocation ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="age"

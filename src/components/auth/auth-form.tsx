@@ -59,7 +59,7 @@ const userRegisterSchema = z.object({
 const healthWorkerRegisterSchema = z.object({
     username: z.string().min(2, 'Username is too short'),
     email: z.string().email('Invalid email address'),
-    workerId: z.string().optional(),
+    workerId: z.string().min(1, 'Worker ID is required.'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
@@ -526,7 +526,7 @@ function HealthWorkerRegisterForm({ redirectUrl }: { redirectUrl: string }) {
                         )} />
                          <FormField control={form.control} name="workerId" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Health Worker ID (optional)</FormLabel>
+                                <FormLabel>Health Worker ID</FormLabel>
                                 <FormControl>
                                     <div className="relative">
                                         <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

@@ -55,7 +55,11 @@ type UserRegisterValues = z.infer<typeof userRegisterSchema>;
 
 
 // Main Component
-export default function AuthForm({ initialTab = 'login' }: { initialTab?: 'login' | 'register' }) {
+export default function AuthForm({ initialTab = 'login', userType = 'user' }: { initialTab?: 'login' | 'register', userType?: 'user' | 'health-worker' }) {
+  
+  const loginRedirectUrl = userType === 'health-worker' ? '/dashboard-health-worker' : '/dashboard';
+  const registerRedirectUrl = userType === 'health-worker' ? '/health-worker/login' : '/dashboard';
+
   return (
     <Tabs defaultValue={initialTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
@@ -63,17 +67,17 @@ export default function AuthForm({ initialTab = 'login' }: { initialTab?: 'login
         <TabsTrigger value="register">Register</TabsTrigger>
       </TabsList>
       <TabsContent value="login">
-        <LoginForm />
+        <LoginForm userType={userType} redirectUrl={loginRedirectUrl} />
       </TabsContent>
       <TabsContent value="register">
-        <UserRegisterForm />
+        <UserRegisterForm userType={userType} redirectUrl={registerRedirectUrl} />
       </TabsContent>
     </Tabs>
   );
 }
 
 // Login Form Component
-function LoginForm() {
+function LoginForm({ userType, redirectUrl }: { userType: 'user' | 'health-worker', redirectUrl: string }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -91,6 +95,13 @@ function LoginForm() {
         
         const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
         const existingProfile = allProfiles[user.email!];
+        
+        // Role check
+        const isHealthWorker = existingProfile?.isHealthWorker ?? false;
+        if ((userType === 'health-worker' && !isHealthWorker) || (userType === 'user' && isHealthWorker)) {
+            await auth.signOut();
+            throw new Error('role-mismatch');
+        }
 
         const updatedProfile = {
             ...(existingProfile || {}),
@@ -109,23 +120,27 @@ function LoginForm() {
           description: 'Redirecting to dashboard...',
         });
 
-        router.push('/dashboard');
+        router.push(redirectUrl);
 
     } catch (error: any) {
         console.error('Login error:', error);
         let description = 'An unexpected error occurred.';
-        switch (error.code) {
-            case 'auth/user-not-found':
-            case 'auth/wrong-password':
-            case 'auth/invalid-credential':
-                description = 'Invalid email or password. Please try again.';
-                break;
-            case 'auth/invalid-email':
-                description = 'The email address you entered is not valid.';
-                break;
-            case 'auth/too-many-requests':
-                description = 'Too many login attempts. Please try again later.';
-                break;
+        if (error.message === 'role-mismatch') {
+            description = `You are trying to log in through the wrong portal. Please use the ${userType === 'user' ? 'Health Worker' : 'User'} portal.`;
+        } else {
+            switch (error.code) {
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential':
+                    description = 'Invalid email or password. Please try again.';
+                    break;
+                case 'auth/invalid-email':
+                    description = 'The email address you entered is not valid.';
+                    break;
+                case 'auth/too-many-requests':
+                    description = 'Too many login attempts. Please try again later.';
+                    break;
+            }
         }
         toast({
             variant: 'destructive',
@@ -190,7 +205,7 @@ function LoginForm() {
 }
 
 
-function UserRegisterForm() {
+function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'health-worker', redirectUrl: string }) {
     const router = useRouter();
     const { toast } = useToast();
     const form = useForm<UserRegisterValues>({
@@ -203,24 +218,33 @@ function UserRegisterForm() {
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             await updateProfile(userCredential.user, { displayName: data.username });
 
+            const isHealthWorker = userType === 'health-worker';
             const profile = {
                 name: data.username,
                 email: data.email,
                 address: data.address,
-                isHealthWorker: false, // Ensure this is always false for general registration
+                isHealthWorker,
             };
             
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-            const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-            allProfiles[data.email] = profile;
-            localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
-
+            // For health workers, we don't set a session profile, just save it.
+            // They will be redirected to log in.
+            if (isHealthWorker) {
+                 const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+                 allProfiles[data.email] = profile;
+                 localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+            } else {
+                localStorage.setItem('userProfile', JSON.stringify(profile));
+                const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+                allProfiles[data.email] = profile;
+                localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+            }
 
             toast({
                 title: 'Registration Successful',
-                description: "You have been logged in automatically.",
+                description: isHealthWorker ? "Your account has been created. Please log in." : "You have been logged in automatically.",
             });
-            router.push('/dashboard');
+            router.push(redirectUrl);
+
         } catch (error: any) {
             console.error('Registration error:', error);
             let description = 'An unexpected error occurred.';

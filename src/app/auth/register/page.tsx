@@ -2,6 +2,7 @@
 'use client';
 import AuthForm from '@/components/auth/auth-form';
 import { SurakshaJalLogo } from '@/components/icons';
+import Link from 'next/link';
 
 export default function RegisterPage() {
   return (
@@ -14,7 +15,13 @@ export default function RegisterPage() {
             Create an account to get started.
           </p>
         </div>
-        <AuthForm initialTab="register" />
+        <AuthForm initialTab="register" userType="user" />
+         <p className="mt-4 text-center text-sm text-muted-foreground">
+            Are you a health worker?{' '}
+            <Link href="/health-worker/register" className="underline hover:text-primary">
+                Register Here
+            </Link>
+        </p>
       </div>
     </div>
   );

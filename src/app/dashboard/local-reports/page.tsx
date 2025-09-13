@@ -15,16 +15,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { subDays, format } from 'date-fns';
 
 // This is mock data. In a real app, this would come from a database
 // filled with reports from verified health workers.
-const mockReports = [
-  { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 15, date: '2023-10-26' },
-  { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 8, date: '2023-10-25' },
-  { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 5, date: '2023-10-24' },
-  { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 12, date: '2023-10-23' },
-  { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 6, date: '2023-10-22' },
-];
+const generateMockReports = () => {
+    const today = new Date();
+    return [
+        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 15, date: format(today, 'yyyy-MM-dd') },
+        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 8, date: format(subDays(today, 1), 'yyyy-MM-dd') },
+        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 5, date: format(subDays(today, 2), 'yyyy-MM-dd') },
+        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 12, date: format(subDays(today, 3), 'yyyy-MM-dd') },
+        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 6, date: format(subDays(today, 4), 'yyyy-MM-dd') },
+        { id: 6, disease: 'Giardiasis', location: 'Pune, Maharashtra', cases: 7, date: format(subDays(today, 1), 'yyyy-MM-dd') },
+        { id: 7, disease: 'Dysentery', location: 'Jaipur, Rajasthan', cases: 9, date: format(today, 'yyyy-MM-dd') },
+    ];
+}
+
+const mockReports = generateMockReports();
 
 
 export default function LocalReportsPage() {

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -28,21 +29,60 @@ const medicineSchema = z.object({
 
 type MedicineValues = z.infer<typeof medicineSchema>;
 
+const commonMedicines = [
+    'Paracetamol',
+    'Ibuprofen',
+    'Aspirin',
+    'Cetirizine',
+    'Loratadine',
+    'Diphenhydramine',
+    'Ranitidine',
+    'Omeprazole',
+    'Loperamide',
+    'Oral Rehydration Salts (ORS)',
+];
+
 export default function MedicineCheckerPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MedicineInformationOutput | null>(null);
   const { t, effectiveLanguage } = useLanguage();
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
+
 
   const form = useForm<MedicineValues>({
     resolver: zodResolver(medicineSchema),
     defaultValues: { medicineName: '' },
   });
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    form.setValue('medicineName', value);
+    if (value.length > 0) {
+      const filteredSuggestions = commonMedicines.filter((med) =>
+        med.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
+      setIsSuggestionsVisible(true);
+    } else {
+      setSuggestions([]);
+      setIsSuggestionsVisible(false);
+    }
+  };
+
+  const handleSuggestionClick = (medicine: string) => {
+    form.setValue('medicineName', medicine, { shouldValidate: true });
+    setSuggestions([]);
+    setIsSuggestionsVisible(false);
+  };
+
 
   const onSubmit: SubmitHandler<MedicineValues> = async (data) => {
     setLoading(true);
     setError(null);
     setResult(null);
+    setIsSuggestionsVisible(false);
 
     try {
       const response = await getMedicineInformation({
@@ -82,7 +122,29 @@ export default function MedicineCheckerPage() {
                     <FormControl>
                         <div className="relative">
                             <Pill className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="e.g., Paracetamol" {...field} className="pl-10" />
+                            <Input 
+                                placeholder="e.g., Paracetamol" 
+                                {...field} 
+                                className="pl-10" 
+                                onChange={handleInputChange}
+                                onBlur={() => setTimeout(() => setIsSuggestionsVisible(false), 150)}
+                                autoComplete="off"
+                            />
+                             {isSuggestionsVisible && suggestions.length > 0 && (
+                                <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg">
+                                    <ul className="py-1">
+                                    {suggestions.map((medicine, index) => (
+                                        <li
+                                            key={index}
+                                            className="px-3 py-2 cursor-pointer hover:bg-accent"
+                                            onClick={() => handleSuggestionClick(medicine)}
+                                        >
+                                            {medicine}
+                                        </li>
+                                    ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </FormControl>
                     <FormMessage />

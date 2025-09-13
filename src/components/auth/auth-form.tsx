@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,7 +12,7 @@ import {
   Loader2,
   Mail,
   MapPin,
-  ScanLine,
+  Camera,
   User,
   Lock,
 } from 'lucide-react';
@@ -39,6 +39,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Schemas
 const loginSchema = z.object({
@@ -54,7 +55,7 @@ const userRegisterSchema = z.object({
 });
 
 const healthWorkerRegisterSchema = userRegisterSchema.extend({
-    healthId: z.any().refine(file => file instanceof File, 'ID card image is required.'),
+    faceId: z.string().min(1, 'Face ID capture is required.'),
 });
 
 
@@ -111,9 +112,10 @@ function LoginForm() {
         }
         
         const updatedProfile = {
-            ...profile, // Keep existing fields like address, age, etc.
+            ...profile,
+            name: profile.name || user.displayName,
             email: user.email,
-            name: profile.name || user.displayName, // Prefer existing name
+            photoURL: profile.photoURL || user.photoURL,
         };
 
         localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
@@ -128,8 +130,6 @@ function LoginForm() {
         let description = 'An unexpected error occurred.';
         switch (error.code) {
             case 'auth/user-not-found':
-                description = 'Account not found. Please register first.';
-                break;
             case 'auth/wrong-password':
             case 'auth/invalid-credential':
                 description = 'Invalid email or password. Please try again.';
@@ -344,40 +344,77 @@ function HealthWorkerRegisterForm() {
     const { toast } = useToast();
     const [idStatus, setIdStatus] = useState<'idle' | 'verifying' | 'valid' | 'invalid'>('idle');
     const [verificationReason, setVerificationReason] = useState('');
-    const [filePreview, setFilePreview] = useState<string | null>(null);
-
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
 
     const form = useForm<HealthWorkerRegisterValues>({
         resolver: zodResolver(healthWorkerRegisterSchema),
-        defaultValues: { username: '', email: '', address: '', password: '' },
+        defaultValues: { username: '', email: '', address: '', password: '', faceId: '' },
     });
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            form.setValue('healthId', file);
-            setFilePreview(URL.createObjectURL(file));
+    useEffect(() => {
+        const getCameraPermission = async () => {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({video: true});
+            setHasCameraPermission(true);
+    
+            if (videoRef.current) {
+              videoRef.current.srcObject = stream;
+            }
+          } catch (error) {
+            console.error('Error accessing camera:', error);
+            setHasCameraPermission(false);
+            toast({
+              variant: 'destructive',
+              title: 'Camera Access Denied',
+              description: 'Please enable camera permissions in your browser settings to use this app.',
+            });
+          }
+        };
+    
+        getCameraPermission();
+
+        return () => {
+            if (videoRef.current && videoRef.current.srcObject) {
+                const stream = videoRef.current.srcObject as MediaStream;
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+      }, [toast]);
+
+
+    const handleCaptureAndVerify = async () => {
+        if (videoRef.current && canvasRef.current) {
             setIdStatus('verifying');
             setVerificationReason('');
 
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onloadend = async () => {
-                const base64String = reader.result as string;
+            const video = videoRef.current;
+            const canvas = canvasRef.current;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            if (context) {
+                context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                const dataUri = canvas.toDataURL('image/jpeg');
+                form.setValue('faceId', dataUri);
+                
                 try {
-                    const result = await verifyHealthWorkerId({ idDataUri: base64String });
+                    const result = await verifyHealthWorkerId({ idDataUri: dataUri });
                     if (result.isValid) {
                         setIdStatus('valid');
                     } else {
                         setIdStatus('invalid');
-                        setVerificationReason(result.reason || 'The provided ID could not be verified.');
+                        setVerificationReason(result.reason || 'The captured face could not be verified.');
+                        form.setValue('faceId', ''); // Clear invalid data
                     }
                 } catch (error) {
-                    console.error("ID verification error:", error);
+                    console.error("Face verification error:", error);
                     setIdStatus('invalid');
                     setVerificationReason('An error occurred during verification. Please try again.');
+                    form.setValue('faceId', ''); // Clear invalid data
                 }
-            };
+            }
         }
     };
 
@@ -385,8 +422,8 @@ function HealthWorkerRegisterForm() {
         if (idStatus !== 'valid') {
             toast({
                 variant: 'destructive',
-                title: 'ID Not Verified',
-                description: 'Please upload and verify your health worker ID before registering.',
+                title: 'Face Not Verified',
+                description: 'Please capture and verify your face before registering.',
             });
             return;
         }
@@ -399,11 +436,8 @@ function HealthWorkerRegisterForm() {
                 name: data.username,
                 email: data.email,
                 address: data.address,
-                age: undefined,
-                weight: undefined,
-                height: undefined,
-                bloodGroup: undefined,
                 isHealthWorker: true,
+                photoURL: data.faceId // Save face capture as profile picture
             };
             localStorage.setItem('userProfile', JSON.stringify(profile));
 
@@ -426,12 +460,12 @@ function HealthWorkerRegisterForm() {
         <Card>
             <CardHeader>
                 <CardTitle>Health Worker Registration</CardTitle>
-                <CardDescription>Verify your ID to get started.</CardDescription>
+                <CardDescription>Verify your face to get started.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        {/* Basic fields from User form */}
+                        {/* Basic fields */}
                         <FormField control={form.control} name="username" render={({ field }) => (
                             <FormItem><FormLabel>Username</FormLabel><FormControl><div className="relative"><User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input placeholder="your_username" {...field} className="pl-10" /></div></FormControl><FormMessage /></FormItem>
                         )} />
@@ -445,31 +479,39 @@ function HealthWorkerRegisterForm() {
                            <FormItem><FormLabel>Password</FormLabel><FormControl><div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" /><Input type="password" placeholder="Choose a strong password" {...field} className="pl-10" /></div></FormControl><FormMessage /></FormItem>
                         )} />
                         
-                        {/* Health Worker ID Field */}
+                        {/* Face ID Field */}
                         <FormField
                             control={form.control}
-                            name="healthId"
+                            name="faceId"
                             render={() => (
                                 <FormItem>
-                                    <FormLabel>Health Worker ID</FormLabel>
+                                    <FormLabel>Face Verification</FormLabel>
                                     <FormControl>
-                                        <div className="relative">
-                                            <ScanLine className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                            <Input 
-                                                type="file" 
-                                                accept="image/*"
-                                                className="pl-10 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                                                onChange={handleFileChange}
-                                            />
+                                        <div className="space-y-4">
+                                            <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
+                                                <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+                                                <canvas ref={canvasRef} className="hidden" />
+                                                {hasCameraPermission === false && (
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white p-4">
+                                                        <Camera className="h-10 w-10 mb-2" />
+                                                        <p className="text-center font-semibold">Camera access is required for verification.</p>
+                                                        <p className="text-center text-sm">Please allow camera access in your browser settings.</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <Button type="button" onClick={handleCaptureAndVerify} disabled={idStatus === 'verifying' || hasCameraPermission !== true}>
+                                                {idStatus === 'verifying' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Camera className="mr-2 h-4 w-4" />}
+                                                {idStatus === 'valid' ? 'Re-capture' : 'Capture & Verify'}
+                                            </Button>
                                         </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-
+                        
                         {/* Verification Status */}
-                        {idStatus !== 'idle' && (
+                         {idStatus !== 'idle' && (
                             <div className="p-3 rounded-md flex items-center gap-3 text-sm
                                 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 data-[status=valid]:bg-green-100 data-[status=valid]:dark:bg-green-900/20 data-[status=valid]:text-green-800 data-[status=valid]:dark:text-green-300
                                 data-[status=invalid]:bg-red-100 data-[status=invalid]:dark:bg-red-900/20 data-[status=invalid]:text-red-800 data-[status=invalid]:dark:text-red-300"
@@ -479,8 +521,8 @@ function HealthWorkerRegisterForm() {
                                 {idStatus === 'valid' && <FileCheck2 className="h-4 w-4" />}
                                 {idStatus === 'invalid' && <FileX2 className="h-4 w-4" />}
                                 <div>
-                                    {idStatus === 'verifying' && 'Verifying your ID, please wait...'}
-                                    {idStatus === 'valid' && 'ID verified successfully!'}
+                                    {idStatus === 'verifying' && 'Verifying your face, please wait...'}
+                                    {idStatus === 'valid' && 'Face verified successfully!'}
                                     {idStatus === 'invalid' && `Verification Failed: ${verificationReason}`}
                                 </div>
                             </div>

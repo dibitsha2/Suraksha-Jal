@@ -1,9 +1,10 @@
+
 'use server';
 
 /**
- * @fileOverview Verifies the validity of a health worker's government-issued ID using AI.
+ * @fileOverview Verifies a health worker's face using AI.
  *
- * - verifyHealthWorkerId - A function that verifies the ID.
+ * - verifyHealthWorkerId - A function that verifies the face.
  * - VerifyHealthWorkerIdInput - The input type for the verifyHealthWorkerId function.
  * - VerifyHealthWorkerIdOutput - The return type for the verifyHealthWorkerId function.
  */
@@ -15,14 +16,14 @@ const VerifyHealthWorkerIdInputSchema = z.object({
   idDataUri: z
     .string()
     .describe(
-      "A government-issued health worker ID, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "A photo of the user's face, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
 });
 export type VerifyHealthWorkerIdInput = z.infer<typeof VerifyHealthWorkerIdInputSchema>;
 
 const VerifyHealthWorkerIdOutputSchema = z.object({
-  isValid: z.boolean().describe('Whether the ID is valid or not.'),
-  reason: z.string().describe('The reason for the ID being invalid, if applicable.'),
+  isValid: z.boolean().describe('Whether the face is a valid, real human face.'),
+  reason: z.string().describe('The reason for the face being invalid, if applicable. For example, if it is blurry, not a face, or a picture of a picture.'),
 });
 export type VerifyHealthWorkerIdOutput = z.infer<typeof VerifyHealthWorkerIdOutputSchema>;
 
@@ -34,12 +35,16 @@ const prompt = ai.definePrompt({
   name: 'verifyHealthWorkerIdPrompt',
   input: {schema: VerifyHealthWorkerIdInputSchema},
   output: {schema: VerifyHealthWorkerIdOutputSchema},
-  prompt: `You are an AI expert in verifying the validity of government-issued health worker IDs.
+  prompt: `You are an AI expert in verifying a person's identity from a captured photo of their face.
 
-You will be provided with an image of the ID. You must determine if the ID is valid or not.
-If the ID is not valid, explain why in the reason field. If the ID is valid, the reason field should be left empty.
+You will be provided with an image of a person's face. You must determine if it is a valid, clear, live photo of a real human.
 
-Consider factors like image quality, clarity of information, signs of tampering, and consistency with known ID formats.
+- The image must contain a single, clear face.
+- The face must not be obscured.
+- The image must not be blurry.
+- The image must appear to be a live capture, not a photo of another screen or a printed photograph.
+
+If the face is not valid, explain why in the 'reason' field (e.g., "Image is too blurry," "No face detected," or "Image appears to be a photo of a screen."). If the face is valid, the 'reason' field should be left empty.
 
 Image: {{media url=idDataUri}}
 `,
@@ -56,3 +61,5 @@ const verifyHealthWorkerIdFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

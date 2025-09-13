@@ -57,8 +57,7 @@ type UserRegisterValues = z.infer<typeof userRegisterSchema>;
 // Main Component
 export default function AuthForm({ initialTab = 'login', userType = 'user' }: { initialTab?: 'login' | 'register', userType?: 'user' | 'health-worker' }) {
   
-  const loginRedirectUrl = userType === 'health-worker' ? 'https://9000-firebase-studio-1757768442875.cluster-y3k7ko3fang56qzieg3trwgyfg.cloudworkstations.dev' : '/dashboard';
-  const registerRedirectUrl = userType === 'health-worker' ? '/health-worker/login' : '/dashboard';
+  const redirectUrl = userType === 'health-worker' ? 'https://9000-firebase-studio-1757768442875.cluster-y3k7ko3fang56qzieg3trwgyfg.cloudworkstations.dev' : '/dashboard';
 
   return (
     <Tabs defaultValue={initialTab} className="w-full">
@@ -67,10 +66,10 @@ export default function AuthForm({ initialTab = 'login', userType = 'user' }: { 
         <TabsTrigger value="register">Register</TabsTrigger>
       </TabsList>
       <TabsContent value="login">
-        <LoginForm userType={userType} redirectUrl={loginRedirectUrl} />
+        <LoginForm userType={userType} redirectUrl={redirectUrl} />
       </TabsContent>
       <TabsContent value="register">
-        <UserRegisterForm userType={userType} redirectUrl={registerRedirectUrl} />
+        <UserRegisterForm userType={userType} redirectUrl={redirectUrl} />
       </TabsContent>
     </Tabs>
   );
@@ -117,10 +116,14 @@ function LoginForm({ userType, redirectUrl }: { userType: 'user' | 'health-worke
 
         toast({
           title: 'Login Successful',
-          description: 'Redirecting to dashboard...',
+          description: 'Redirecting...',
         });
 
-        router.push(redirectUrl);
+        if (userType === 'health-worker') {
+            window.location.href = redirectUrl;
+        } else {
+            router.push(redirectUrl);
+        }
 
     } catch (error: any) {
         console.error('Login error:', error);
@@ -230,21 +233,19 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
             allProfiles[data.email] = profile;
             localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
             
-            // For health workers, we don't set a session profile, just save it.
-            // They will be redirected to log in.
             if (isHealthWorker) {
                  toast({
                     title: 'Registration Successful',
-                    description: "Your account has been created. Please log in.",
+                    description: "Redirecting...",
                 });
-                router.push(redirectUrl);
+                window.location.href = redirectUrl;
             } else {
                 localStorage.setItem('userProfile', JSON.stringify(profile));
                 toast({
                     title: 'Registration Successful',
                     description: "You have been logged in automatically.",
                 });
-                router.push('/dashboard');
+                router.push(redirectUrl);
             }
 
         } catch (error: any) {
@@ -330,5 +331,7 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
         </Card>
     );
 }
+
+    
 
     

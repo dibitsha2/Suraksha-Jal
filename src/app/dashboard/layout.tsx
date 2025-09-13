@@ -75,7 +75,6 @@ function Sidebar() {
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
-    { href: '/dashboard/view-reports', icon: BarChart2, label: 'View Reports' },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
     { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];
@@ -125,7 +124,6 @@ function Header() {
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
-    { href: '/dashboard/view-reports', icon: BarChart2, label: 'View Reports' },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
     { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];

@@ -5,9 +5,28 @@ import AuthForm from '@/components/auth/auth-form';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { User } from 'lucide-react';
+import { User, Share2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function HealthWorkerLoginPage() {
+  const { toast } = useToast();
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      toast({
+        title: 'Link Copied!',
+        description: 'The page URL has been copied to your clipboard.',
+      });
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+      toast({
+        variant: 'destructive',
+        title: 'Failed to Copy',
+        description: 'Could not copy the link. Please try again.',
+      });
+    });
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
@@ -19,6 +38,13 @@ export default function HealthWorkerLoginPage() {
           </p>
         </div>
         <AuthForm initialTab="login" userType="health-worker" />
+
+        <div className="mt-4 flex justify-end">
+            <Button variant="ghost" size="sm" onClick={handleShare}>
+                <Share2 className="mr-2 h-4 w-4" />
+                Share
+            </Button>
+        </div>
 
         <Separator className="my-6" />
 

@@ -57,7 +57,7 @@ type UserRegisterValues = z.infer<typeof userRegisterSchema>;
 // Main Component
 export default function AuthForm({ initialTab = 'login', userType = 'user' }: { initialTab?: 'login' | 'register', userType?: 'user' | 'health-worker' }) {
   
-  const loginRedirectUrl = userType === 'health-worker' ? '/dashboard-health-worker' : '/dashboard';
+  const loginRedirectUrl = userType === 'health-worker' ? 'https://9000-firebase-studio-1757768442875.cluster-y3k7ko3fang56qzieg3trwgyfg.cloudworkstations.dev' : '/dashboard';
   const registerRedirectUrl = userType === 'health-worker' ? '/health-worker/login' : '/dashboard';
 
   return (

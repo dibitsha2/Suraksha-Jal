@@ -31,11 +31,13 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
-import { Loader2, LocateFixed, Upload } from 'lucide-react';
+import { Loader2, LocateFixed, Upload, Check, ShieldCheck } from 'lucide-react';
 import { debounce } from 'lodash';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User } from 'lucide-react';
 import { auth } from '@/lib/firebase';
+import { validHealthWorkerIds } from '@/lib/mock-data';
+import { Badge } from '@/components/ui/badge';
 
 
 const profileSchema = z.object({
@@ -47,6 +49,8 @@ const profileSchema = z.object({
   weight: z.coerce.number().min(1, 'Weight must be a positive number').optional(),
   height: z.coerce.number().min(1, 'Height must be a positive number').optional(),
   bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+  healthWorkerId: z.string().optional(),
+  isHealthWorker: z.boolean().optional(),
 });
 
 type ProfileValues = z.infer<typeof profileSchema>;
@@ -71,6 +75,8 @@ export default function ProfilePage() {
       weight: undefined,
       height: undefined,
       bloodGroup: undefined,
+      healthWorkerId: '',
+      isHealthWorker: false,
     },
   });
 
@@ -182,18 +188,29 @@ export default function ProfilePage() {
       
       const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
       const currentProfile = allProfiles[currentUser.email!] || {};
-      const updatedProfile = { ...currentProfile, ...data };
+      
+      const isNowHealthWorker = validHealthWorkerIds.includes(data.healthWorkerId || '');
+      const wasHealthWorker = currentProfile.isHealthWorker;
+
+      const updatedProfile = { ...currentProfile, ...data, isHealthWorker: isNowHealthWorker };
       
       allProfiles[currentUser.email!] = updatedProfile;
       localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
       localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
-      toast({
-        title: 'Profile Updated',
-        description: 'Your information has been saved successfully.',
-      });
-      // Force a reload of the page to update the user menu avatar
-      window.location.reload();
+      if (isNowHealthWorker && !wasHealthWorker) {
+        toast({
+            title: 'Health Worker Verified!',
+            description: 'Your ID has been verified. You now have access to health worker features.',
+        });
+        setTimeout(() => window.location.reload(), 1500); // Reload to show new sidebar item
+      } else {
+        toast({
+            title: 'Profile Updated',
+            description: 'Your information has been saved successfully.',
+        });
+      }
+
     } catch (error) {
        console.error('Failed to save profile:', error);
         toast({
@@ -401,6 +418,28 @@ export default function ProfilePage() {
                   )}
                 />
               </div>
+
+               <div className="border-t pt-6 space-y-6">
+                 <FormField
+                    control={form.control}
+                    name="healthWorkerId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="healthWorkerId" className="flex items-center gap-2">
+                            Health Worker Verification
+                            {form.getValues('isHealthWorker') && <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300"><ShieldCheck className="h-3.5 w-3.5 mr-1" />Verified</Badge>}
+                        </FormLabel>
+                         <p className="text-sm text-muted-foreground">If you are a registered health worker, enter your government-issued ID to get access to additional features.</p>
+                        <FormControl>
+                          <Input placeholder="Enter your Health Worker ID" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+               </div>
+
+
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save Changes

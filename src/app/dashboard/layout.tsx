@@ -212,12 +212,7 @@ function UserMenu() {
         const storedProfile = localStorage.getItem('userProfile');
         if (storedProfile) {
             try {
-                const profile = JSON.parse(storedProfile);
-                // If there's a stored profile but no active auth user, still show it.
-                // The auth state change will correct this if they are logged out.
-                if (!auth.currentUser) {
-                     setUser(profile);
-                }
+                setUser(JSON.parse(storedProfile));
             } catch (e) {
                  console.error("Error parsing user profile on initial load", e);
             }
@@ -286,5 +281,7 @@ function UserMenu() {
 }
 
 
+
+    
 
     

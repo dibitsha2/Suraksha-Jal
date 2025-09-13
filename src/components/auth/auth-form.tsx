@@ -113,11 +113,10 @@ function LoginForm() {
             }
         }
         
-        // Merge Firebase auth data with existing profile, preserving user-entered details
         const updatedProfile = {
-            ...profile,
+            ...profile, // Keep existing fields like address, age, etc.
             email: user.email,
-            name: profile.name || user.displayName,
+            name: profile.name || user.displayName, // Prefer existing name
         };
 
         localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
@@ -514,5 +513,7 @@ function HealthWorkerRegisterForm() {
 
 
 
+
+    
 
     

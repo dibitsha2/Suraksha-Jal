@@ -75,7 +75,7 @@ function Sidebar() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+    { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];
 
   return (
@@ -124,7 +124,7 @@ function Header() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+    { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];
   
   const handleLinkClick = () => {

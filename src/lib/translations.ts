@@ -55,7 +55,6 @@ const generateTranslations = () => {
     
     // Add specific known translations
     translations.hi = {
-        ...translations.hi,
         dashboard: 'डैशबोर्ड',
         symptomChecker: 'लक्षण परीक्षक',
         reports: 'स्थानीय रिपोर्ट',
@@ -76,7 +75,6 @@ const generateTranslations = () => {
         emergencyContacts: 'आपातकालीन संपर्क',
     };
     translations.bn = {
-        ...translations.bn,
         dashboard: 'ড্যাশবোর্ড',
         symptomChecker: 'লক্ষণ পরীক্ষক',
         reports: 'স্থানীয় প্রতিবেদন',
@@ -97,7 +95,6 @@ const generateTranslations = () => {
         emergencyContacts: 'জরুরী যোগাযোগ',
     };
     translations.as = {
-        ...translations.as,
         dashboard: 'ডেশ্বৰ্ড',
         symptomChecker: 'ৰোগৰ লক্ষণ পৰীক্ষক',
         reports: 'স্থানীয় প্ৰতিবেদন',
@@ -118,7 +115,6 @@ const generateTranslations = () => {
         emergencyContacts: 'জৰুৰীকালীন যোগাযোগ',
     };
     translations.gu = {
-        ...translations.gu,
         dashboard: 'ડેશબોર્ડ',
         symptomChecker: 'લક્ષણ તપાસનાર',
         reports: 'સ્થાનિક અહેવાલો',
@@ -127,10 +123,18 @@ const generateTranslations = () => {
         logout: 'લૉગ આઉટ',
         welcome: 'સ્વાગત છે',
         checkSymptomsPrompt: 'અસ્વસ્થતા અનુભવો છો? હવે તમારા લક્ષણો તપાસો.',
+        getStarted: 'શરૂ કરો',
+        casesLast30Days: 'છેલ્લા 30 દિવસમાં કેસ',
         precautions: 'સાવચેતીઓ',
+        medicationSuggester: 'દવા સૂચવનાર',
+        healthReminders: 'આરોગ્ય રીમાઇન્ડર્સ',
+        reminders: 'રીમાઇન્ડર્સ',
+        medicineChecker: 'દવા તપાસનાર',
+        waterQuality: 'પાણીની ગુણવત્તા',
+        aiChat: 'AI ચેટ',
+        emergencyContacts: 'ઇમરજન્સી સંપર્કો',
     };
      translations.ta = {
-        ...translations.ta,
         dashboard: 'แดชบอร์ด',
         symptomChecker: 'அறிகுறி சரிபார்ப்பு',
         reports: 'உள்ளூர் அறிக்கைகள்',
@@ -139,10 +143,18 @@ const generateTranslations = () => {
         logout: 'வெளியேறு',
         welcome: 'வரவேற்கிறோம்',
         checkSymptomsPrompt: 'உடல்நிலை சரியில்லையா? உங்கள் அறிகுறிகளை இப்போது சரிபார்க்கவும்.',
+        getStarted: 'தொடங்குங்கள்',
+        casesLast30Days: 'கடந்த 30 நாட்களில் வழக்குகள்',
         precautions: 'முன்னெச்சரிக்கைகள்',
+        medicationSuggester: 'மருந்து பரிந்துரையாளர்',
+        healthReminders: 'உடல்நல நினைவூட்டல்கள்',
+        reminders: 'நினைவூட்டல்கள்',
+        medicineChecker: 'மருந்து சரிபார்ப்பு',
+        waterQuality: 'நீரின் தரம்',
+        aiChat: 'AI அரட்டை',
+        emergencyContacts: 'அவசர தொடர்புகள்',
     };
     translations.te = {
-        ...translations.te,
         dashboard: 'డాష్‌బోర్డ్',
         symptomChecker: 'లక్షణాల తనిఖీ',
         reports: 'స్థానిక నివేదికలు',
@@ -151,10 +163,18 @@ const generateTranslations = () => {
         logout: 'లాగ్ అవుట్',
         welcome: 'స్వాగతం',
         checkSymptomsPrompt: 'అనారోగ్యంగా అనిపిస్తుందా? మీ లక్షణాలను ఇప్పుడు తనిఖీ చేయండి.',
+        getStarted: 'ప్రారంభించండి',
+        casesLast30Days: 'గత 30 రోజులలో కేసులు',
         precautions: 'జాగ్రత్తలు',
+        medicationSuggester: 'మందుల సూచన',
+        healthReminders: 'ఆరోగ్య రిమైండర్‌లు',
+        reminders: 'రిమైండర్‌లు',
+        medicineChecker: 'మందుల తనిఖీ',
+        waterQuality: 'నీటి నాణ్యత',
+        aiChat: 'AI చాట్',
+        emergencyContacts: 'అత్యవసర పరిచయాలు',
     };
     translations.kn = {
-        ...translations.kn,
         dashboard: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
         symptomChecker: 'ರೋಗಲಕ್ಷಣ ಪರೀಕ್ಷಕ',
         reports: 'ಸ್ಥಳೀಯ ವರದಿಗಳು',
@@ -163,10 +183,18 @@ const generateTranslations = () => {
         logout: 'ಲಾಗ್ ಔಟ್',
         welcome: 'ಸ್ವಾಗತ',
         checkSymptomsPrompt: 'ಅನಾರೋಗ್ಯ ಅನಿಸುತ್ತಿದೆಯೇ? ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಈಗಲೇ ಪರಿಶೀಲಿಸಿ.',
+        getStarted: 'ಪ್ರಾರಂಭಿಸಿ',
+        casesLast30Days: 'ಕಳೆದ 30 ದಿನಗಳಲ್ಲಿ ಪ್ರಕರಣಗಳು',
         precautions: 'ಮುನ್ನೆಚ್ಚರಿಕೆಗಳು',
+        medicationSuggester: 'ಔಷಧಿ ಸೂಚಕ',
+        healthReminders: 'ಆರೋಗ್ಯ ಜ್ಞಾಪನೆಗಳು',
+        reminders: 'ಜ್ಞಾಪನೆಗಳು',
+        medicineChecker: 'ಔಷಧಿ ಪರೀಕ್ಷಕ',
+        waterQuality: 'ನೀರಿನ ಗುಣಮಟ್ಟ',
+        aiChat: 'AI ಚಾಟ್',
+        emergencyContacts: 'ತುರ್ತು ಸಂಪರ್ಕಗಳು',
     };
      translations.ml = {
-        ...translations.ml,
         dashboard: 'ഡാഷ്ബോർഡ്',
         symptomChecker: 'ലക്ഷണ പരിശോധകൻ',
         reports: 'പ്രാദേശിക റിപ്പോർട്ടുകൾ',
@@ -175,10 +203,18 @@ const generateTranslations = () => {
         logout: 'ലോഗ് ഔട്ട്',
         welcome: 'സ്വാഗതം',
         checkSymptomsPrompt: 'സുഖമില്ലേ? നിങ്ങളുടെ ലക്ഷണങ്ങൾ ഇപ്പോൾ പരിശോധിക്കുക.',
+        getStarted: 'തുടങ്ങുക',
+        casesLast30Days: 'കഴിഞ്ഞ 30 ദിവസത്തെ കേസുകൾ',
         precautions: 'മുൻകരുതലുകൾ',
+        medicationSuggester: 'മരുന്ന് നിർദ്ദേശകൻ',
+        healthReminders: 'ആരോഗ്യ ഓർമ്മപ്പെടുത്തലുകൾ',
+        reminders: 'ഓർമ്മപ്പെടുത്തലുകൾ',
+        medicineChecker: 'മരുന്ന് പരിശോധകൻ',
+        waterQuality: 'വെള്ളത്തിന്റെ ഗുണനിലവാരം',
+        aiChat: 'AI ചാറ്റ്',
+        emergencyContacts: 'അടിയന്തര കോൺടാക്റ്റുകൾ',
     };
     translations.mr = {
-        ...translations.mr,
         dashboard: 'डॅशबोर्ड',
         symptomChecker: 'लक्षण तपासक',
         reports: 'स्थानिक अहवाल',
@@ -187,10 +223,18 @@ const generateTranslations = () => {
         logout: 'लॉग आउट',
         welcome: 'स्वागत आहे',
         checkSymptomsPrompt: 'बरे वाटत नाहीये? आता तुमची लक्षणे तपासा.',
+        getStarted: 'सुरु',
+        casesLast30Days: 'गेल्या 30 दिवसांतील प्रकरणे',
         precautions: 'काळजी',
+        medicationSuggester: 'औषध సూచక',
+        healthReminders: 'आरोग्य स्मरणपत्रे',
+        reminders: 'स्मरणपत्रे',
+        medicineChecker: 'औषध तपासक',
+        waterQuality: 'पाण्याची गुणवत्ता',
+        aiChat: 'AI चॅट',
+        emergencyContacts: 'आपत्कालीन संपर्क',
     };
      translations.pa = {
-        ...translations.pa,
         dashboard: 'ਡੈਸ਼ਬੋਰਡ',
         symptomChecker: 'ਲੱਛਣ ਜਾਂਚਕਰਤਾ',
         reports: 'ਸਥਾਨਕ ਰਿਪੋਰਟਾਂ',
@@ -199,10 +243,18 @@ const generateTranslations = () => {
         logout: 'ਲਾਗ ਆਉਟ',
         welcome: 'ਜੀ ਆਇਆਂ ਨੂੰ',
         checkSymptomsPrompt: 'ਬਿਮਾਰ ਮਹਿਸੂਸ ਕਰ ਰਹੇ ਹੋ? ਹੁਣੇ ਆਪਣੇ ਲੱਛਣਾਂ ਦੀ ਜਾਂਚ ਕਰੋ।',
+        getStarted: 'ਸ਼ੁਰੂ ਕਰੋ',
+        casesLast30Days: 'ਪਿਛਲੇ 30 ਦਿਨਾਂ ਵਿੱਚ ਕੇਸ',
         precautions: 'ਸਾਵਧਾਨੀਆਂ',
+        medicationSuggester: 'ਦਵਾਈ ਸੁਝਾਉਣ ਵਾਲਾ',
+        healthReminders: 'ਸਿਹਤ ਰੀਮਾਈਂਡਰ',
+        reminders: 'ਰੀਮਾਈਂਡਰ',
+        medicineChecker: 'ਦਵਾਈ ਜਾਂਚਕਰਤਾ',
+        waterQuality: 'ਪਾਣੀ ਦੀ ਗੁਣਵੱਤਾ',
+        aiChat: 'ਏਆਈ ਚੈਟ',
+        emergencyContacts: 'ਐਮਰਜੈਂਸੀ ਸੰਪਰਕ',
     };
     translations.ur = {
-        ...translations.ur,
         dashboard: 'ڈیش بورڈ',
         symptomChecker: 'علامت چیکر',
         reports: 'مقامی رپورٹس',
@@ -211,7 +263,16 @@ const generateTranslations = () => {
         logout: 'لاگ آوٹ',
         welcome: 'خوش آمدید',
         checkSymptomsPrompt: 'بیمار محسوس کر رہے ہیں؟ اب اپنی علامات چیک کریں۔',
+        getStarted: 'شروع کریں',
+        casesLast30Days: 'گزشتہ 30 دنوں میں کیسز',
         precautions: 'احتیاطی تدابیر',
+        medicationSuggester: 'دوا تجویز کرنے والا',
+        healthReminders: 'صحت کی یاد دہانیاں',
+        reminders: 'یاد دہانیاں',
+        medicineChecker: 'دوا چیکر',
+        waterQuality: 'پانی کا معیار',
+        aiChat: 'اے آئی چیٹ',
+        emergencyContacts: 'ہنگامی رابطے',
     };
 
 

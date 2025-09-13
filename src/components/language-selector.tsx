@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -21,12 +22,18 @@ export default function LanguageSelector() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        // If user is logged in, redirect to the dashboard
-        router.push('/dashboard');
+      const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+      const userProfile = user ? allProfiles[user.email!] : null;
+
+      if (user && userProfile) {
+        if (userProfile.isHealthWorker) {
+          router.push('/dashboard'); // Health workers also go to main dashboard for now
+        } else {
+          router.push('/dashboard');
+        }
       } else if (language) {
-        // If language is set but user is not logged in, go to auth
-        router.push('/auth');
+        // If language is set but user is not logged in, go to welcome page
+        router.push('/');
       } else {
         // If no language and no user, stay on language selection
         setLoading(false);
@@ -40,7 +47,7 @@ export default function LanguageSelector() {
 
   const handleLanguageSelect = (langCode: string) => {
     setLanguage(langCode);
-    router.push('/auth');
+    router.push('/');
   };
   
   if (loading) {

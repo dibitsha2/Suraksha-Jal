@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -58,6 +59,7 @@ export default function SymptomCheckerPage() {
   });
 
   const handleStartRecording = async () => {
+    form.setValue('symptoms', '');
     setIsRecording(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -94,12 +96,12 @@ export default function SymptomCheckerPage() {
             setLoading(false);
           }
         };
+         // Stop media tracks after stopping recording
+        if (mediaRecorderRef.current && mediaRecorderRef.current.stream) {
+            mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+        }
       };
       mediaRecorderRef.current.stop();
-      // Stop media tracks after stopping recording
-      if (mediaRecorderRef.current.stream) {
-        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-      }
       setIsRecording(false);
     }
   };
@@ -372,5 +374,7 @@ export default function SymptomCheckerPage() {
     </div>
   );
 }
+
+    
 
     

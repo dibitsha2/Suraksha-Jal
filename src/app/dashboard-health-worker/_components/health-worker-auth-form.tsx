@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -35,7 +37,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
 
@@ -59,23 +60,11 @@ type HealthWorkerRegisterValues = z.infer<typeof healthWorkerRegisterSchema>;
 
 
 // Main Component
-export default function HealthWorkerAuthForm() {
-  const [activeTab, setActiveTab] = useState('login');
-  
-  return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="login">Login</TabsTrigger>
-        <TabsTrigger value="register">Register</TabsTrigger>
-      </TabsList>
-      <TabsContent value="login">
-        <LoginForm />
-      </TabsContent>
-      <TabsContent value="register">
-        <HealthWorkerRegisterForm />
-      </TabsContent>
-    </Tabs>
-  );
+export default function HealthWorkerAuthForm({ initialTab = 'login' }: { initialTab?: 'login' | 'register' }) {
+  if (initialTab === 'login') {
+    return <LoginForm />;
+  }
+  return <HealthWorkerRegisterForm />;
 }
 
 // Login Form Component
@@ -200,6 +189,12 @@ function LoginForm() {
             </Button>
           </form>
         </Form>
+         <p className="mt-4 text-center text-sm text-muted-foreground">
+            Not a health worker?{' '}
+            <Link href="/dashboard-health-worker/register" className="underline">
+                Register here
+            </Link>
+        </p>
       </CardContent>
     </Card>
   );
@@ -407,6 +402,12 @@ function HealthWorkerRegisterForm() {
                         </Button>
                     </form>
                 </Form>
+                 <p className="mt-4 text-center text-sm text-muted-foreground">
+                    Already have a health worker account?{' '}
+                    <Link href="/dashboard-health-worker/login" className="underline">
+                        Login here
+                    </Link>
+                </p>
             </CardContent>
         </Card>
     );

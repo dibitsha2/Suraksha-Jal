@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -15,9 +16,9 @@ export default function WelcomePage() {
     // Set a default language if none is selected, before moving to auth
     setLanguage('en'); 
     if (portal === 'user') {
-      router.push('/auth');
+      router.push('/auth/login');
     } else {
-      router.push('/dashboard-health-worker');
+      router.push('/dashboard-health-worker/login');
     }
   };
 

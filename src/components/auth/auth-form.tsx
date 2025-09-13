@@ -1,19 +1,15 @@
 
-
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import {
-  FileCheck2,
-  FileX2,
   Loader2,
   Mail,
   MapPin,
-  Camera,
   User,
   Lock,
 } from 'lucide-react';
@@ -37,9 +33,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
+import Link from 'next/link';
 
 // Schemas
 const loginSchema = z.object({
@@ -60,23 +55,11 @@ type UserRegisterValues = z.infer<typeof userRegisterSchema>;
 
 
 // Main Component
-export default function AuthForm() {
-  const [activeTab, setActiveTab] = useState('login');
-  
-  return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="login">Login</TabsTrigger>
-        <TabsTrigger value="register">Register</TabsTrigger>
-      </TabsList>
-      <TabsContent value="login">
-        <LoginForm />
-      </TabsContent>
-      <TabsContent value="register">
-        <UserRegisterForm />
-      </TabsContent>
-    </Tabs>
-  );
+export default function AuthForm({ initialTab = 'login' }: { initialTab?: 'login' | 'register' }) {
+  if (initialTab === 'login') {
+    return <LoginForm />;
+  }
+  return <UserRegisterForm />;
 }
 
 // Login Form Component
@@ -194,6 +177,12 @@ function LoginForm() {
             </Button>
           </form>
         </Form>
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+            Don't have an account?{' '}
+            <Link href="/auth/register" className="underline">
+                Register here
+            </Link>
+        </p>
       </CardContent>
     </Card>
   );
@@ -312,6 +301,12 @@ function UserRegisterForm() {
                         </Button>
                     </form>
                 </Form>
+                <p className="mt-4 text-center text-sm text-muted-foreground">
+                    Already have an account?{' '}
+                    <Link href="/auth/login" className="underline">
+                        Login here
+                    </Link>
+                </p>
             </CardContent>
         </Card>
     );

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Languages } from 'lucide-react';
 
@@ -10,28 +10,47 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SurakshaJalLogo } from '@/components/icons';
 import { languages } from '@/lib/translations';
+import { auth } from '@/lib/firebase';
+import { Loader2 } from 'lucide-react';
 
 
 export default function LanguageSelector() {
   const router = useRouter();
   const { language, setLanguage } = useLanguage();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If language is already set, redirect to dashboard
-    if (language) {
-      router.push('/auth');
-    }
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        // If user is logged in, redirect to dashboard
+        router.push('/dashboard');
+      } else if (language) {
+        // If language is set but user is not logged in, go to auth
+        router.push('/auth');
+      } else {
+        // If no language and no user, stay on language selection
+        setLoading(false);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, [language, router]);
+  
 
   const handleLanguageSelect = (langCode: string) => {
     setLanguage(langCode);
     router.push('/auth');
   };
   
-  // While checking for language, show nothing to avoid flash
-  if (language) {
-      return null;
+  if (loading) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-background">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      );
   }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">

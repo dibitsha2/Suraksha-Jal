@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Pill, Home } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill, Home, ShieldAlert } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,7 @@ import {
   type MedicationSuggesterOutput,
 } from '@/ai/flows/medication-suggester';
 import { useLanguage } from '@/hooks/use-language';
+import { Badge } from '@/components/ui/badge';
 
 const symptomSchema = z.object({
   symptoms: z.string().min(10, 'Please describe your symptoms in more detail.'),
@@ -165,11 +166,28 @@ export default function MedicationSuggesterPage() {
                         <span>Suggested Over-the-Counter Medicines</span>
                     </h3>
                     <div className="p-4 border rounded-md">
-                         <ul className="space-y-3">
+                         <ul className="space-y-4">
                             {result.suggestedMedicines.map((medicine, index) => (
-                                <li key={index} className="flex items-start">
-                                    <Pill className="h-5 w-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
-                                    <span className="text-sm text-muted-foreground">{medicine}</span>
+                                <li key={index} className="flex flex-col items-start gap-2">
+                                    <div className="flex items-center gap-3">
+                                        <Pill className="h-5 w-5 text-primary flex-shrink-0" />
+                                        <span className="font-medium">{medicine.name}</span>
+                                    </div>
+                                    {medicine.contraindications.length > 0 && (
+                                        <div className="pl-8">
+                                            <h4 className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 mb-1.5">
+                                                <ShieldAlert className="h-3.5 w-3.5" />
+                                                Use with caution if you have:
+                                            </h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {medicine.contraindications.map((ci, ciIndex) => (
+                                                    <Badge key={ciIndex} variant="outline" className="text-xs font-normal border-amber-500 text-amber-700 dark:text-amber-400">
+                                                        {ci}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </li>
                             ))}
                         </ul>

@@ -18,8 +18,13 @@ const MedicationSuggesterInputSchema = z.object({
 });
 export type MedicationSuggesterInput = z.infer<typeof MedicationSuggesterInputSchema>;
 
+const SuggestedMedicineSchema = z.object({
+  name: z.string().describe('The name of the suggested over-the-counter medicine.'),
+  contraindications: z.array(z.string()).describe('A list of diseases or conditions where this medicine should be used with caution or avoided.'),
+});
+
 const MedicationSuggesterOutputSchema = z.object({
-  suggestedMedicines: z.array(z.string()).describe('A list of common over-the-counter medicines that might help alleviate symptoms.'),
+  suggestedMedicines: z.array(SuggestedMedicineSchema).describe('A list of common over-the-counter medicines that might help alleviate symptoms, including potential contraindications.'),
   homeRemedies: z.array(z.string()).describe('A list of home remedies that may help with the symptoms.'),
 });
 export type MedicationSuggesterOutput = z.infer<typeof MedicationSuggesterOutputSchema>;
@@ -33,6 +38,8 @@ const medicationSuggesterPrompt = ai.definePrompt({
   input: {schema: MedicationSuggesterInputSchema},
   output: {schema: MedicationSuggesterOutputSchema},
   prompt: `You are a medical assistant. Based on the symptoms and age (if provided) by the user, suggest some common over-the-counter medicines and home remedies that might help. Tailor your suggestions to be appropriate for the user's age.
+
+For each medicine you suggest, you MUST also list any common diseases or conditions that would be a contraindication for its use (e.g., for Ibuprofen, mention stomach ulcers or kidney disease). If there are no common contraindications, provide an empty array.
 
 You must always include a strong and clear disclaimer that the user should consult a doctor before taking any new medication or trying any remedies, as this is not professional medical advice.
 

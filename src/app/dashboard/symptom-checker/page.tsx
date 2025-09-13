@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -51,15 +51,47 @@ export default function SymptomCheckerPage() {
   const audioChunksRef = useRef<Blob[]>([]);
   const { toast } = useToast();
   const [isSpeaking, setIsSpeaking] = useState<Record<string, boolean>>({});
+  
+  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const dataArrayRef = useRef<Uint8Array | null>(null);
+  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
 
   const form = useForm<SymptomValues>({
     resolver: zodResolver(symptomSchema),
     defaultValues: { symptoms: '' },
   });
+  
+  const stopRecordingAndCleanup = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+    }
+    if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+    }
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
+    }
+    if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = null;
+    }
+    setIsRecording(false);
+  }
 
   const handleStartRecording = async () => {
+    if (isRecording) {
+      handleStopRecording();
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
       
@@ -69,6 +101,10 @@ export default function SymptomCheckerPage() {
       
       mediaRecorderRef.current.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        if (audioBlob.size === 0) {
+            console.log("Empty recording, not processing.");
+            return;
+        }
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
         reader.onloadend = async () => {
@@ -76,8 +112,15 @@ export default function SymptomCheckerPage() {
           try {
             setLoading(true);
             const { transcription } = await speechToText({ audioDataUri: base64Audio });
-            form.setValue('symptoms', transcription);
+            const currentSymptoms = form.getValues('symptoms');
+            form.setValue('symptoms', currentSymptoms ? `${currentSymptoms} ${transcription}` : transcription);
             setLoading(false);
+            
+            // Automatically submit the form after successful transcription
+            if(transcription) {
+              form.handleSubmit(onSubmit)();
+            }
+
           } catch (e) {
             console.error(e);
             toast({ variant: 'destructive', title: 'Transcription Error', description: 'Could not transcribe audio. Please try again or type your symptoms.'});
@@ -88,17 +131,56 @@ export default function SymptomCheckerPage() {
       
       mediaRecorderRef.current.start();
       setIsRecording(true);
+
+      // Silence detection
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
+      
+      sourceRef.current.connect(analyserRef.current);
+      analyserRef.current.fftSize = 2048;
+      const bufferLength = analyserRef.current.frequencyBinCount;
+      dataArrayRef.current = new Uint8Array(bufferLength);
+
+      const checkSilence = () => {
+        if (!analyserRef.current || !dataArrayRef.current) return;
+
+        analyserRef.current.getByteTimeDomainData(dataArrayRef.current);
+        let sum = 0;
+        for(let i = 0; i < dataArrayRef.current.length; i++) {
+          sum += Math.abs(dataArrayRef.current[i] - 128);
+        }
+        const avg = sum / dataArrayRef.current.length;
+
+        if (avg < 2) { // Threshold for silence
+          if (!silenceTimerRef.current) {
+            silenceTimerRef.current = setTimeout(() => {
+              handleStopRecording();
+            }, 2000); // 2 seconds of silence
+          }
+        } else {
+          if (silenceTimerRef.current) {
+            clearTimeout(silenceTimerRef.current);
+            silenceTimerRef.current = null;
+          }
+        }
+
+        if (mediaRecorderRef.current?.state === 'recording') {
+            requestAnimationFrame(checkSilence);
+        }
+      };
+      requestAnimationFrame(checkSilence);
+
+
     } catch (err) {
       console.error("Error accessing microphone:", err);
       toast({ variant: 'destructive', title: 'Microphone Error', description: 'Could not access the microphone. Please check your browser permissions.'});
+      setIsRecording(false);
     }
   };
 
   const handleStopRecording = () => {
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
+    stopRecordingAndCleanup();
   };
 
   const handlePlayback = async (id: string, text: string) => {
@@ -147,6 +229,13 @@ export default function SymptomCheckerPage() {
         setDetailedInfo(prev => ({ ...prev, [diseaseName]: { loading: false, data: { diseaseInfo: 'Could not fetch detailed information.'}}}));
     }
   }
+  
+    useEffect(() => {
+    // Cleanup on unmount
+    return () => {
+      stopRecordingAndCleanup();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -175,15 +264,15 @@ export default function SymptomCheckerPage() {
                           {...field}
                         />
                         <div className="absolute top-3 right-3">
-                          {!isRecording ? (
-                              <Button type="button" variant="ghost" size="icon" onClick={handleStartRecording} aria-label="Start recording">
-                                  <Mic className="h-5 w-5" />
-                              </Button>
-                          ) : (
-                              <Button type="button" variant="destructive" size="icon" onClick={handleStopRecording} aria-label="Stop recording">
-                                  <Square className="h-5 w-5" />
-                              </Button>
-                          )}
+                          <Button 
+                            type="button" 
+                            variant={isRecording ? 'destructive' : 'ghost'} 
+                            size="icon" 
+                            onClick={handleStartRecording} 
+                            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+                          >
+                            {isRecording ? <Square className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                          </Button>
                         </div>
                       </div>
                     </FormControl>
@@ -191,7 +280,7 @@ export default function SymptomCheckerPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading || isRecording}>
                 {loading || isRecording ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

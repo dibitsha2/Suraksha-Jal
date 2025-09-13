@@ -20,7 +20,6 @@ import {
   Droplet,
   Globe,
   Siren,
-  Languages,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -73,7 +72,6 @@ function Sidebar() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/translator', icon: Languages, label: t('translator') },
     { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
   ];
 
@@ -123,7 +121,6 @@ function Header() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/translator', icon: Languages, label: t('translator') },
     { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
   ];
 

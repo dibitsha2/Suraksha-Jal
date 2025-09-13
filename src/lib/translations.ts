@@ -47,7 +47,6 @@ const generateTranslations = () => {
         waterQuality: 'Water Quality',
         aiChat: 'AI Chat',
         emergencyContacts: 'Emergency Contacts',
-        translator: 'Translator',
     };
 
     for (const lang of languages) {
@@ -75,7 +74,6 @@ const generateTranslations = () => {
         waterQuality: 'पानी की गुणवत्ता',
         aiChat: 'एआई चैट',
         emergencyContacts: 'आपातकालीन संपर्क',
-        translator: 'अनुवादक',
     };
     translations.bn = {
         ...translations.bn,
@@ -97,7 +95,6 @@ const generateTranslations = () => {
         waterQuality: 'জলর গুণগত মান',
         aiChat: 'এআই চ্যাট',
         emergencyContacts: 'জরুরী যোগাযোগ',
-        translator: 'অনুবাদক',
     };
     translations.as = {
         ...translations.as,
@@ -119,7 +116,6 @@ const generateTranslations = () => {
         waterQuality: 'পানীৰ গুণগত মান',
         aiChat: 'এআই চেট',
         emergencyContacts: 'জৰুৰীকালীন যোগাযোগ',
-        translator: 'অনুবাদক',
     };
     translations.gu = {
         ...translations.gu,
@@ -132,7 +128,6 @@ const generateTranslations = () => {
         welcome: 'સ્વાગત છે',
         checkSymptomsPrompt: 'અસ્વસ્થતા અનુભવો છો? હવે તમારા લક્ષણો તપાસો.',
         precautions: 'સાવચેતીઓ',
-        translator: 'અનુવાદક',
     };
      translations.ta = {
         ...translations.ta,
@@ -145,7 +140,6 @@ const generateTranslations = () => {
         welcome: 'வரவேற்கிறோம்',
         checkSymptomsPrompt: 'உடல்நிலை சரியில்லையா? உங்கள் அறிகுறிகளை இப்போது சரிபார்க்கவும்.',
         precautions: 'முன்னெச்சரிக்கைகள்',
-        translator: 'மொழிபெயர்ப்பாளர்',
     };
     translations.te = {
         ...translations.te,
@@ -158,7 +152,6 @@ const generateTranslations = () => {
         welcome: 'స్వాగతం',
         checkSymptomsPrompt: 'అనారోగ్యంగా అనిపిస్తుందా? మీ లక్షణాలను ఇప్పుడు తనిఖీ చేయండి.',
         precautions: 'జాగ్రత్తలు',
-        translator: 'అనువాదకుడు',
     };
     translations.kn = {
         ...translations.kn,
@@ -171,7 +164,6 @@ const generateTranslations = () => {
         welcome: 'ಸ್ವಾಗತ',
         checkSymptomsPrompt: 'ಅನಾರೋಗ್ಯ ಅನಿಸುತ್ತಿದೆಯೇ? ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ಈಗಲೇ ಪರಿಶೀಲಿಸಿ.',
         precautions: 'ಮುನ್ನೆಚ್ಚರಿಕೆಗಳು',
-        translator: 'ಅನುವಾದಕ',
     };
      translations.ml = {
         ...translations.ml,
@@ -184,7 +176,6 @@ const generateTranslations = () => {
         welcome: 'സ്വാഗതം',
         checkSymptomsPrompt: 'സുഖമില്ലേ? നിങ്ങളുടെ ലക്ഷണങ്ങൾ ഇപ്പോൾ പരിശോധിക്കുക.',
         precautions: 'മുൻകരുതലുകൾ',
-        translator: 'വിവർത്തകൻ',
     };
     translations.mr = {
         ...translations.mr,
@@ -197,7 +188,6 @@ const generateTranslations = () => {
         welcome: 'स्वागत आहे',
         checkSymptomsPrompt: 'बरे वाटत नाहीये? आता तुमची लक्षणे तपासा.',
         precautions: 'काळजी',
-        translator: 'भाषांतरकार',
     };
      translations.pa = {
         ...translations.pa,
@@ -210,7 +200,6 @@ const generateTranslations = () => {
         welcome: 'ਜੀ ਆਇਆਂ ਨੂੰ',
         checkSymptomsPrompt: 'ਬਿਮਾਰ ਮਹਿਸੂਸ ਕਰ ਰਹੇ ਹੋ? ਹੁਣੇ ਆਪਣੇ ਲੱਛਣਾਂ ਦੀ ਜਾਂਚ ਕਰੋ।',
         precautions: 'ਸਾਵਧਾਨੀਆਂ',
-        translator: 'ਅਨੁਵਾਦਕ',
     };
     translations.ur = {
         ...translations.ur,
@@ -223,7 +212,6 @@ const generateTranslations = () => {
         welcome: 'خوش آمدید',
         checkSymptomsPrompt: 'بیمار محسوس کر رہے ہیں؟ اب اپنی علامات چیک کریں۔',
         precautions: 'احتیاطی تدابیر',
-        translator: 'مترجم',
     };
 
 

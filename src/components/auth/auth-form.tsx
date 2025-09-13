@@ -236,9 +236,9 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
             if (isHealthWorker) {
                  toast({
                     title: 'Registration Successful',
-                    description: "Redirecting...",
+                    description: "Please log in with your new account.",
                 });
-                window.location.href = redirectUrl;
+                router.push('/health-worker/login');
             } else {
                 localStorage.setItem('userProfile', JSON.stringify(profile));
                 toast({
@@ -331,6 +331,8 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
         </Card>
     );
 }
+
+    
 
     
 

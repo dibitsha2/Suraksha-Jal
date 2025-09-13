@@ -85,7 +85,7 @@ export default function SymptomCheckerPage() {
           const base64Audio = reader.result as string;
           setLoading(true);
           try {
-            const { transcription } = await speechToText({ audioDataUri: base64Audio });
+            const { transcription } = await speechToText({ audioDataUri: base64Audio, language: effectiveLanguage });
             const currentSymptoms = form.getValues('symptoms');
             form.setValue('symptoms', currentSymptoms ? `${currentSymptoms} ${transcription}` : transcription);
           } catch (e) {

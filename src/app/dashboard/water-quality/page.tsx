@@ -225,7 +225,7 @@ export default function WaterQualityPage() {
                 <VideoIcon className="h-5 w-5 text-primary" />
                 <span>Detection Tutorial</span>
             </CardTitle>
-            <CardDescription>Learn how to detect potential waterborne diseases and contamination.</CardDescription>
+            <CardDescription>Learn how to use pH detection kit</CardDescription>
         </CardHeader>
         <CardContent>
             <VideoDialog
@@ -236,7 +236,7 @@ export default function WaterQualityPage() {
                     </Button>
                 }
                 title="Detection Tutorial"
-                description="A guide to detecting waterborne diseases."
+                description="Learn how to use pH detection kit"
                 videoUrl="https://www.youtube.com/embed/SVMGEyjmDIw"
             />
         </CardContent>

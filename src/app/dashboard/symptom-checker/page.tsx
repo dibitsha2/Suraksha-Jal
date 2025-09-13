@@ -75,6 +75,7 @@ export default function SymptomCheckerPage() {
     }
     if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
+        audioContextRef.current = null;
     }
     if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
@@ -114,11 +115,12 @@ export default function SymptomCheckerPage() {
             const { transcription } = await speechToText({ audioDataUri: base64Audio });
             const currentSymptoms = form.getValues('symptoms');
             form.setValue('symptoms', currentSymptoms ? `${currentSymptoms} ${transcription}` : transcription);
-            setLoading(false);
             
             // Automatically submit the form after successful transcription
             if(transcription) {
-              form.handleSubmit(onSubmit)();
+              await form.handleSubmit(onSubmit)();
+            } else {
+              setLoading(false);
             }
 
           } catch (e) {
@@ -143,7 +145,7 @@ export default function SymptomCheckerPage() {
       dataArrayRef.current = new Uint8Array(bufferLength);
 
       const checkSilence = () => {
-        if (!analyserRef.current || !dataArrayRef.current) return;
+        if (!analyserRef.current || !dataArrayRef.current || !mediaRecorderRef.current || mediaRecorderRef.current.state !== 'recording') return;
 
         analyserRef.current.getByteTimeDomainData(dataArrayRef.current);
         let sum = 0;
@@ -152,11 +154,11 @@ export default function SymptomCheckerPage() {
         }
         const avg = sum / dataArrayRef.current.length;
 
-        if (avg < 2) { // Threshold for silence
+        if (avg < 2.5) { // Threshold for silence
           if (!silenceTimerRef.current) {
             silenceTimerRef.current = setTimeout(() => {
               handleStopRecording();
-            }, 2000); // 2 seconds of silence
+            }, 3000); // 3 seconds of silence
           }
         } else {
           if (silenceTimerRef.current) {
@@ -165,7 +167,7 @@ export default function SymptomCheckerPage() {
           }
         }
 
-        if (mediaRecorderRef.current?.state === 'recording') {
+        if (isRecording) {
             requestAnimationFrame(checkSilence);
         }
       };

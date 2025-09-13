@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -59,7 +58,6 @@ export default function SymptomCheckerPage() {
   });
 
   const handleStartRecording = async () => {
-    form.setValue('symptoms', '');
     setIsRecording(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -374,7 +372,5 @@ export default function SymptomCheckerPage() {
     </div>
   );
 }
-
-    
 
     

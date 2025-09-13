@@ -35,6 +35,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 // Schemas
 const loginSchema = z.object({
@@ -56,10 +57,20 @@ type UserRegisterValues = z.infer<typeof userRegisterSchema>;
 
 // Main Component
 export default function AuthForm({ initialTab = 'login' }: { initialTab?: 'login' | 'register' }) {
-  if (initialTab === 'login') {
-    return <LoginForm />;
-  }
-  return <UserRegisterForm />;
+  return (
+    <Tabs defaultValue={initialTab} className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="login">Login</TabsTrigger>
+        <TabsTrigger value="register">Register</TabsTrigger>
+      </TabsList>
+      <TabsContent value="login">
+        <LoginForm />
+      </TabsContent>
+      <TabsContent value="register">
+        <UserRegisterForm />
+      </TabsContent>
+    </Tabs>
+  );
 }
 
 // Login Form Component
@@ -131,7 +142,7 @@ function LoginForm() {
   };
 
   return (
-    <Card>
+    <Card className="border-t-0 rounded-t-none">
       <CardHeader>
         <CardTitle>Welcome Back</CardTitle>
         <CardDescription>Enter your credentials to access your account.</CardDescription>
@@ -177,12 +188,6 @@ function LoginForm() {
             </Button>
           </form>
         </Form>
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link href="/auth/register" className="underline">
-                Register here
-            </Link>
-        </p>
       </CardContent>
     </Card>
   );
@@ -239,7 +244,7 @@ function UserRegisterForm() {
     };
 
     return (
-        <Card>
+        <Card className="border-t-0 rounded-t-none">
             <CardHeader>
                 <CardTitle>Create an Account</CardTitle>
                 <CardDescription>Join our community to stay informed.</CardDescription>
@@ -301,12 +306,6 @@ function UserRegisterForm() {
                         </Button>
                     </form>
                 </Form>
-                <p className="mt-4 text-center text-sm text-muted-foreground">
-                    Already have an account?{' '}
-                    <Link href="/auth/login" className="underline">
-                        Login here
-                    </Link>
-                </p>
             </CardContent>
         </Card>
     );

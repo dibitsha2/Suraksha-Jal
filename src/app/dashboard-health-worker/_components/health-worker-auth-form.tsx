@@ -18,8 +18,6 @@ import {
 } from 'lucide-react';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import Link from 'next/link';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -39,6 +37,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { verifyHealthWorkerId } from '@/ai/flows/health-worker-id-verification';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Schemas
 const loginSchema = z.object({
@@ -61,10 +60,20 @@ type HealthWorkerRegisterValues = z.infer<typeof healthWorkerRegisterSchema>;
 
 // Main Component
 export default function HealthWorkerAuthForm({ initialTab = 'login' }: { initialTab?: 'login' | 'register' }) {
-  if (initialTab === 'login') {
-    return <LoginForm />;
-  }
-  return <HealthWorkerRegisterForm />;
+  return (
+    <Tabs defaultValue={initialTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="register">Register</TabsTrigger>
+        </TabsList>
+        <TabsContent value="login">
+            <LoginForm />
+        </TabsContent>
+        <TabsContent value="register">
+            <HealthWorkerRegisterForm />
+        </TabsContent>
+    </Tabs>
+  );
 }
 
 // Login Form Component
@@ -94,6 +103,7 @@ function LoginForm() {
                 title: 'Access Denied',
                 description: 'This email is not registered as a health worker.',
             });
+            setLoading(false);
             return;
         }
 
@@ -143,7 +153,7 @@ function LoginForm() {
   };
 
   return (
-    <Card>
+    <Card className="border-t-0 rounded-t-none">
       <CardHeader>
         <CardTitle>Health Worker Login</CardTitle>
         <CardDescription>Enter your credentials to access the health worker portal.</CardDescription>
@@ -189,12 +199,6 @@ function LoginForm() {
             </Button>
           </form>
         </Form>
-         <p className="mt-4 text-center text-sm text-muted-foreground">
-            Not a health worker?{' '}
-            <Link href="/dashboard-health-worker/register" className="underline">
-                Register here
-            </Link>
-        </p>
       </CardContent>
     </Card>
   );
@@ -270,11 +274,15 @@ function HealthWorkerRegisterForm() {
                         setVerificationReason(result.reason || 'The captured face could not be verified.');
                         form.setValue('faceId', ''); // Clear invalid data
                     }
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Face verification error:", error);
+                    let reason = 'An error occurred during verification. Please try again.';
+                    if (error instanceof Error && error.message.includes('503')) {
+                        reason = 'The verification service is currently overloaded. Please wait a moment and try again.';
+                    }
                     setIdStatus('invalid');
-                    setVerificationReason('An error occurred during verification. Please try again.');
-                    form.setValue('faceId', ''); // Clear invalid data
+                    setVerificationReason(reason);
+                    form.setValue('faceId', '');
                 }
             }
         }
@@ -290,6 +298,7 @@ function HealthWorkerRegisterForm() {
             return;
         }
 
+        form.formState.isSubmitting = true;
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
             await updateProfile(userCredential.user, { displayName: data.username });
@@ -316,16 +325,22 @@ function HealthWorkerRegisterForm() {
             router.push('/dashboard');
         } catch (error: any) {
              console.error('Health worker registration error:', error);
+             let description = 'An unexpected error occurred. Please try again.';
+             if (error.code === 'auth/email-already-in-use') {
+                 description = 'This email is already registered as a health worker. Please try logging in.';
+             }
              toast({
                 variant: 'destructive',
                 title: 'Registration Failed',
-                description: 'An unexpected error occurred. Please try again.',
+                description,
             });
+        } finally {
+            form.formState.isSubmitting = false;
         }
     };
 
     return (
-        <Card>
+        <Card className="border-t-0 rounded-t-none">
             <CardHeader>
                 <CardTitle>Health Worker Registration</CardTitle>
                 <CardDescription>Verify your face to get started.</CardDescription>
@@ -402,13 +417,9 @@ function HealthWorkerRegisterForm() {
                         </Button>
                     </form>
                 </Form>
-                 <p className="mt-4 text-center text-sm text-muted-foreground">
-                    Already have a health worker account?{' '}
-                    <Link href="/dashboard-health-worker/login" className="underline">
-                        Login here
-                    </Link>
-                </p>
             </CardContent>
         </Card>
     );
 }
+
+    

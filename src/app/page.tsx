@@ -2,23 +2,18 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ArrowRight, User, Stethoscope } from 'lucide-react';
+import { User, Stethoscope } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { SurakshaJalLogo } from '@/components/icons';
-import { useLanguage } from '@/hooks/use-language';
 
 export default function WelcomePage() {
   const router = useRouter();
-  const { setLanguage } = useLanguage();
 
   const handlePortalSelection = (portal: 'user' | 'health-worker') => {
-    // Set a default language if none is selected, before moving to auth
-    setLanguage('en'); 
     if (portal === 'user') {
-      router.push('/auth/login');
+      router.push('/auth');
     } else {
-      router.push('/dashboard-health-worker/login');
+      router.push('/dashboard-health-worker');
     }
   };
 

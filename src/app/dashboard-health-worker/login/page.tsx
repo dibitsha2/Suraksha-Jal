@@ -6,7 +6,6 @@ import HealthWorkerAuthForm from '../_components/health-worker-auth-form';
 
 export default function HealthWorkerLoginPage() {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
           <SurakshaJalLogo className="w-20 h-20 text-primary" />
@@ -17,6 +16,5 @@ export default function HealthWorkerLoginPage() {
         </div>
         <HealthWorkerAuthForm initialTab="login" />
       </div>
-    </div>
   );
 }

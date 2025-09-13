@@ -22,32 +22,22 @@ export default function LanguageSelector() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-      const userProfile = user ? allProfiles[user.email!] : null;
-
-      if (user && userProfile) {
-        if (userProfile.isHealthWorker) {
-          router.push('/dashboard'); // Health workers also go to main dashboard for now
-        } else {
+      if (user) {
           router.push('/dashboard');
-        }
       } else if (language) {
-        // If language is set but user is not logged in, go to welcome page
-        router.push('/');
+        router.push('/auth');
       } else {
-        // If no language and no user, stay on language selection
         setLoading(false);
       }
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [language, router]);
   
 
   const handleLanguageSelect = (langCode: string) => {
     setLanguage(langCode);
-    router.push('/');
+    router.push('/auth');
   };
   
   if (loading) {
@@ -89,9 +79,3 @@ export default function LanguageSelector() {
     </div>
   );
 }
-
-    
-
-    
-
-    

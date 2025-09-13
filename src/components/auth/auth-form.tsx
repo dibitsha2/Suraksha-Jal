@@ -34,7 +34,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 // Schemas
@@ -90,7 +89,6 @@ function LoginForm() {
         const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
         const user = userCredential.user;
         
-        // Retrieve all profiles from local storage
         const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
         const existingProfile = allProfiles[user.email!];
 
@@ -101,9 +99,7 @@ function LoginForm() {
             photoURL: existingProfile?.photoURL || user.photoURL,
         };
 
-        // Save the current user's profile to a separate key for easy access
         localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-        // Update the collection of all profiles
         allProfiles[user.email!] = updatedProfile;
         localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
 
@@ -211,12 +207,10 @@ function UserRegisterForm() {
                 name: data.username,
                 email: data.email,
                 address: data.address,
-                isHealthWorker: false,
+                isHealthWorker: false, // Ensure this is always false for general registration
             };
             
-            // Set current user profile
             localStorage.setItem('userProfile', JSON.stringify(profile));
-            // Add to all profiles object, keyed by email
             const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
             allProfiles[data.email] = profile;
             localStorage.setItem('userProfiles', JSON.stringify(allProfiles));

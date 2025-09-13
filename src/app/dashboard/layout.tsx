@@ -222,7 +222,7 @@ function UserMenu() {
         try {
             await auth.signOut();
             localStorage.removeItem('userProfile');
-            router.push('/');
+            router.push('/auth/login');
             toast({
                 title: 'Logged Out',
                 description: 'You have been successfully logged out.',

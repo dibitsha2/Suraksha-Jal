@@ -175,7 +175,7 @@ function UserMenu() {
         try {
             await auth.signOut();
             localStorage.removeItem('userProfile');
-            router.push('/');
+            router.push('/health-worker/login');
             toast({
                 title: 'Logged Out',
                 description: 'You have been successfully logged out.',

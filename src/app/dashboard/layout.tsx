@@ -21,6 +21,7 @@ import {
   Droplet,
   Globe,
   Siren,
+  FilePlus,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -72,6 +73,7 @@ function Sidebar() {
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
+    { href: '/dashboard/submit-report', icon: FilePlus, label: 'Submit Report' },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
     { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
   ];
@@ -121,6 +123,7 @@ function Header() {
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
+    { href: '/dashboard/submit-report', icon: FilePlus, label: 'Submit Report' },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
     { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
   ];
@@ -274,3 +277,5 @@ function UserMenu() {
         </DropdownMenu>
     );
 }
+
+    

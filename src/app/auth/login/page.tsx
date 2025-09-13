@@ -1,7 +1,11 @@
 
 'use client';
+import Link from 'next/link';
 import AuthForm from '@/components/auth/auth-form';
 import { SurakshaJalLogo } from '@/components/icons';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { FilePlus } from 'lucide-react';
 
 export default function LoginPage() {
   return (
@@ -15,7 +19,21 @@ export default function LoginPage() {
           </p>
         </div>
         <AuthForm initialTab="login" userType="user" />
+
+        <Separator className="my-6" />
+
+        <div className="text-center">
+            <p className="mb-4 text-muted-foreground">Are you a health worker or want to report an outbreak?</p>
+            <Button asChild variant="outline">
+                <Link href="/dashboard/submit-report">
+                    <FilePlus className="mr-2 h-4 w-4" />
+                    Submit a Report
+                </Link>
+            </Button>
+        </div>
       </div>
     </div>
   );
 }
+
+    

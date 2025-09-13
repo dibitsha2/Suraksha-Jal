@@ -32,13 +32,14 @@ const generateMockReports = () => {
     ];
 }
 
-const mockReports = generateMockReports();
+const initialMockReports = generateMockReports();
 
 
 export default function LocalReportsPage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredReports, setFilteredReports] = useState(mockReports);
+  const [allReports, setAllReports] = useState(initialMockReports);
+  const [filteredReports, setFilteredReports] = useState(initialMockReports);
   const [userLocation, setUserLocation] = useState<string | null>(null);
 
   useEffect(() => {
@@ -48,15 +49,6 @@ export default function LocalReportsPage() {
         const profile = JSON.parse(savedProfile);
         if (profile.address) {
             setUserLocation(profile.address);
-            // Attempt to extract a city/state from the address to pre-filter
-            const locationParts = profile.address.split(',');
-            const primaryLocation = locationParts[0]?.trim().toLowerCase();
-            if (primaryLocation) {
-                 const userLocationReports = mockReports.filter(report => 
-                    report.location.toLowerCase().includes(primaryLocation)
-                );
-                setFilteredReports(userLocationReports);
-            }
         }
       }
     } catch (error) {
@@ -64,18 +56,42 @@ export default function LocalReportsPage() {
     }
   }, []);
 
-  const handleSearch = () => {
-    if (!searchQuery) {
-        setFilteredReports(mockReports);
-        return;
+  useEffect(() => {
+    // Combine initial reports with any from local storage
+    const storedReports = JSON.parse(localStorage.getItem('mockReports') || '[]');
+    const combined = [...storedReports, ...initialMockReports];
+    // Simple deduplication
+    const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
+        .map(id => {
+            return combined.find(a => a.id === id)
+        })
+    
+    setAllReports(uniqueReports as any);
+  }, []);
+
+  useEffect(() => {
+    // Filter logic
+    let reportsToFilter = [...allReports];
+    if (searchQuery) {
+        const lowercasedQuery = searchQuery.toLowerCase();
+        reportsToFilter = allReports.filter(report => 
+            report.disease.toLowerCase().includes(lowercasedQuery) ||
+            report.location.toLowerCase().includes(lowercasedQuery)
+        );
+    } else if (userLocation) {
+        const primaryLocation = userLocation.split(',')[0]?.trim().toLowerCase();
+        if (primaryLocation) {
+            const userLocationReports = allReports.filter(report => 
+                report.location.toLowerCase().includes(primaryLocation)
+            );
+            if(userLocationReports.length > 0) {
+                reportsToFilter = userLocationReports;
+            }
+        }
     }
-    const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = mockReports.filter(report => 
-      report.disease.toLowerCase().includes(lowercasedQuery) ||
-      report.location.toLowerCase().includes(lowercasedQuery)
-    );
-    setFilteredReports(filtered);
-  };
+    setFilteredReports(reportsToFilter);
+  }, [searchQuery, allReports, userLocation]);
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -91,7 +107,7 @@ export default function LocalReportsPage() {
                 <span>Local Area Health Reports</span>
               </CardTitle>
               <CardDescription>
-                View recent waterborne disease reports submitted by verified health workers.
+                View recent waterborne disease reports submitted by health workers and the community.
               </CardDescription>
             </div>
             <div className="flex w-full sm:w-auto gap-2">
@@ -102,18 +118,17 @@ export default function LocalReportsPage() {
                         className="pl-10"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     />
                 </div>
-                <Button onClick={handleSearch}>Search</Button>
+                <Button onClick={() => setSearchQuery('')}>Clear</Button>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          {userLocation && (
+          {userLocation && !searchQuery && (
               <div className="mb-4 p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg text-sm text-blue-800 dark:text-blue-300 flex items-center gap-3">
                   <Info className="h-5 w-5" />
-                  <p>Showing reports initially filtered for your location: <strong>{userLocation.split(',')[0]}</strong>. Clear the search to see all reports.</p>
+                  <p>Showing reports initially filtered for your location: <strong>{userLocation.split(',')[0]}</strong>. Clear the search or use the filter to see all reports.</p>
               </div>
           )}
           <div className="border rounded-lg">
@@ -159,7 +174,7 @@ export default function LocalReportsPage() {
             </Table>
           </div>
            <p className="text-xs text-muted-foreground mt-4">
-                Disclaimer: This data is for informational purposes only and is based on mock data. In a real-world scenario, this would be populated by reports from verified health officials.
+                Disclaimer: This data is for informational purposes and combines mock data with community submissions. It may not be fully verified.
             </p>
         </CardContent>
       </Card>
@@ -167,3 +182,4 @@ export default function LocalReportsPage() {
   );
 }
 
+    

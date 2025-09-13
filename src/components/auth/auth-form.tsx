@@ -226,24 +226,26 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
                 isHealthWorker,
             };
             
+            const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+            allProfiles[data.email] = profile;
+            localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+            
             // For health workers, we don't set a session profile, just save it.
             // They will be redirected to log in.
             if (isHealthWorker) {
-                 const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-                 allProfiles[data.email] = profile;
-                 localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+                 toast({
+                    title: 'Registration Successful',
+                    description: "Your account has been created. Please log in.",
+                });
+                router.push(redirectUrl);
             } else {
                 localStorage.setItem('userProfile', JSON.stringify(profile));
-                const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-                allProfiles[data.email] = profile;
-                localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+                toast({
+                    title: 'Registration Successful',
+                    description: "You have been logged in automatically.",
+                });
+                router.push('/dashboard');
             }
-
-            toast({
-                title: 'Registration Successful',
-                description: isHealthWorker ? "Your account has been created. Please log in." : "You have been logged in automatically.",
-            });
-            router.push(redirectUrl);
 
         } catch (error: any) {
             console.error('Registration error:', error);
@@ -328,3 +330,5 @@ function UserRegisterForm({ userType, redirectUrl }: { userType: 'user' | 'healt
         </Card>
     );
 }
+
+    

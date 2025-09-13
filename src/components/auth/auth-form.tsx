@@ -109,9 +109,12 @@ function LoginForm() {
             profile = JSON.parse(existingProfile);
         }
         
-        profile.email = user.email;
+        // Ensure email from auth is the source of truth, but keep other profile data
+        profile.email = user.email; 
+        
+        // If there's no name in the stored profile, try to get it from Firebase auth
         if (!profile.name) {
-          profile.name = user.displayName || "Demo User"
+          profile.name = user.displayName;
         }
 
         localStorage.setItem('userProfile', JSON.stringify(profile));

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Globe, MapPin, Search, Calendar, BarChart2, FilePlus, Loader2 } from 'lucide-react';
+import { Globe, MapPin, Search, Calendar, BarChart2, FilePlus, Loader2, Trash2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,18 @@ import {
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { format, subDays } from 'date-fns';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { useToast } from '@/hooks/use-toast';
+
 
 interface Report {
     id: number;
@@ -45,8 +57,10 @@ export default function ViewReportsPage() {
   const [allReports, setAllReports] = useState<Report[]>([]);
   const [filteredReports, setFilteredReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reportToDelete, setReportToDelete] = useState<Report | null>(null);
+  const { toast } = useToast();
 
-  useEffect(() => {
+  const loadReports = () => {
     setLoading(true);
     try {
       const initialMockReports = generateMockReports();
@@ -67,6 +81,10 @@ export default function ViewReportsPage() {
     } finally {
       setLoading(false);
     }
+  };
+  
+  useEffect(() => {
+    loadReports();
   }, []);
 
   useEffect(() => {
@@ -81,108 +99,177 @@ export default function ViewReportsPage() {
     }
     setFilteredReports(reportsToFilter);
   }, [searchQuery, allReports]);
+  
+  const handleDeleteReport = () => {
+    if (!reportToDelete) return;
+
+    try {
+        const storedReports: Report[] = JSON.parse(localStorage.getItem('mockReports') || '[]');
+        const updatedStoredReports = storedReports.filter(report => report.id !== reportToDelete.id);
+        localStorage.setItem('mockReports', JSON.stringify(updatedStoredReports));
+
+        setAllReports(prev => prev.filter(report => report.id !== reportToDelete.id));
+        
+        toast({
+            title: 'Report Deleted',
+            description: `The report for "${reportToDelete.disease}" has been removed.`,
+        });
+
+    } catch (e) {
+        console.error("Failed to delete report:", e);
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Failed to delete the report. Please try again.',
+        });
+    } finally {
+        setReportToDelete(null);
+    }
+  };
 
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl font-headline">View Health Reports</h1>
-      </div>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <CardTitle className="font-headline text-2xl flex items-center gap-2">
-                <Globe className="h-6 w-6 text-primary" />
-                <span>Submitted Health Reports</span>
-              </CardTitle>
-              <CardDescription>
-                View all health reports submitted by health workers.
-              </CardDescription>
+    <>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center">
+          <h1 className="text-lg font-semibold md:text-2xl font-headline">View Health Reports</h1>
+        </div>
+        <Card>
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <CardTitle className="font-headline text-2xl flex items-center gap-2">
+                  <Globe className="h-6 w-6 text-primary" />
+                  <span>Submitted Health Reports</span>
+                </CardTitle>
+                <CardDescription>
+                  View all health reports submitted by health workers.
+                </CardDescription>
+              </div>
+              <Button asChild>
+                  <Link href="/dashboard-health-worker/submit-report">
+                      <FilePlus className="mr-2 h-4 w-4" />
+                      Submit New Report
+                  </Link>
+              </Button>
             </div>
-             <Button asChild>
-                <Link href="/dashboard-health-worker/submit-report">
-                    <FilePlus className="mr-2 h-4 w-4" />
-                    Submit New Report
-                </Link>
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-            <div className="flex w-full mb-4">
-                <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                        placeholder="Filter by disease or location..." 
-                        className="pl-10"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
-            </div>
-         
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <div className="flex items-center gap-2">
-                      <BarChart2 className="h-4 w-4" /> Disease
-                    </div>
-                  </TableHead>
-                  <TableHead>
-                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" /> Location
-                    </div>
-                  </TableHead>
-                  <TableHead className="text-center">Reported Cases</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>
-                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" /> Date Reported
-                    </div>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                    <TableRow>
-                        <TableCell colSpan={5} className="h-24 text-center">
-                           <div className="flex justify-center items-center gap-2">
-                             <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                             <p className="text-muted-foreground">Loading reports...</p>
-                           </div>
-                        </TableCell>
-                    </TableRow>
-                ) : filteredReports.length > 0 ? (
-                  filteredReports.map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell className="font-medium">{report.disease}</TableCell>
-                      <TableCell>{report.location}</TableCell>
-                      <TableCell className="text-center font-bold text-primary">{report.cases.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Badge variant={report.source === 'System' ? 'secondary' : 'default'}>
-                          {report.source || 'Health Worker'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+          </CardHeader>
+          <CardContent>
+              <div className="flex w-full mb-4">
+                  <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                          placeholder="Filter by disease or location..." 
+                          className="pl-10"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                  </div>
+              </div>
+          
+            <div className="border rounded-lg">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      No reports found.
-                    </TableCell>
+                    <TableHead>
+                      <div className="flex items-center gap-2">
+                        <BarChart2 className="h-4 w-4" /> Disease
+                      </div>
+                    </TableHead>
+                    <TableHead>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" /> Location
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-center">Reported Cases</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" /> Date Reported
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-           <p className="text-xs text-muted-foreground mt-4">
-                Disclaimer: This data is for informational purposes and is based on health worker submissions and system-generated data.
-            </p>
-        </CardContent>
-      </Card>
-    </div>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                      <TableRow>
+                          <TableCell colSpan={6} className="h-24 text-center">
+                            <div className="flex justify-center items-center gap-2">
+                              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                              <p className="text-muted-foreground">Loading reports...</p>
+                            </div>
+                          </TableCell>
+                      </TableRow>
+                  ) : filteredReports.length > 0 ? (
+                    filteredReports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell className="font-medium">{report.disease}</TableCell>
+                        <TableCell>{report.location}</TableCell>
+                        <TableCell className="text-center font-bold text-primary">{report.cases.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge variant={report.source === 'System' ? 'secondary' : 'default'}>
+                            {report.source || 'Health Worker'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
+                        <TableCell className="text-right">
+                          {report.source === 'Health Worker' && (
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => setReportToDelete(report)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                              <span className="sr-only">Delete Report</span>
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        No reports found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            <p className="text-xs text-muted-foreground mt-4">
+                  Disclaimer: This data is for informational purposes and is based on health worker submissions and system-generated data.
+              </p>
+          </CardContent>
+        </Card>
+      </div>
+
+       <AlertDialog open={reportToDelete !== null} onOpenChange={(open) => !open && setReportToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+             <div className="flex items-center gap-4">
+                <div className="h-12 w-12 flex-shrink-0 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <AlertTriangle className="h-6 w-6 text-destructive" />
+                </div>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="pl-16">
+              This action cannot be undone. This will permanently delete the report
+              for "{reportToDelete?.disease}" in "{reportToDelete?.location}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="pl-16">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteReport}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+                Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
-}
+
+    

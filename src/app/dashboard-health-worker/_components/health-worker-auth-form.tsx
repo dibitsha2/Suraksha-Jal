@@ -226,16 +226,15 @@ function HealthWorkerRegisterForm() {
                 photoURL: ''
             };
             
-            localStorage.setItem('userProfile', JSON.stringify(profile));
             const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
             allProfiles[data.email] = profile;
             localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
 
             toast({
                 title: 'Registration Successful',
-                description: 'Your health worker account has been created.',
+                description: 'Your health worker account has been created. Please log in.',
             });
-            router.push('/dashboard-health-worker');
+            router.push('/dashboard-health-worker/login');
         } catch (error: any) {
              console.error('Health worker registration error:', error);
              let description = 'An unexpected error occurred. Please try again.';

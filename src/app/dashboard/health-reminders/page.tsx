@@ -45,22 +45,6 @@ const healthTips = [
     title: 'Use AI for Help',
     description: 'When in doubt, use our AI tools to check symptoms or get medication suggestions, but always consult a doctor.',
   },
-  {
-    icon: VideoIcon,
-    title: 'Detection Tutorial',
-    description: 'Watch this tutorial to learn about detecting waterborne diseases.',
-    action: <VideoDialog
-                trigger={
-                    <Button variant="outline" size="sm">
-                        <VideoIcon className="mr-2 h-4 w-4" />
-                        Watch Detection Tutorial
-                    </Button>
-                }
-                title="Detection Tutorial"
-                description="A guide to detecting waterborne diseases."
-                videoUrl="https://www.youtube.com/embed/SVMGEyjmDIw"
-            />,
-  },
 ];
 
 export default function HealthRemindersPage() {

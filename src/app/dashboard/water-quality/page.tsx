@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Droplet, Thermometer, TestTube, FlaskConical, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Droplet, Thermometer, TestTube, FlaskConical, CheckCircle2, XCircle, Video as VideoIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +29,7 @@ import {
   type WaterQualityOutput,
 } from '@/ai/flows/water-quality-checker';
 import { useLanguage } from '@/hooks/use-language';
+import { VideoDialog } from '@/components/water-filter-video-dialog';
 
 const waterQualitySchema = z.object({
   turbidity: z.coerce.number().min(0, 'Turbidity must be a positive number.'),
@@ -217,6 +218,30 @@ export default function WaterQualityPage() {
           </CardContent>
         </Card>
       )}
+
+      <Card>
+        <CardHeader>
+            <CardTitle className="font-headline text-xl flex items-center gap-2">
+                <VideoIcon className="h-5 w-5 text-primary" />
+                <span>Detection Tutorial</span>
+            </CardTitle>
+            <CardDescription>Learn how to detect potential waterborne diseases and contamination.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <VideoDialog
+                trigger={
+                    <Button variant="outline">
+                        <VideoIcon className="mr-2 h-4 w-4" />
+                        Watch Detection Tutorial
+                    </Button>
+                }
+                title="Detection Tutorial"
+                description="A guide to detecting waterborne diseases."
+                videoUrl="https://www.youtube.com/embed/SVMGEyjmDIw"
+            />
+        </CardContent>
+      </Card>
+
     </div>
   );
 }

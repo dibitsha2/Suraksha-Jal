@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -8,13 +9,8 @@ import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SurakshaJalLogo } from '@/components/icons';
+import { languages } from '@/lib/translations';
 
-const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'hi', name: 'हिन्दी (Hindi)' },
-  { code: 'bn', name: 'বাংলা (Bengali)' },
-  { code: 'as', name: 'অসমীয়া (Assamese)' },
-];
 
 export default function LanguageSelector() {
   const router = useRouter();
@@ -50,7 +46,7 @@ export default function LanguageSelector() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {languages.map((lang) => (
+            {languages.slice(0, 4).map((lang) => ( // Show top 4 for initial selection
               <Button
                 key={lang.code}
                 variant="outline"

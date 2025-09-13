@@ -36,7 +36,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import Link from 'next/link';
 
 // Schemas
 const loginSchema = z.object({
@@ -110,11 +109,21 @@ function LoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: U
         let existingProfile = allProfiles[data.email];
 
         if (!existingProfile) {
-            existingProfile = {
-                name: data.email.split('@')[0],
-                email: data.email,
-                role: userType,
-            };
+            if (userType === 'health-worker') {
+                 existingProfile = {
+                    name: data.email.split('@')[0],
+                    email: data.email,
+                    role: userType,
+                };
+            } else {
+                 toast({
+                    variant: 'destructive',
+                    title: 'Login Failed',
+                    description: 'This email is not registered. Please create an account.',
+                 });
+                 setLoading(false);
+                 return;
+            }
         }
         
         // IMPORTANT: Check if the user role matches the portal type
@@ -192,22 +201,24 @@ function LoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: U
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password (optional)</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {userType === 'user' && (
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In

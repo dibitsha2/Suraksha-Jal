@@ -31,14 +31,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    // This is a temporary workaround for a Next.js 15 bug
-    // that causes the server to restart in a loop.
-    allowedDevOrigins: [
-      'https://*.cloudworkstations.dev',
-      'https://*.firebase.studio',
-    ]
-  },
 };
 
 export default nextConfig;

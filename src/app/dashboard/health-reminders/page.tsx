@@ -1,9 +1,11 @@
+
 'use client';
 
-import { GlassWater, Apple, Bot, HandHeart, Filter } from 'lucide-react';
+import { GlassWater, Apple, Bot, HandHeart, Filter, Video as VideoIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { WaterFilterVideoDialog } from '@/components/water-filter-video-dialog';
+import { VideoDialog } from '@/components/water-filter-video-dialog';
 import { useLanguage } from '@/hooks/use-language';
+import { Button } from '@/components/ui/button';
 
 
 const healthTips = [
@@ -26,12 +28,38 @@ const healthTips = [
     icon: Filter,
     title: 'Drink Filtered Water',
     description: 'Always consume filtered or boiled water. If you don\'t have a filter, you can learn a natural filtration method.',
-    action: <WaterFilterVideoDialog />,
+    action: <VideoDialog 
+                trigger={
+                    <Button variant="outline" size="sm">
+                        <VideoIcon className="mr-2 h-4 w-4" />
+                        Watch Video Guide
+                    </Button>
+                }
+                title="Natural Water Filtration"
+                description="Learn how to create a simple and effective water filter using natural materials."
+                videoUrl="https://www.youtube.com/embed/lHFElyiA2m8"
+            />,
   },
   {
     icon: Bot,
     title: 'Use AI for Help',
     description: 'When in doubt, use our AI tools to check symptoms or get medication suggestions, but always consult a doctor.',
+  },
+  {
+    icon: VideoIcon,
+    title: 'Detection Tutorial',
+    description: 'Watch this tutorial to learn about detecting waterborne diseases.',
+    action: <VideoDialog
+                trigger={
+                    <Button variant="outline" size="sm">
+                        <VideoIcon className="mr-2 h-4 w-4" />
+                        Watch Detection Tutorial
+                    </Button>
+                }
+                title="Detection Tutorial"
+                description="A guide to detecting waterborne diseases."
+                videoUrl="https://www.youtube.com/embed/SVMGEyjmDIw"
+            />,
   },
 ];
 

@@ -12,26 +12,28 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Video } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-export function WaterFilterVideoDialog() {
+interface VideoDialogProps {
+    trigger: ReactNode;
+    title: string;
+    description: string;
+    videoUrl: string;
+}
+
+export function VideoDialog({ trigger, title, description, videoUrl }: VideoDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  // YouTube embed URL
-  const videoUrl = 'https://www.youtube.com/embed/lHFElyiA2m8';
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Video className="mr-2 h-4 w-4" />
-          Watch Video Guide
-        </Button>
+        {trigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
-          <DialogTitle>Natural Water Filtration</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Learn how to create a simple and effective water filter using natural materials.
+            {description}
           </DialogDescription>
         </DialogHeader>
         <div className="aspect-video">

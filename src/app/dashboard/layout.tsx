@@ -75,7 +75,7 @@ function Sidebar() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
+    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
   ];
 
   return (
@@ -124,7 +124,7 @@ function Header() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/settings', icon: Settings, label: t('languageSettings') },
+    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
   ];
   
   const handleLinkClick = () => {
@@ -262,8 +262,8 @@ function UserMenu() {
                 </DropdownMenuItem>
                  <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings">
-                    <Languages className="mr-2 h-4 w-4" />
-                    <span>Change Language</span>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

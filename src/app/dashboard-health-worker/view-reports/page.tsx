@@ -32,11 +32,11 @@ interface Report {
 const generateMockReports = (): Report[] => {
     const today = new Date();
     return [
-        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 15, date: format(today, 'yyyy-MM-dd'), severity: 'high', source: 'System' },
-        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 8, date: format(subDays(today, 1), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
-        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 5, date: format(subDays(today, 2), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
-        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 12, date: format(subDays(today, 3), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
-        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 6, date: format(subDays(today, 4), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
+        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 1500, date: format(today, 'yyyy-MM-dd'), severity: 'high', source: 'System' },
+        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 850, date: format(subDays(today, 1), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
+        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 520, date: format(subDays(today, 2), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
+        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 1230, date: format(subDays(today, 3), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
+        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 680, date: format(subDays(today, 4), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
     ];
 }
 
@@ -159,7 +159,7 @@ export default function ViewReportsPage() {
                     <TableRow key={report.id}>
                       <TableCell className="font-medium">{report.disease}</TableCell>
                       <TableCell>{report.location}</TableCell>
-                      <TableCell className="text-center font-bold text-primary">{report.cases}</TableCell>
+                      <TableCell className="text-center font-bold text-primary">{report.cases.toLocaleString()}</TableCell>
                       <TableCell>
                         <Badge variant={report.source === 'System' ? 'secondary' : 'default'}>
                           {report.source || 'Health Worker'}

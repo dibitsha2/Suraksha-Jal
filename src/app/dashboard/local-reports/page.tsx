@@ -31,13 +31,13 @@ interface Report {
 const generateMockReports = (): Report[] => {
     const today = new Date();
     return [
-        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 15, date: format(today, 'yyyy-MM-dd'), source: 'System' },
-        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 8, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
-        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 5, date: format(subDays(today, 2), 'yyyy-MM-dd'), source: 'System' },
-        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 12, date: format(subDays(today, 3), 'yyyy-MM-dd'), source: 'System' },
-        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 6, date: format(subDays(today, 4), 'yyyy-MM-dd'), source: 'System' },
-        { id: 6, disease: 'Giardiasis', location: 'Pune, Maharashtra', cases: 7, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
-        { id: 7, disease: 'Dysentery', location: 'Jaipur, Rajasthan', cases: 9, date: format(today, 'yyyy-MM-dd'), source: 'System' },
+        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 1500, date: format(today, 'yyyy-MM-dd'), source: 'System' },
+        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 850, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
+        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 520, date: format(subDays(today, 2), 'yyyy-MM-dd'), source: 'System' },
+        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 1230, date: format(subDays(today, 3), 'yyyy-MM-dd'), source: 'System' },
+        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 680, date: format(subDays(today, 4), 'yyyy-MM-dd'), source: 'System' },
+        { id: 6, disease: 'Giardiasis', location: 'Pune, Maharashtra', cases: 710, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
+        { id: 7, disease: 'Dysentery', location: 'Jaipur, Rajasthan', cases: 940, date: format(today, 'yyyy-MM-dd'), source: 'System' },
     ];
 }
 
@@ -171,7 +171,7 @@ export default function LocalReportsPage() {
                     <TableRow key={report.id}>
                       <TableCell className="font-medium">{report.disease}</TableCell>
                       <TableCell>{report.location}</TableCell>
-                      <TableCell className="text-center font-bold text-primary">{report.cases}</TableCell>
+                      <TableCell className="text-center font-bold text-primary">{report.cases.toLocaleString()}</TableCell>
                       <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
                     </TableRow>
                   ))

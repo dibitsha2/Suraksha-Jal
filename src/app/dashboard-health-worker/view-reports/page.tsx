@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table"
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { format, subDays } from 'date-fns';
 
 interface Report {
     id: number;
@@ -28,20 +29,41 @@ interface Report {
     source: string;
 }
 
+const generateMockReports = (): Report[] => {
+    const today = new Date();
+    return [
+        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 15, date: format(today, 'yyyy-MM-dd'), severity: 'high', source: 'System' },
+        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 8, date: format(subDays(today, 1), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
+        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 5, date: format(subDays(today, 2), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
+        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 12, date: format(subDays(today, 3), 'yyyy-MM-dd'), severity: 'medium', source: 'System' },
+        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 6, date: format(subDays(today, 4), 'yyyy-MM-dd'), severity: 'low', source: 'System' },
+    ];
+}
+
+const initialMockReports = generateMockReports();
+
+
 export default function ViewReportsPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [allReports, setAllReports] = useState<Report[]>([]);
-  const [filteredReports, setFilteredReports] = useState<Report[]>([]);
+  const [allReports, setAllReports] = useState<Report[]>(initialMockReports);
+  const [filteredReports, setFilteredReports] = useState<Report[]>(initialMockReports);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     try {
-      const storedReports = JSON.parse(localStorage.getItem('mockReports') || '[]');
-      setAllReports(storedReports as Report[]);
+      const storedReports: Report[] = JSON.parse(localStorage.getItem('mockReports') || '[]');
+      // Combine initial reports with any from local storage
+      const combined = [...storedReports, ...initialMockReports];
+      // Simple deduplication based on id
+      const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
+          .map(id => combined.find(a => a.id === id)!)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+      setAllReports(uniqueReports);
     } catch (e) {
       console.error(e);
-      setAllReports([]);
+      setAllReports(initialMockReports); // fallback to initial mocks on error
     } finally {
       setLoading(false);
     }
@@ -139,7 +161,7 @@ export default function ViewReportsPage() {
                       <TableCell>{report.location}</TableCell>
                       <TableCell className="text-center font-bold text-primary">{report.cases}</TableCell>
                       <TableCell>
-                        <Badge variant={'default'}>
+                        <Badge variant={report.source === 'System' ? 'secondary' : 'default'}>
                           {report.source || 'Health Worker'}
                         </Badge>
                       </TableCell>
@@ -157,7 +179,7 @@ export default function ViewReportsPage() {
             </Table>
           </div>
            <p className="text-xs text-muted-foreground mt-4">
-                Disclaimer: This data is for informational purposes and is based on health worker submissions.
+                Disclaimer: This data is for informational purposes and is based on health worker submissions and system-generated data.
             </p>
         </CardContent>
       </Card>

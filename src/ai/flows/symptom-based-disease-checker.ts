@@ -18,6 +18,7 @@ const SymptomBasedDiseaseCheckerInputSchema = z.object({
     .string()
     .optional()
     .describe("The user's current location, if available."),
+  language: z.string().describe('The language for the response.').optional(),
 });
 export type SymptomBasedDiseaseCheckerInput = z.infer<typeof SymptomBasedDiseaseCheckerInputSchema>;
 
@@ -41,6 +42,10 @@ const symptomBasedDiseaseCheckerPrompt = ai.definePrompt({
 
 Symptoms: {{{symptoms}}}
 Location (if available): {{{location}}}
+
+{{#if language}}
+The user's preferred language is {{language}}. Respond in that language.
+{{/if}}
 
 Respond in the following format:
 

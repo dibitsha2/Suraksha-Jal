@@ -13,6 +13,7 @@ import {z} from 'genkit';
 
 const MedicineInformationInputSchema = z.object({
   medicineName: z.string().describe('The name of the medicine to get information about.'),
+  language: z.string().describe('The language for the response.').optional(),
 });
 export type MedicineInformationInput = z.infer<typeof MedicineInformationInputSchema>;
 
@@ -32,6 +33,10 @@ const medicineInformationPrompt = ai.definePrompt({
   prompt: `You are a pharmacist and medical expert. A user wants to know about a specific medicine. Provide accurate and easy-to-understand information about what the medicine is used for. Be clear and concise.
 
 Medicine Name: {{{medicineName}}}
+
+{{#if language}}
+The user's preferred language is {{language}}. Respond in that language.
+{{/if}}
 `,
 });
 

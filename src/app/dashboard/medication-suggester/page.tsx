@@ -35,7 +35,7 @@ export default function MedicationSuggesterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MedicationSuggesterOutput | null>(null);
-  const { t } = useLanguage();
+  const { t, effectiveLanguage } = useLanguage();
 
   const form = useForm<SymptomValues>({
     resolver: zodResolver(symptomSchema),
@@ -65,6 +65,7 @@ export default function MedicationSuggesterPage() {
       const response = await getMedicationSuggestions({
         symptoms: data.symptoms,
         age: data.age,
+        language: effectiveLanguage,
       });
       setResult(response);
     } catch (e) {

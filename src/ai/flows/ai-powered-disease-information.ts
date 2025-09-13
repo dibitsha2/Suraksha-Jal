@@ -14,6 +14,7 @@ import {z} from 'genkit';
 const DiseaseInformationInputSchema = z.object({
   diseaseName: z.string().describe('The name of the waterborne disease to get information about.'),
   symptoms: z.string().describe('A comma separated list of symptoms the user is experiencing.'),
+  language: z.string().describe('The language for the response.').optional(),
 });
 export type DiseaseInformationInput = z.infer<typeof DiseaseInformationInputSchema>;
 
@@ -34,6 +35,10 @@ const diseaseInformationPrompt = ai.definePrompt({
 
 Disease Name: {{{diseaseName}}}
 User Symptoms: {{{symptoms}}}
+
+{{#if language}}
+The user's preferred language is {{language}}. Respond in that language.
+{{/if}}
 `,
 });
 

@@ -18,6 +18,7 @@ const HealthChatInputSchema = z.object({
     role: z.enum(['user', 'model']),
     content: z.string(),
   })).optional().describe('The conversation history.'),
+  language: z.string().describe('The language for the response.').optional(),
 });
 export type HealthChatInput = z.infer<typeof HealthChatInputSchema>;
 
@@ -40,6 +41,9 @@ const healthChatPrompt = ai.definePrompt({
 - You can answer questions about symptoms, diseases (especially waterborne ones), medication uses, and general health and safety tips (like hygiene and water purification).
 - Keep your responses concise and easy to understand.
 - You have access to the conversation history to maintain context.
+{{#if language}}
+- The user's preferred language is {{language}}. You MUST respond in that language.
+{{/if}}
 
 Current User Message:
 {{{message}}}

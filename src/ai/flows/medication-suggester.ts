@@ -14,6 +14,7 @@ import {z} from 'genkit';
 const MedicationSuggesterInputSchema = z.object({
   symptoms: z.string().describe('A description of the symptoms the user is experiencing.'),
   age: z.number().optional().describe('The age of the user, if available.'),
+  language: z.string().describe('The language for the response.').optional(),
 });
 export type MedicationSuggesterInput = z.infer<typeof MedicationSuggesterInputSchema>;
 
@@ -38,6 +39,9 @@ You must always include a strong and clear disclaimer that the user should consu
 Symptoms: {{{symptoms}}}
 {{#if age}}
 Age: {{{age}}}
+{{/if}}
+{{#if language}}
+The user's preferred language is {{language}}. Respond in that language.
 {{/if}}
 `,
 });

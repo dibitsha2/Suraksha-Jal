@@ -32,7 +32,7 @@ export default function MedicineCheckerPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MedicineInformationOutput | null>(null);
-  const { t } = useLanguage();
+  const { t, effectiveLanguage } = useLanguage();
 
   const form = useForm<MedicineValues>({
     resolver: zodResolver(medicineSchema),
@@ -47,6 +47,7 @@ export default function MedicineCheckerPage() {
     try {
       const response = await getMedicineInformation({
         medicineName: data.medicineName,
+        language: effectiveLanguage,
       });
       setResult(response);
     } catch (e) {

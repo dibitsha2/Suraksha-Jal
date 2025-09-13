@@ -22,6 +22,7 @@ import {
   type SymptomBasedDiseaseCheckerOutput,
 } from '@/ai/flows/symptom-based-disease-checker';
 import { getDiseaseInformation, type DiseaseInformationOutput } from '@/ai/flows/ai-powered-disease-information';
+import { useLanguage } from '@/hooks/use-language';
 
 const symptomSchema = z.object({
   symptoms: z.string().min(10, 'Please describe your symptoms in more detail.'),
@@ -41,6 +42,7 @@ export default function SymptomCheckerPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SymptomBasedDiseaseCheckerOutput | null>(null);
   const [detailedInfo, setDetailedInfo] = useState<DetailedInfoState>({});
+  const { effectiveLanguage } = useLanguage();
 
   const form = useForm<SymptomValues>({
     resolver: zodResolver(symptomSchema),
@@ -59,6 +61,7 @@ export default function SymptomCheckerPage() {
       const response = await symptomBasedDiseaseChecker({
         symptoms: data.symptoms,
         location: 'Mumbai, India', // Mock location
+        language: effectiveLanguage,
       });
       setResult(response);
     } catch (e) {
@@ -72,7 +75,7 @@ export default function SymptomCheckerPage() {
   const fetchDetailedInfo = async (diseaseName: string, symptoms: string) => {
     setDetailedInfo(prev => ({ ...prev, [diseaseName]: { loading: true, data: null }}));
     try {
-        const response = await getDiseaseInformation({ diseaseName, symptoms });
+        const response = await getDiseaseInformation({ diseaseName, symptoms, language: effectiveLanguage });
         setDetailedInfo(prev => ({ ...prev, [diseaseName]: { loading: false, data: response }}));
     } catch (e) {
         console.error(e);

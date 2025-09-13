@@ -17,18 +17,27 @@ import {
 } from "@/components/ui/table"
 import { subDays, format } from 'date-fns';
 
+interface Report {
+    id: number;
+    disease: string;
+    location: string;
+    cases: number;
+    date: string;
+    source: string;
+}
+
 // This is mock data. In a real app, this would come from a database
 // filled with reports from verified health workers.
-const generateMockReports = () => {
+const generateMockReports = (): Report[] => {
     const today = new Date();
     return [
-        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 15, date: format(today, 'yyyy-MM-dd') },
-        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 8, date: format(subDays(today, 1), 'yyyy-MM-dd') },
-        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 5, date: format(subDays(today, 2), 'yyyy-MM-dd') },
-        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 12, date: format(subDays(today, 3), 'yyyy-MM-dd') },
-        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 6, date: format(subDays(today, 4), 'yyyy-MM-dd') },
-        { id: 6, disease: 'Giardiasis', location: 'Pune, Maharashtra', cases: 7, date: format(subDays(today, 1), 'yyyy-MM-dd') },
-        { id: 7, disease: 'Dysentery', location: 'Jaipur, Rajasthan', cases: 9, date: format(today, 'yyyy-MM-dd') },
+        { id: 1, disease: 'Cholera', location: 'Mumbai, Maharashtra', cases: 15, date: format(today, 'yyyy-MM-dd'), source: 'System' },
+        { id: 2, disease: 'Typhoid', location: 'Delhi, NCT', cases: 8, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
+        { id: 3, disease: 'Hepatitis A', location: 'Kolkata, West Bengal', cases: 5, date: format(subDays(today, 2), 'yyyy-MM-dd'), source: 'System' },
+        { id: 4, disease: 'Cholera', location: 'Chennai, Tamil Nadu', cases: 12, date: format(subDays(today, 3), 'yyyy-MM-dd'), source: 'System' },
+        { id: 5, disease: 'Typhoid', location: 'Mumbai, Maharashtra', cases: 6, date: format(subDays(today, 4), 'yyyy-MM-dd'), source: 'System' },
+        { id: 6, disease: 'Giardiasis', location: 'Pune, Maharashtra', cases: 7, date: format(subDays(today, 1), 'yyyy-MM-dd'), source: 'System' },
+        { id: 7, disease: 'Dysentery', location: 'Jaipur, Rajasthan', cases: 9, date: format(today, 'yyyy-MM-dd'), source: 'System' },
     ];
 }
 
@@ -38,8 +47,8 @@ const initialMockReports = generateMockReports();
 export default function LocalReportsPage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
-  const [allReports, setAllReports] = useState(initialMockReports);
-  const [filteredReports, setFilteredReports] = useState(initialMockReports);
+  const [allReports, setAllReports] = useState<Report[]>(initialMockReports);
+  const [filteredReports, setFilteredReports] = useState<Report[]>(initialMockReports);
   const [userLocation, setUserLocation] = useState<string | null>(null);
 
   useEffect(() => {
@@ -59,7 +68,7 @@ export default function LocalReportsPage() {
   useEffect(() => {
     // Combine initial reports with any from local storage
     try {
-        const storedReports = JSON.parse(localStorage.getItem('mockReports') || '[]');
+        const storedReports: Report[] = JSON.parse(localStorage.getItem('mockReports') || '[]');
         const combined = [...storedReports, ...initialMockReports];
         // Simple deduplication based on id
         const uniqueReports = Array.from(new Set(combined.map(a => a.id)))
@@ -184,5 +193,3 @@ export default function LocalReportsPage() {
     </div>
   );
 }
-
-    

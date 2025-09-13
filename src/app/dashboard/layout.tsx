@@ -177,7 +177,7 @@ function UserMenu() {
     const [user, setUser] = React.useState<any>(null);
 
     React.useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+        const handleAuthChange = (currentUser: any) => {
             if (currentUser) {
                 // User is signed in.
                 let profile: any = {};
@@ -190,25 +190,34 @@ function UserMenu() {
                     }
                 }
                 
-                profile.name = profile.name || currentUser.displayName;
-                profile.email = currentUser.email;
-                profile.photoURL = profile.photoURL || currentUser.photoURL;
-
-                setUser(profile);
-                localStorage.setItem('userProfile', JSON.stringify(profile));
+                const updatedProfile = {
+                    ...profile,
+                    name: profile.name || currentUser.displayName,
+                    email: currentUser.email,
+                    photoURL: profile.photoURL || currentUser.photoURL,
+                };
+                
+                setUser(updatedProfile);
+                localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
             } else {
                 // User is signed out.
                 setUser(null);
-                // We don't clear the profile here so that on next login, we can retrieve it.
             }
-        });
+        };
+
+        const unsubscribe = auth.onAuthStateChanged(handleAuthChange);
         
         // Also set user from local storage on initial load
         const storedProfile = localStorage.getItem('userProfile');
         if (storedProfile) {
             try {
-                setUser(JSON.parse(storedProfile));
+                const profile = JSON.parse(storedProfile);
+                // If there's a stored profile but no active auth user, still show it.
+                // The auth state change will correct this if they are logged out.
+                if (!auth.currentUser) {
+                     setUser(profile);
+                }
             } catch (e) {
                  console.error("Error parsing user profile on initial load", e);
             }
@@ -221,7 +230,7 @@ function UserMenu() {
         try {
             await auth.signOut();
             // We don't remove userProfile from localStorage on logout
-            // so the name/address can be remembered on next login.
+            // so the profile data can be remembered on next login.
             router.push('/auth');
             toast({
                 title: 'Logged Out',
@@ -275,3 +284,4 @@ function UserMenu() {
         </DropdownMenu>
     );
 }
+

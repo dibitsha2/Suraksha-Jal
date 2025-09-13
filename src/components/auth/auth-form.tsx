@@ -113,15 +113,14 @@ function LoginForm() {
             }
         }
         
-        // Ensure email from auth is the source of truth, but keep other profile data
-        profile.email = user.email; 
-        
-        // If there's no name in the stored profile, try to get it from Firebase auth
-        if (!profile.name && user.displayName) {
-          profile.name = user.displayName;
-        }
+        // Merge Firebase auth data with existing profile, preserving user-entered details
+        const updatedProfile = {
+            ...profile,
+            email: user.email,
+            name: profile.name || user.displayName,
+        };
 
-        localStorage.setItem('userProfile', JSON.stringify(profile));
+        localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
         toast({
           title: 'Login Successful',
@@ -512,4 +511,5 @@ function HealthWorkerRegisterForm() {
     
 
     
+
 

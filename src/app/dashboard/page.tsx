@@ -2,14 +2,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, lazy, Suspense } from 'react';
+import { useState } from 'react';
 import { 
   Stethoscope, 
   Shield, 
   BarChart, 
   Bell, 
   AlertTriangle,
-  Loader2,
   Users,
   TrendingDown,
   HeartCrack
@@ -19,11 +18,9 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/use-language';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AiChat } from '@/components/ai-chat';
 import { useToast } from '@/hooks/use-toast';
 import { add } from 'date-fns';
-import { Skeleton } from '@/components/ui/skeleton';
-
-const AiChat = lazy(() => import('@/components/ai-chat').then(module => ({ default: module.AiChat })));
 
 const dailyData = [
   { name: 'Today', cases: 30, recovered: 20, deaths: 2 },
@@ -163,23 +160,7 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
       
-      <Suspense fallback={
-          <Card className="flex flex-col flex-1 h-[600px]">
-            <CardHeader>
-              <Skeleton className="h-8 w-1/2" />
-              <Skeleton className="h-4 w-3/4" />
-            </CardHeader>
-            <CardContent className="flex flex-col flex-1">
-                <div className="flex-1 space-y-4 p-4 border rounded-lg mb-4 flex items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-                <Skeleton className="h-[60px] w-full" />
-            </CardContent>
-          </Card>
-      }>
-        <AiChat />
-      </Suspense>
-
+      <AiChat />
     </div>
   );
 }

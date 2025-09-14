@@ -68,7 +68,6 @@ function Sidebar() {
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
-    { href: '/dashboard/ai-chat', icon: MessageCircle, label: t('aiChat') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
@@ -118,7 +117,6 @@ function Header() {
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
-    { href: '/dashboard/ai-chat', icon: MessageCircle, label: t('aiChat') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },

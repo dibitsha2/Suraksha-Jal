@@ -24,6 +24,7 @@ import {
   FilePlus,
   Languages,
   BarChart2,
+  MessageCircle,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -67,6 +68,7 @@ function Sidebar() {
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
+    { href: '/dashboard/ai-chat', icon: MessageCircle, label: t('aiChat') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },
@@ -94,7 +96,7 @@ function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:text-primary ${
                   pathname === item.href ? 'bg-muted text-primary' : 'text-muted-foreground'
                 }`}
               >
@@ -116,6 +118,7 @@ function Header() {
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
+    { href: '/dashboard/ai-chat', icon: MessageCircle, label: t('aiChat') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester') },

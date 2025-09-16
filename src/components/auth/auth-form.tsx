@@ -13,6 +13,7 @@ import {
   User,
   Lock,
   Briefcase,
+  KeyRound,
 } from 'lucide-react';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -45,7 +46,7 @@ const loginSchema = z.object({
 
 const healthWorkerLoginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().optional(),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 
@@ -63,46 +64,80 @@ const healthWorkerRegisterSchema = z.object({
     password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
+const forgotPasswordSchema = z.object({
+    email: z.string().email('Invalid email address'),
+});
+
+const resetPasswordSchema = z.object({
+    otp: z.string().length(6, 'OTP must be 6 digits.'),
+    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string(),
+}).refine(data => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+});
+
 
 type LoginValues = z.infer<typeof loginSchema>;
 type HealthWorkerLoginValues = z.infer<typeof healthWorkerLoginSchema>;
 type UserRegisterValues = z.infer<typeof userRegisterSchema>;
 type HealthWorkerRegisterValues = z.infer<typeof healthWorkerRegisterSchema>;
+type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
 type UserType = 'user' | 'health-worker';
+type AuthView = 'login' | 'register' | 'forgot-password' | 'reset-password';
 
 
 // Main Component
 export default function AuthForm({ initialTab = 'login', userType = 'user' }: { initialTab?: 'login' | 'register', userType: UserType }) {
-  
+  const [currentView, setCurrentView] = useState<AuthView>(initialTab);
+  const [resetEmail, setResetEmail] = useState<string>('');
+
   const redirectUrl = userType === 'health-worker' ? '/dashboard-health-worker' : '/dashboard';
 
+  const renderContent = () => {
+    switch (currentView) {
+      case 'login':
+        return userType === 'user' ? 
+          <LoginForm redirectUrl={redirectUrl} onForgotPassword={() => setCurrentView('forgot-password')} /> :
+          <HealthWorkerLoginForm redirectUrl={redirectUrl} onForgotPassword={() => setCurrentView('forgot-password')} />;
+      case 'register':
+        return userType === 'user' ? (
+          <UserRegisterForm redirectUrl={redirectUrl} />
+        ) : (
+          <HealthWorkerRegisterForm redirectUrl={redirectUrl} />
+        );
+      case 'forgot-password':
+          return <ForgotPasswordForm onEmailSubmitted={(email) => { setResetEmail(email); setCurrentView('reset-password'); }} onBackToLogin={() => setCurrentView('login')} />;
+      case 'reset-password':
+          return <ResetPasswordForm email={resetEmail} onPasswordReset={() => setCurrentView('login')} onBackToLogin={() => setCurrentView('login')} />;
+      default:
+         return userType === 'user' ? 
+          <LoginForm redirectUrl={redirectUrl} onForgotPassword={() => setCurrentView('forgot-password')} /> :
+          <HealthWorkerLoginForm redirectUrl={redirectUrl} onForgotPassword={() => setCurrentView('forgot-password')} />;
+    }
+  }
+  
+  const handleTabChange = (tab: string) => {
+    setCurrentView(tab as AuthView);
+  }
+
   return (
-    <Tabs defaultValue={initialTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="login">Login</TabsTrigger>
-        <TabsTrigger value="register">Register</TabsTrigger>
-      </TabsList>
-      <TabsContent value="login">
-        {userType === 'user' ? (
-          <LoginForm redirectUrl={redirectUrl} />
-        ) : (
-          <HealthWorkerLoginForm redirectUrl={redirectUrl} userType={userType} />
+    <Tabs value={currentView} onValueChange={handleTabChange} className="w-full">
+        {currentView !== 'forgot-password' && currentView !== 'reset-password' && (
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="register">Register</TabsTrigger>
+            </TabsList>
         )}
-      </TabsContent>
-      <TabsContent value="register">
-        {userType === 'user' ? (
-            <UserRegisterForm redirectUrl={redirectUrl} />
-        ) : (
-            <HealthWorkerRegisterForm redirectUrl={redirectUrl} />
-        )}
-      </TabsContent>
+      {renderContent()}
     </Tabs>
   );
 }
 
 // Login Form Component
-function LoginForm({ redirectUrl }: { redirectUrl: string }) {
+function LoginForm({ redirectUrl, onForgotPassword }: { redirectUrl: string, onForgotPassword: () => void }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -138,20 +173,17 @@ function LoginForm({ redirectUrl }: { redirectUrl: string }) {
             return;
         }
 
-        // In a real app, you'd verify the password here. For this demo, we skip it.
-        // We will just check if the stored profile has the same password.
         if (existingProfile.password !== data.password) {
-          // This check is disabled in the original logic, so we will keep it simple.
-          // For a real app, you'd use Firebase Auth to verify.
+            toast({
+                variant: 'destructive',
+                title: 'Login Failed',
+                description: 'Incorrect password. Please try again.',
+            });
+            setLoading(false);
+            return;
         }
 
-        const updatedProfile = {
-            ...existingProfile,
-            name: existingProfile.name || data.email.split('@')[0],
-            email: data.email,
-        };
-
-        localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+        localStorage.setItem('userProfile', JSON.stringify(existingProfile));
         
         toast({
           title: 'Login Successful',
@@ -213,6 +245,11 @@ function LoginForm({ redirectUrl }: { redirectUrl: string }) {
                 </FormItem>
               )}
             />
+             <div className="text-right">
+              <Button type="button" variant="link" size="sm" className="p-0 h-auto" onClick={onForgotPassword}>
+                Forgot Password?
+              </Button>
+            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
@@ -224,7 +261,7 @@ function LoginForm({ redirectUrl }: { redirectUrl: string }) {
   );
 }
 
-function HealthWorkerLoginForm({ redirectUrl, userType }: { redirectUrl: string, userType: UserType }) {
+function HealthWorkerLoginForm({ redirectUrl, onForgotPassword }: { redirectUrl: string, onForgotPassword: () => void }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -237,17 +274,17 @@ function HealthWorkerLoginForm({ redirectUrl, userType }: { redirectUrl: string,
   const onSubmit: SubmitHandler<HealthWorkerLoginValues> = async (data) => {
     setLoading(true);
     try {
-        // Simplified login for demo
         const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-        let existingProfile = allProfiles[data.email];
+        const existingProfile = allProfiles[data.email];
 
         if (!existingProfile) {
-            // For demo purposes, create a profile if it doesn't exist for a health worker
-            existingProfile = {
-                name: data.email.split('@')[0],
-                email: data.email,
-                role: userType,
-            };
+            toast({
+                variant: 'destructive',
+                title: 'Login Failed',
+                description: 'This email is not registered. Please create an account.',
+            });
+            setLoading(false);
+            return;
         }
         
         if (existingProfile?.role !== 'health-worker') {
@@ -259,17 +296,18 @@ function HealthWorkerLoginForm({ redirectUrl, userType }: { redirectUrl: string,
             setLoading(false);
             return;
         }
+
+        if (existingProfile.password !== data.password) {
+            toast({
+                variant: 'destructive',
+                title: 'Login Failed',
+                description: 'Incorrect password. Please try again.',
+            });
+            setLoading(false);
+            return;
+        }
         
-        const updatedProfile = {
-            ...existingProfile,
-            name: existingProfile.name || data.email.split('@')[0],
-            email: data.email,
-        };
-
-        localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-        allProfiles[data.email] = updatedProfile;
-        localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
-
+        localStorage.setItem('userProfile', JSON.stringify(existingProfile));
 
         toast({
           title: 'Login Successful',
@@ -294,7 +332,7 @@ function HealthWorkerLoginForm({ redirectUrl, userType }: { redirectUrl: string,
     <Card className="border-t-0 rounded-t-none">
       <CardHeader>
         <CardTitle>Welcome Back</CardTitle>
-        <CardDescription>Enter your email to access the health worker portal.</CardDescription>
+        <CardDescription>Enter your credentials to access the health worker portal.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -315,6 +353,27 @@ function HealthWorkerLoginForm({ redirectUrl, userType }: { redirectUrl: string,
                 </FormItem>
               )}
             />
+             <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <div className="text-right">
+              <Button type="button" variant="link" size="sm" className="p-0 h-auto" onClick={onForgotPassword}>
+                Forgot Password?
+              </Button>
+            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
@@ -468,6 +527,7 @@ function HealthWorkerRegisterForm({ redirectUrl }: { redirectUrl: string }) {
                 name: data.username,
                 email: data.email,
                 workerId: data.workerId,
+                password: data.password,
                 role: 'health-worker', // Assign role
             };
             
@@ -558,3 +618,189 @@ function HealthWorkerRegisterForm({ redirectUrl }: { redirectUrl: string }) {
         </Card>
     );
 }
+
+function ForgotPasswordForm({ onEmailSubmitted, onBackToLogin }: { onEmailSubmitted: (email: string) => void, onBackToLogin: () => void }) {
+    const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
+    const form = useForm<ForgotPasswordValues>({
+        resolver: zodResolver(forgotPasswordSchema),
+        defaultValues: { email: '' },
+    });
+
+    const onSubmit: SubmitHandler<ForgotPasswordValues> = async (data) => {
+        setLoading(true);
+        try {
+            const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+            if (!allProfiles[data.email]) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: 'No account found with this email address.',
+                });
+                return;
+            }
+            // Simulate sending OTP
+            toast({
+                title: 'OTP Sent',
+                description: `An OTP has been "sent" to ${data.email}. (For demo, use 123456)`,
+            });
+            onEmailSubmitted(data.email);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Card className="border-t-0 rounded-t-none">
+            <CardHeader>
+                <CardTitle>Forgot Password</CardTitle>
+                <CardDescription>Enter your email to receive a one-time password (OTP).</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input placeholder="your.email@example.com" {...field} className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Send OTP
+                        </Button>
+                        <Button type="button" variant="link" className="w-full" onClick={onBackToLogin}>
+                            Back to Login
+                        </Button>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    );
+}
+
+function ResetPasswordForm({ email, onPasswordReset, onBackToLogin }: { email: string, onPasswordReset: () => void, onBackToLogin: () => void }) {
+    const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
+    const form = useForm<ResetPasswordValues>({
+        resolver: zodResolver(resetPasswordSchema),
+        defaultValues: { otp: '', newPassword: '', confirmPassword: '' },
+    });
+
+    const onSubmit: SubmitHandler<ResetPasswordValues> = async (data) => {
+        setLoading(true);
+        try {
+            // Simulate OTP verification
+            if (data.otp !== '123456') {
+                toast({
+                    variant: 'destructive',
+                    title: 'Invalid OTP',
+                    description: 'The OTP you entered is incorrect. Please try again.',
+                });
+                return;
+            }
+
+            const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+            if (allProfiles[email]) {
+                allProfiles[email].password = data.newPassword;
+                localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
+
+                toast({
+                    title: 'Password Reset Successful',
+                    description: 'You can now log in with your new password.',
+                });
+                onPasswordReset();
+            } else {
+                 toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: 'An unexpected error occurred. Please try again.',
+                });
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Card className="border-t-0 rounded-t-none">
+            <CardHeader>
+                <CardTitle>Reset Your Password</CardTitle>
+                <CardDescription>Enter the OTP sent to {email} and set a new password.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="otp"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>One-Time Password (OTP)</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input placeholder="123456" {...field} className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="newPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>New Password</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Confirm New Password</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input type="password" placeholder="••••••••" {...field} className="pl-10" />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Reset Password
+                        </Button>
+                         <Button type="button" variant="link" className="w-full" onClick={onBackToLogin}>
+                            Back to Login
+                        </Button>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    );
+}
+
+    

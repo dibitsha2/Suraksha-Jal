@@ -22,9 +22,8 @@ export default function WelcomePage() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-        const userProfile = allProfiles[user.email!];
-        if (userProfile?.role === 'health-worker') {
+        // In a real app, you might check a custom claim or database record for role
+        if (user.email?.includes('worker')) { // Simple check for demo
             router.replace('/dashboard-health-worker');
         } else {
             router.replace('/dashboard');
@@ -105,3 +104,5 @@ function PortalSelectionPage() {
     </div>
   );
 }
+
+    

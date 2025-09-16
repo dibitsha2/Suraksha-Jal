@@ -35,6 +35,8 @@ import { Loader2, LocateFixed, Upload } from 'lucide-react';
 import { debounce } from 'lodash';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User } from 'lucide-react';
+import { auth } from '@/lib/firebase';
+import { updateProfile } from 'firebase/auth';
 
 const profileSchema = z.object({
   photoURL: z.string().optional(),
@@ -48,6 +50,28 @@ const profileSchema = z.object({
 });
 
 type ProfileValues = z.infer<typeof profileSchema>;
+
+// This is a mock function. In a real app, you would save this to a database like Firestore.
+const saveExtraProfileData = (userId: string, data: any) => {
+    try {
+        const userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+        userProfiles[userId] = { ...userProfiles[userId], ...data };
+        localStorage.setItem('userProfiles', JSON.stringify(userProfiles));
+    } catch (e) {
+        console.error("Failed to save extra profile data", e);
+    }
+}
+
+const loadExtraProfileData = (userId: string) => {
+    try {
+        const userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+        return userProfiles[userId] || {};
+    } catch(e) {
+        console.error("Failed to load extra profile data", e);
+        return {};
+    }
+}
+
 
 export default function ProfilePage() {
   const { toast } = useToast();
@@ -73,14 +97,15 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    try {
-        const savedProfile = localStorage.getItem('userProfile');
-        if (savedProfile) {
-            const profileData = JSON.parse(savedProfile);
-            form.reset(profileData);
-        }
-    } catch (error) {
-        console.error('Failed to load user profile:', error);
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+        const extraData = loadExtraProfileData(currentUser.uid);
+        form.reset({
+            name: currentUser.displayName || '',
+            email: currentUser.email || '',
+            photoURL: currentUser.photoURL || '',
+            ...extraData,
+        });
     }
   }, [form]);
   
@@ -171,17 +196,32 @@ export default function ProfilePage() {
     }
   };
 
-  const onSubmit = (data: ProfileValues) => {
+  const onSubmit = async (data: ProfileValues) => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        toast({ variant: 'destructive', title: 'Not Authenticated', description: 'You must be logged in to update your profile.' });
+        return;
+    }
+
     try {
-        const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-        allProfiles[data.email] = data;
-        localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
-        localStorage.setItem('userProfile', JSON.stringify(data));
+        await updateProfile(currentUser, {
+            displayName: data.name,
+            photoURL: data.photoURL,
+        });
+
+        // Save non-standard Firebase fields to our mock DB (localStorage)
+        const { name, photoURL, email, ...extraData } = data;
+        saveExtraProfileData(currentUser.uid, extraData);
+
 
         toast({
             title: 'Profile Updated',
             description: 'Your information has been saved successfully.',
         });
+        // Force a re-render or state update in the layout if needed
+        window.dispatchEvent(new Event('profileUpdated'));
+
+
     } catch (error) {
        console.error('Failed to save profile:', error);
         toast({
@@ -400,3 +440,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

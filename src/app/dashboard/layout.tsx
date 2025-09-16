@@ -77,6 +77,7 @@ function Sidebar() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
+    { href: '/dashboard/ai-chat', icon: MessageCircle, label: 'AI Chat' },
     { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];
 
@@ -126,6 +127,7 @@ function Header() {
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
+    { href: '/dashboard/ai-chat', icon: MessageCircle, label: 'AI Chat' },
     { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];
   
@@ -181,50 +183,15 @@ function UserMenu() {
     const [user, setUser] = React.useState<any>(null);
 
     React.useEffect(() => {
-        const handleAuthChange = (currentUser: any) => {
-            if (currentUser) {
-                // User is signed in.
-                const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-                const storedProfile = allProfiles[currentUser.email!];
-                
-                const updatedProfile = {
-                    ...(storedProfile || {}),
-                    name: storedProfile?.name || currentUser.displayName,
-                    email: currentUser.email,
-                    photoURL: storedProfile?.photoURL || currentUser.photoURL,
-                };
-                
-                setUser(updatedProfile);
-                localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-                allProfiles[currentUser.email!] = updatedProfile;
-                localStorage.setItem('userProfiles', JSON.stringify(allProfiles));
-
-
-            } else {
-                // User is signed out.
-                setUser(null);
-            }
-        };
-
-        const unsubscribe = auth.onAuthStateChanged(handleAuthChange);
-        
-        // Also set user from local storage on initial load
-        const storedProfile = localStorage.getItem('userProfile');
-        if (storedProfile) {
-            try {
-                setUser(JSON.parse(storedProfile));
-            } catch (e) {
-                 console.error("Error parsing user profile on initial load", e);
-            }
-        }
-
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            setUser(currentUser);
+        });
         return () => unsubscribe();
     }, []);
 
     const handleLogout = async () => {
         try {
             await auth.signOut();
-            localStorage.removeItem('userProfile');
             router.push('/auth/login');
             toast({
                 title: 'Logged Out',
@@ -245,16 +212,16 @@ function UserMenu() {
             <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
                      <Avatar className="h-8 w-8">
-                        {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.name || 'User'} />}
+                        {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || 'User'} />}
                         <AvatarFallback>
-                            {user?.name ? user.name.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
+                            {user?.displayName ? user.displayName.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
                         </AvatarFallback>
                      </Avatar>
                     <span className="sr-only">Toggle user menu</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.displayName || 'My Account'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/profile">
@@ -278,3 +245,5 @@ function UserMenu() {
         </DropdownMenu>
     );
 }
+
+    

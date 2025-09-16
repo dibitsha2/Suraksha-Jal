@@ -147,34 +147,15 @@ function UserMenu() {
     const [user, setUser] = React.useState<any>(null);
 
     React.useEffect(() => {
-        const handleAuthChange = (currentUser: any) => {
-            if (currentUser) {
-                const allProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
-                const storedProfile = allProfiles[currentUser.email!];
-                
-                const updatedProfile = {
-                    ...(storedProfile || {}),
-                    name: storedProfile?.name || currentUser.displayName,
-                    email: currentUser.email,
-                    photoURL: storedProfile?.photoURL || currentUser.photoURL,
-                };
-                
-                setUser(updatedProfile);
-                localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-            } else {
-                setUser(null);
-            }
-        };
-
-        const unsubscribe = auth.onAuthStateChanged(handleAuthChange);
-        
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            setUser(currentUser);
+        });
         return () => unsubscribe();
     }, []);
 
     const handleLogout = async () => {
         try {
             await auth.signOut();
-            localStorage.removeItem('userProfile');
             router.push('/health-worker/login');
             toast({
                 title: 'Logged Out',
@@ -195,16 +176,16 @@ function UserMenu() {
             <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
                      <Avatar className="h-8 w-8">
-                        {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.name || 'User'} />}
+                        {user?.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || 'User'} />}
                         <AvatarFallback>
-                            {user?.name ? user.name.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
+                            {user?.displayName ? user.displayName.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
                         </AvatarFallback>
                      </Avatar>
                     <span className="sr-only">Toggle user menu</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.name || 'Health Worker'}</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.displayName || 'Health Worker'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard-health-worker/profile">
@@ -228,3 +209,5 @@ function UserMenu() {
         </DropdownMenu>
     );
 }
+
+    

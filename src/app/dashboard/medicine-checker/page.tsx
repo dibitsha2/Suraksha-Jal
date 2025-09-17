@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Pill, Info, Camera, Video, ScanLine, Volume2 } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill, Info, Camera, Video, ScanLine, Volume2, StopCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -83,7 +83,7 @@ export default function MedicineCheckerPage() {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [resultFromImage, setResultFromImage] = useState(false);
-
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const form = useForm<MedicineValues>({
     resolver: zodResolver(medicineSchema),
@@ -117,6 +117,14 @@ export default function MedicineCheckerPage() {
             const stream = videoRef.current.srcObject as MediaStream;
             stream.getTracks().forEach(track => track.stop());
             videoRef.current.srcObject = null;
+        }
+    }
+    
+    // Cleanup audio on component unmount
+    return () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
         }
     }
   }, [isCameraOpen, toast]);
@@ -160,6 +168,36 @@ export default function MedicineCheckerPage() {
     setIsSuggestionsVisible(false);
   };
 
+  const handlePlayback = async (text: string) => {
+      if (audioRef.current && !audioRef.current.paused) {
+        stopPlayback();
+        return;
+      }
+      setIsSpeaking(true);
+      try {
+        const { audioDataUri } = await textToSpeech({ text });
+        const audio = new Audio(audioDataUri);
+        audioRef.current = audio;
+        audio.play();
+        audio.onended = () => {
+            setIsSpeaking(false);
+            audioRef.current = null;
+        }
+      } catch (e) {
+        console.error(e);
+        toast({ variant: 'destructive', title: 'Playback Error', description: 'Could not play the audio response.'});
+        setIsSpeaking(false);
+      }
+  }
+
+  const stopPlayback = () => {
+    if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current = null;
+        setIsSpeaking(false);
+    }
+  }
 
   const onSubmit: SubmitHandler<MedicineValues> = async (data) => {
     if (!data.medicineName && !capturedImage) {
@@ -175,7 +213,9 @@ export default function MedicineCheckerPage() {
     setError(null);
     setResult(null);
     setIsSuggestionsVisible(false);
-    setResultFromImage(!!capturedImage);
+    stopPlayback();
+    const isImageSearch = !!capturedImage;
+    setResultFromImage(isImageSearch);
 
     try {
       const response = await getMedicineInformation({
@@ -184,6 +224,9 @@ export default function MedicineCheckerPage() {
         language: effectiveLanguage,
       });
       setResult(response);
+      if (isImageSearch && response.usageInfo) {
+          handlePlayback(response.usageInfo);
+      }
     } catch (e) {
       console.error(e);
       setError('An error occurred while getting information. Please try again.');
@@ -192,21 +235,6 @@ export default function MedicineCheckerPage() {
     }
   };
   
-  const handlePlayback = async (text: string) => {
-      setIsSpeaking(true);
-      try {
-        const { audioDataUri } = await textToSpeech({ text });
-        const audio = new Audio(audioDataUri);
-        audio.play();
-        audio.onended = () => setIsSpeaking(false);
-      } catch (e) {
-        console.error(e);
-        toast({ variant: 'destructive', title: 'Playback Error', description: 'Could not play the audio response.'});
-        setIsSpeaking(false);
-      }
-  }
-
-
   return (
     <div className="flex flex-col gap-6">
        <div className="flex items-center">
@@ -355,11 +383,16 @@ export default function MedicineCheckerPage() {
                         variant="ghost"
                         size="icon"
                         className="absolute top-2 right-2"
-                        onClick={() => handlePlayback(result.usageInfo)}
-                        disabled={isSpeaking}
-                        aria-label="Read details aloud"
+                        onClick={() => {
+                            if (isSpeaking) {
+                                stopPlayback();
+                            } else {
+                                handlePlayback(result.usageInfo);
+                            }
+                        }}
+                        aria-label={isSpeaking ? "Stop reading" : "Read details aloud"}
                     >
-                        {isSpeaking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                       {isSpeaking ? <StopCircle className="h-5 w-5 text-destructive" /> : <Volume2 className="h-5 w-5" />}
                     </Button>
                 )}
             </div>
@@ -369,3 +402,4 @@ export default function MedicineCheckerPage() {
     </div>
   );
 }
+

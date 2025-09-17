@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Pill, Info } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill, Info, Camera, Video, ScanLine } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,9 +22,12 @@ import {
   type MedicineInformationOutput,
 } from '@/ai/flows/medicine-checker';
 import { useLanguage } from '@/hooks/use-language';
+import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import Image from 'next/image';
 
 const medicineSchema = z.object({
-  medicineName: z.string().min(2, 'Please enter a valid medicine name.'),
+  medicineName: z.string().optional(),
 });
 
 type MedicineValues = z.infer<typeof medicineSchema>;
@@ -70,17 +73,71 @@ export default function MedicineCheckerPage() {
   const { t, effectiveLanguage } = useLanguage();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
+  const { toast } = useToast();
 
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   const form = useForm<MedicineValues>({
     resolver: zodResolver(medicineSchema),
     defaultValues: { medicineName: '' },
   });
   
+  useEffect(() => {
+    if (isCameraOpen) {
+        const getCameraPermission = async () => {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }});
+            setHasCameraPermission(true);
+
+            if (videoRef.current) {
+              videoRef.current.srcObject = stream;
+            }
+          } catch (error) {
+            console.error('Error accessing camera:', error);
+            setHasCameraPermission(false);
+            setIsCameraOpen(false);
+            toast({
+              variant: 'destructive',
+              title: 'Camera Access Denied',
+              description: 'Please enable camera permissions in your browser settings to use this feature.',
+            });
+          }
+        };
+        getCameraPermission();
+    } else {
+        if (videoRef.current?.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null;
+        }
+    }
+  }, [isCameraOpen, toast]);
+  
+  const handleCapture = () => {
+    if (videoRef.current && canvasRef.current) {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        if (context) {
+            context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            setCapturedImage(dataUrl);
+            setIsCameraOpen(false); // Close camera after capture
+        }
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     form.setValue('medicineName', value);
     if (value.length > 0) {
+      setCapturedImage(null); // Clear image if user types
       const filteredSuggestions = commonMedicines.filter((med) =>
         med.toLowerCase().includes(value.toLowerCase())
       );
@@ -100,6 +157,15 @@ export default function MedicineCheckerPage() {
 
 
   const onSubmit: SubmitHandler<MedicineValues> = async (data) => {
+    if (!data.medicineName && !capturedImage) {
+        toast({
+            variant: 'destructive',
+            title: 'Input Required',
+            description: 'Please enter a medicine name or scan an image.',
+        });
+        return;
+    }
+
     setLoading(true);
     setError(null);
     setResult(null);
@@ -108,6 +174,7 @@ export default function MedicineCheckerPage() {
     try {
       const response = await getMedicineInformation({
         medicineName: data.medicineName,
+        image: capturedImage ?? undefined,
         language: effectiveLanguage,
       });
       setResult(response);
@@ -128,7 +195,7 @@ export default function MedicineCheckerPage() {
         <CardHeader>
           <CardTitle className="font-headline text-2xl">AI Medicine Checker</CardTitle>
           <CardDescription>
-            Enter the name of a medicine to learn what it's used for.
+            Enter the name of a medicine or scan it with your camera to learn what it's used for.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -172,7 +239,56 @@ export default function MedicineCheckerPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={loading} className="justify-self-start">
+
+            <div className="relative flex items-center justify-center my-4">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or</span>
+                </div>
+            </div>
+
+            <div className="space-y-4">
+                 {!isCameraOpen && !capturedImage && (
+                     <Button type="button" variant="outline" className="w-full" onClick={() => setIsCameraOpen(true)}>
+                         <Camera className="mr-2" />
+                         Scan with Camera
+                     </Button>
+                 )}
+
+                {isCameraOpen && (
+                    <div className="space-y-4">
+                        <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted playsInline />
+                        {hasCameraPermission === false && (
+                             <Alert variant="destructive">
+                                <AlertTitle>Camera Access Required</AlertTitle>
+                                <AlertDescription>Please allow camera access in your browser settings to use this feature.</AlertDescription>
+                            </Alert>
+                        )}
+                         <div className="flex gap-4">
+                            <Button type="button" className="w-full" onClick={handleCapture} disabled={hasCameraPermission === false}>
+                                <ScanLine className="mr-2" />
+                                Capture
+                            </Button>
+                            <Button type="button" variant="ghost" onClick={() => setIsCameraOpen(false)}>Cancel</Button>
+                        </div>
+                    </div>
+                )}
+                
+                {capturedImage && (
+                    <div className="space-y-4 text-center">
+                         <Image src={capturedImage} alt="Captured medicine" width={400} height={300} className="rounded-md mx-auto" />
+                         <p className="text-sm text-muted-foreground">Image captured. Click "Get Information" to analyze.</p>
+                         <Button type="button" variant="outline" onClick={() => { setCapturedImage(null); form.setValue('medicineName', ''); }}>
+                             Retake or Type
+                         </Button>
+                    </div>
+                )}
+                 <canvas ref={canvasRef} className="hidden" />
+            </div>
+
+              <Button type="submit" disabled={loading} className="justify-self-start mt-4">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

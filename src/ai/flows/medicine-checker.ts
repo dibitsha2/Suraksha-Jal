@@ -12,7 +12,10 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const MedicineInformationInputSchema = z.object({
-  medicineName: z.string().describe('The name of the medicine to get information about.'),
+  medicineName: z.string().optional().describe('The name of the medicine to get information about.'),
+  image: z.string().optional().describe(
+      "A photo of the medicine, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
   language: z.string().describe('The language for the response.').optional(),
 });
 export type MedicineInformationInput = z.infer<typeof MedicineInformationInputSchema>;
@@ -31,10 +34,17 @@ const medicineInformationPrompt = ai.definePrompt({
   input: {schema: MedicineInformationInputSchema},
   output: {schema: MedicineInformationOutputSchema},
   prompt: `You are a pharmacist and medical expert. A user wants to know about a specific medicine. Provide accurate and easy-to-understand information about what the medicine is used for. Be clear and concise.
+  
+  {{#if image}}
+  Analyse the provided image to identify the medicine.
+  Image: {{media url=image}}
+  {{/if}}
 
-Medicine Name: {{{medicineName}}}
-
-{{#if language}}
+  {{#if medicineName}}
+  Medicine Name: {{{medicineName}}}
+  {{/if}}
+  
+  {{#if language}}
 The user's preferred language is {{language}}. Respond in that language.
 {{/if}}
 `,

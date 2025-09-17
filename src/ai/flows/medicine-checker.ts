@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -45,7 +46,7 @@ const medicineInformationPrompt = ai.definePrompt({
   {{/if}}
   
   {{#if language}}
-The user's preferred language is {{language}}. Respond in that language.
+Respond in the user's preferred language: {{{language}}}.
 {{/if}}
 `,
 });

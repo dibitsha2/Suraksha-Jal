@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Pill, Info, Camera, Video, ScanLine } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill, Info, Camera, Video, ScanLine, Volume2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +21,7 @@ import {
   getMedicineInformation,
   type MedicineInformationOutput,
 } from '@/ai/flows/medicine-checker';
+import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useLanguage } from '@/hooks/use-language';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -80,6 +81,9 @@ export default function MedicineCheckerPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [resultFromImage, setResultFromImage] = useState(false);
+
 
   const form = useForm<MedicineValues>({
     resolver: zodResolver(medicineSchema),
@@ -138,6 +142,7 @@ export default function MedicineCheckerPage() {
     form.setValue('medicineName', value);
     if (value.length > 0) {
       setCapturedImage(null); // Clear image if user types
+      setResultFromImage(false);
       const filteredSuggestions = commonMedicines.filter((med) =>
         med.toLowerCase().includes(value.toLowerCase())
       );
@@ -170,6 +175,7 @@ export default function MedicineCheckerPage() {
     setError(null);
     setResult(null);
     setIsSuggestionsVisible(false);
+    setResultFromImage(!!capturedImage);
 
     try {
       const response = await getMedicineInformation({
@@ -185,6 +191,21 @@ export default function MedicineCheckerPage() {
       setLoading(false);
     }
   };
+  
+  const handlePlayback = async (text: string) => {
+      setIsSpeaking(true);
+      try {
+        const { audioDataUri } = await textToSpeech({ text });
+        const audio = new Audio(audioDataUri);
+        audio.play();
+        audio.onended = () => setIsSpeaking(false);
+      } catch (e) {
+        console.error(e);
+        toast({ variant: 'destructive', title: 'Playback Error', description: 'Could not play the audio response.'});
+        setIsSpeaking(false);
+      }
+  }
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -280,7 +301,7 @@ export default function MedicineCheckerPage() {
                     <div className="space-y-4 text-center">
                          <Image src={capturedImage} alt="Captured medicine" width={400} height={300} className="rounded-md mx-auto" />
                          <p className="text-sm text-muted-foreground">Image captured. Click "Get Information" to analyze.</p>
-                         <Button type="button" variant="outline" onClick={() => { setCapturedImage(null); form.setValue('medicineName', ''); }}>
+                         <Button type="button" variant="outline" onClick={() => { setCapturedImage(null); setResultFromImage(false); form.setValue('medicineName', ''); }}>
                              Retake or Type
                          </Button>
                     </div>
@@ -327,8 +348,20 @@ export default function MedicineCheckerPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="prose prose-sm dark:prose-invert max-w-none p-4 border rounded-md">
+            <div className="prose prose-sm dark:prose-invert max-w-none p-4 border rounded-md relative">
                 <p>{result.usageInfo}</p>
+                {resultFromImage && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => handlePlayback(result.usageInfo)}
+                        disabled={isSpeaking}
+                        aria-label="Read details aloud"
+                    >
+                        {isSpeaking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                    </Button>
+                )}
             </div>
           </CardContent>
         </Card>

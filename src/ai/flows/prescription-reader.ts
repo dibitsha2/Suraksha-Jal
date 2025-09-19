@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -24,7 +25,7 @@ export type PrescriptionReaderInput = z.infer<typeof PrescriptionReaderInputSche
 const MedicineDetailsSchema = z.object({
     name: z.string().describe('The name of the medicine.'),
     dosage: z.string().describe('The dosage (e.g., "500mg", "1 tablet").'),
-    frequency: z.string().describe('How often to take the medicine (e.g., "Twice a day", "Once at night").'),
+    frequency: z.string().describe('How often to take the medicine, described in simple words (e.g., "Twice a day", "Once at night", "One in the morning and one at night").'),
     instructions: z.string().optional().describe('Any additional instructions, like "before food" or "for 5 days".'),
 });
 
@@ -45,6 +46,8 @@ const prescriptionReaderPrompt = ai.definePrompt({
   prompt: `You are a medical assistant with expertise in reading and transcribing doctor's prescriptions. Analyze the provided image of a prescription.
 
 Your task is to extract all the medicines, their dosages, frequency, and any specific instructions. Present this information in a clear, structured list.
+
+For the 'frequency' field, you MUST use simple, easy-to-understand language. Do not use medical shorthand like "1-0-1" or "TDS". Instead, write it out clearly, for example: "Once in the morning and once at night" or "Three times a day".
 
 Critically, you MUST include a strong disclaimer stating that this is an AI-generated transcription and not a substitute for the original prescription. The user must verify the information with the original document and consult a doctor or pharmacist if they have any questions.
 

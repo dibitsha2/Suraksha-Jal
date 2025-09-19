@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, AlertTriangle, Pill, Info, Camera, Video, ScanLine, Volume2, StopCircle } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Pill, Info, Camera, Video, ScanLine, Volume2, StopCircle, HelpCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,10 +21,32 @@ import {
   getMedicineInformation,
   type MedicineInformationOutput,
 } from '@/ai/flows/medicine-checker';
+import {
+  getMedicineDosage,
+  type MedicineDosageOutput,
+} from '@/ai/flows/medicine-dosage-suggester';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useLanguage } from '@/hooks/use-language';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import Image from 'next/image';
 
 const medicineSchema = z.object({
@@ -32,6 +54,11 @@ const medicineSchema = z.object({
 });
 
 type MedicineValues = z.infer<typeof medicineSchema>;
+
+const dosageSchema = z.object({
+    age: z.coerce.number().min(1, 'Age must be 1 or greater'),
+});
+type DosageValues = z.infer<typeof dosageSchema>;
 
 const commonMedicines = [
     'Paracetamol',
@@ -84,11 +111,33 @@ export default function MedicineCheckerPage() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [resultFromImage, setResultFromImage] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isDosageDialogOpen, setIsDosageDialogOpen] = useState(false);
+  const [isDosageLoading, setIsDosageLoading] = useState(false);
+  const [dosageResult, setDosageResult] = useState<MedicineDosageOutput | null>(null);
+  const [isDosageResultOpen, setIsDosageResultOpen] = useState(false);
 
   const form = useForm<MedicineValues>({
     resolver: zodResolver(medicineSchema),
     defaultValues: { medicineName: '' },
   });
+
+  const dosageForm = useForm<DosageValues>({
+    resolver: zodResolver(dosageSchema),
+  });
+
+  useEffect(() => {
+    try {
+        const savedProfile = localStorage.getItem('userProfile');
+        if (savedProfile) {
+            const profile = JSON.parse(savedProfile);
+            if (profile.age) {
+                dosageForm.setValue('age', profile.age);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load user profile for dosage form:', error);
+    }
+  }, [dosageForm]);
   
   useEffect(() => {
     if (isCameraOpen) {
@@ -234,6 +283,41 @@ export default function MedicineCheckerPage() {
       setLoading(false);
     }
   };
+
+  const onDosageSubmit: SubmitHandler<DosageValues> = async (data) => {
+    const medicineName = form.getValues('medicineName');
+    if (!medicineName) {
+        toast({
+            variant: 'destructive',
+            title: 'Medicine Name Missing',
+            description: 'Please find a medicine first before checking how to take it.',
+        });
+        return;
+    }
+    
+    setIsDosageLoading(true);
+    setDosageResult(null);
+
+    try {
+        const response = await getMedicineDosage({
+            medicineName: medicineName,
+            age: data.age,
+            language: effectiveLanguage,
+        });
+        setDosageResult(response);
+        setIsDosageDialogOpen(false);
+        setIsDosageResultOpen(true);
+    } catch(e) {
+        console.error("Dosage Error", e);
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Could not fetch dosage information. Please try again.',
+        });
+    } finally {
+        setIsDosageLoading(false);
+    }
+  };
   
   return (
     <div className="flex flex-col gap-6">
@@ -337,19 +421,57 @@ export default function MedicineCheckerPage() {
                  <canvas ref={canvasRef} className="hidden" />
             </div>
 
-              <Button type="submit" disabled={loading} className="justify-self-start mt-4">
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Checking...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Get Information
-                  </>
-                )}
-              </Button>
+              <div className="flex flex-wrap gap-2 justify-start mt-4">
+                <Button type="submit" disabled={loading}>
+                    {loading ? (
+                    <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Checking...
+                    </>
+                    ) : (
+                    <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Get Information
+                    </>
+                    )}
+                </Button>
+                 <Dialog open={isDosageDialogOpen} onOpenChange={setIsDosageDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button type="button" variant="secondary" disabled={!form.getValues('medicineName')}>
+                            <HelpCircle className="mr-2 h-4 w-4" />
+                            How to Take
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Enter Age for Dosage</DialogTitle>
+                            <DialogDescription>
+                                Please provide the age of the person who will be taking {form.getValues('medicineName')} to get more accurate instructions.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <Form {...dosageForm}>
+                            <form onSubmit={dosageForm.handleSubmit(onDosageSubmit)} className="space-y-4">
+                                <FormField
+                                    control={dosageForm.control}
+                                    name="age"
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Age</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" placeholder="Enter age" {...field} value={field.value ?? ''} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                                <Button type="submit" disabled={isDosageLoading} className="w-full">
+                                    {isDosageLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Get Dosage Info"}
+                                </Button>
+                            </form>
+                        </Form>
+                    </DialogContent>
+                 </Dialog>
+              </div>
             </form>
           </Form>
         </CardContent>
@@ -386,7 +508,7 @@ export default function MedicineCheckerPage() {
                         onClick={() => {
                             if (isSpeaking) {
                                 stopPlayback();
-                            } else {
+                            } else if (result.usageInfo) {
                                 handlePlayback(result.usageInfo);
                             }
                         }}
@@ -399,7 +521,30 @@ export default function MedicineCheckerPage() {
           </CardContent>
         </Card>
       )}
+
+      {dosageResult && (
+        <AlertDialog open={isDosageResultOpen} onOpenChange={setIsDosageResultOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Dosage for {form.getValues('medicineName')}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                       Based on an age of {dosageForm.getValues('age')}.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="space-y-4 text-sm">
+                    <p><strong>Dosage:</strong> {dosageResult.dosage}</p>
+                    <p><strong>Frequency:</strong> {dosageResult.frequency}</p>
+                    <p><strong>Timing:</strong> {dosageResult.timing}</p>
+                    <div className="p-3 bg-amber-100 dark:bg-amber-900/20 rounded-lg text-amber-800 dark:text-amber-300">
+                        <p className="font-medium">{dosageResult.disclaimer}</p>
+                    </div>
+                </div>
+                <AlertDialogFooter>
+                    <AlertDialogAction>OK</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 }
-

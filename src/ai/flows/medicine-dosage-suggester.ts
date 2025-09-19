@@ -20,7 +20,6 @@ export type MedicineDosageInput = z.infer<typeof MedicineDosageInputSchema>;
 
 const MedicineDosageOutputSchema = z.object({
   dosage: z.string().describe('The recommended dosage amount for the given age (e.g., "500mg", "1 tablet").'),
-  frequency: z.string().describe('How often the medicine should be taken (e.g., "Twice a day", "Every 4-6 hours").'),
   timing: z.string().describe('Instructions on when to take the medicine relative to meals (e.g., "After breakfast and dinner", "With food").'),
   disclaimer: z.string().describe('A strong disclaimer that this is not medical advice and the user must consult a qualified doctor or pharmacist for accurate dosage information.'),
 });

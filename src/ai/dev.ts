@@ -1,3 +1,4 @@
+'use server';
 import { config } from 'dotenv';
 config();
 
@@ -11,3 +12,4 @@ import '@/ai/flows/emergency-contact-suggester.ts';
 import '@/ai/flows/speech-to-text.ts';
 import '@/ai/flows/text-to-speech.ts';
 import '@/ai/flows/medicine-dosage-suggester.ts';
+import '@/ai/flows/prescription-reader.ts';

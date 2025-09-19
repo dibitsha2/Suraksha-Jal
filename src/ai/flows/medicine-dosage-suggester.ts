@@ -21,6 +21,7 @@ export type MedicineDosageInput = z.infer<typeof MedicineDosageInputSchema>;
 const MedicineDosageOutputSchema = z.object({
   dosage: z.string().describe('The recommended dosage amount for the given age (e.g., "500mg", "1 tablet").'),
   timing: z.string().describe('Instructions on when to take the medicine relative to meals (e.g., "After breakfast and dinner", "With food").'),
+  timeOfDay: z.string().describe('The recommended time of day to take the medicine (e.g., "Morning and Evening", "Before sleeping at night").'),
   disclaimer: z.string().describe('A strong disclaimer that this is not medical advice and the user must consult a qualified doctor or pharmacist for accurate dosage information.'),
 });
 export type MedicineDosageOutput = z.infer<typeof MedicineDosageOutputSchema>;
@@ -34,6 +35,11 @@ const medicineDosagePrompt = ai.definePrompt({
   input: {schema: MedicineDosageInputSchema},
   output: {schema: MedicineDosageOutputSchema},
   prompt: `You are an expert pharmacist. Based on the medicine name and user's age, provide typical dosage instructions for over-the-counter use. Be accurate and clear.
+
+Specifically provide the following:
+1.  **Dosage**: The amount to take (e.g., "500mg", "1 tablet").
+2.  **Timing**: When to take it relative to food (e.g., "With food", "On an empty stomach").
+3.  **Time of Day**: What time of day to take it (e.g., "Morning and Evening", "Only at night").
 
 You MUST provide a strong disclaimer that this information is for general guidance only and is not a substitute for professional medical advice. The user MUST consult a qualified doctor or pharmacist before taking any medication, as dosage can vary based on many factors.
 

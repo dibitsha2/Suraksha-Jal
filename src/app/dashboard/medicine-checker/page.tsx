@@ -533,7 +533,8 @@ export default function MedicineCheckerPage() {
                 </AlertDialogHeader>
                 <div className="space-y-4 text-sm">
                     <p><strong>Dosage:</strong> {dosageResult.dosage}</p>
-                    <p><strong>Timing:</strong> {dosageResult.timing}</p>
+                    <p><strong>Timing with Food:</strong> {dosageResult.timing}</p>
+                    <p><strong>Time of Day:</strong> {dosageResult.timeOfDay}</p>
                     <div className="p-3 bg-amber-100 dark:bg-amber-900/20 rounded-lg text-amber-800 dark:text-amber-300">
                         <p className="font-medium">{dosageResult.disclaimer}</p>
                     </div>

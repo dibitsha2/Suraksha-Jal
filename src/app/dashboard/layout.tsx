@@ -70,13 +70,15 @@ function Sidebar() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester')},
+    { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker')},
+    { href: '/dashboard/prescription-reader', icon: FileScan, label: 'Prescription Reader'},
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/ai-chat', icon: MessageCircle, label: t('aiChat') },
     { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];
 
@@ -118,13 +120,15 @@ function Header() {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/dashboard/symptom-checker', icon: Stethoscope, label: t('symptomChecker') },
+    { href: '/dashboard/medication-suggester', icon: Pill, label: t('medicationSuggester')},
+    { href: '/dashboard/medicine-checker', icon: Info, label: t('medicineChecker')},
+    { href: '/dashboard/prescription-reader', icon: FileScan, label: 'Prescription Reader'},
     { href: '/dashboard/water-quality', icon: Droplet, label: t('waterQuality') },
     { href: '/dashboard/precautions', icon: Shield, label: t('precautions') },
     { href: '/dashboard/health-reminders', icon: HeartPulse, label: t('healthReminders') },
     { href: '/dashboard/reminders', icon: Bell, label: t('reminders') },
     { href: '/dashboard/local-reports', icon: Globe, label: t('reports') },
     { href: '/dashboard/emergency-contacts', icon: Siren, label: 'Emergency Contacts' },
-    { href: '/dashboard/ai-chat', icon: MessageCircle, label: t('aiChat') },
     { href: '/dashboard/settings', icon: Settings, label: 'Language Settings' },
   ];
   

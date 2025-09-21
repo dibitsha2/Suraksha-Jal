@@ -9,3 +9,7 @@ import '@/ai/flows/health-chatbot.ts';
 import '@/ai/flows/emergency-contact-suggester.ts';
 import '@/ai/flows/speech-to-text.ts';
 import '@/ai/flows/text-to-speech.ts';
+import '@/ai/flows/medication-suggester.ts';
+import '@/ai/flows/medicine-checker.ts';
+import '@/ai/flows/medicine-dosage-suggester.ts';
+import '@/ai/flows/prescription-reader.ts';

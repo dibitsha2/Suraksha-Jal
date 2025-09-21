@@ -1,0 +1,50 @@
+{
+  "node": {
+    "403484bd370d0a2e71f634ac05a48a9e673a8ed461": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/health-chatbot.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser"
+      }
+    },
+    "404a2889515a88090e7ac9454f5c6155f8db0321f3": {
+      "workers": {
+        "app/dashboard/medicine-checker/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/medicine-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medicine-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/medicine-dosage-suggester.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/medicine-checker/page": "action-browser"
+      }
+    },
+    "40bf2f63165a33ef4f8b3445ebf870db9f5955a232": {
+      "workers": {
+        "app/dashboard/medicine-checker/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/medicine-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medicine-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/medicine-dosage-suggester.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/medicine-checker/page": "action-browser"
+      }
+    },
+    "4048b818e77bed60353b0f346a4ff49b6ee5d0fad8": {
+      "workers": {
+        "app/dashboard/medicine-checker/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/medicine-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medicine-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/medicine-dosage-suggester.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/medicine-checker/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "vQed+xWNon81EU9tVxuj6kkP2ZV/3px3ttjAiWS6fxA="
+}

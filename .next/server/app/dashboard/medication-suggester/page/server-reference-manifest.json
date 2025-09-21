@@ -1,0 +1,16 @@
+{
+  "node": {
+    "404d7b1710f969ae847fc3196dc9cbbccae9f0cf3b": {
+      "workers": {
+        "app/dashboard/medication-suggester/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/medication-suggester/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medication-suggester.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/medication-suggester/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,16 @@
+{
+  "node": {
+    "40d23dbc8304963191d78bf34d4672a934d91b9380": {
+      "workers": {
+        "app/dashboard/translator/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/translator/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/translate-text.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/translator/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

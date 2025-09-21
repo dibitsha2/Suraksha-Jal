@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///home/user/studio/src/app/dashboard-health-worker/layout.tsx"],"sourcesContent":["\nexport default function HealthWorkerAuthLayout({\n  children,\n}: {\n  children: React.ReactNode;\n}) {\n  return (\n    <div className=\"flex min-h-screen w-full flex-col items-center justify-center bg-background p-4\">\n        {children}\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AACe,SAAS,uBAAuB,EAC7C,QAAQ,EAGT;IACC,qBACE,8OAAC;QAAI,WAAU;kBACV;;;;;;AAGT","debugId":null}}]
+}

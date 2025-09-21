@@ -1,0 +1,16 @@
+{
+  "node": {
+    "40d5ba542afd011c9518a18a7459039c9b65f6f55c": {
+      "workers": {
+        "app/dashboard/water-quality/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/water-quality/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/water-quality-checker.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/water-quality/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

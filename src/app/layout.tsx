@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/contexts/language-provider';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: 'Suraksha Jal',
@@ -30,6 +31,7 @@ export default function RootLayout({
           <LanguageProvider>
             {children}
             <Toaster />
+            <Analytics />
           </LanguageProvider>
         </ThemeProvider>
       </body>

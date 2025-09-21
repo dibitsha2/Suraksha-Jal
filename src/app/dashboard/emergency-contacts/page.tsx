@@ -26,31 +26,44 @@ export default function EmergencyContactsPage() {
   const [location, setLocation] = useState<string | null>(null);
   const { t } = useLanguage();
 
-  useEffect(() => {
-    const fetchProfileAndContacts = async () => {
-        try {
-            const savedProfile = localStorage.getItem('userProfile');
-            if (savedProfile) {
-                const profile = JSON.parse(savedProfile);
-                if (profile.address) {
-                    setLocation(profile.address);
-                    const response = await getEmergencyContacts({ location: profile.address });
-                    setResult(response);
-                } else {
-                    setError("No location found in your profile. Please update your address to get local emergency contacts.");
-                }
-            } else {
-                 setError("Could not find your profile. Please complete your profile to use this feature.");
-            }
-        } catch (e) {
-            console.error(e);
-            setError('An error occurred while fetching emergency contacts. Please try again.');
-        } finally {
-            setLoading(false);
+  const fetchProfileAndContacts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+        const userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const profile = userProfiles[user.uid];
+
+        if (profile && profile.address) {
+            setLocation(profile.address);
+            const response = await getEmergencyContacts({ location: profile.address });
+            setResult(response);
+        } else if (profile) {
+            setError("No location found in your profile. Please update your address to get local emergency contacts.");
         }
-    };
-    
+        else {
+             setError("Could not find your profile. Please complete your profile to use this feature.");
+        }
+    } catch (e) {
+        console.error(e);
+        setError('An error occurred while fetching emergency contacts. Please try again.');
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProfileAndContacts();
+
+    const handleProfileUpdate = () => {
+      console.log("Profile updated, refetching contacts...");
+      fetchProfileAndContacts();
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
   }, []);
 
   return (

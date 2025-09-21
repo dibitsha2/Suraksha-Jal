@@ -57,6 +57,7 @@ const saveExtraProfileData = (userId: string, data: any) => {
         const userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
         userProfiles[userId] = { ...userProfiles[userId], ...data };
         localStorage.setItem('userProfiles', JSON.stringify(userProfiles));
+        localStorage.setItem('user', JSON.stringify({ uid: userId }));
     } catch (e) {
         console.error("Failed to save extra profile data", e);
     }

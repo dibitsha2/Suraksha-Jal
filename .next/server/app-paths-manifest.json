@@ -1,7 +1,9 @@
 {
   "/auth/login/page": "app/auth/login/page.js",
   "/auth/page": "app/auth/page.js",
+  "/dashboard/emergency-contacts/page": "app/dashboard/emergency-contacts/page.js",
   "/dashboard/medicine-checker/page": "app/dashboard/medicine-checker/page.js",
   "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/profile/page": "app/dashboard/profile/page.js",
   "/page": "app/page.js"
 }

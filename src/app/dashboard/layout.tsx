@@ -171,14 +171,18 @@ function Header() {
       <div className="w-full flex-1">
         {/* Can add a search bar here if needed */}
       </div>
+      
+      <div className="flex items-center gap-4">
+        <ThemeToggle />
+        <UserMenu />
+      </div>
 
-      <UserMenu />
     </header>
   );
 }
 
 function UserMenu() {
-    const { t, setLanguage } = useLanguage();
+    const { t } = useLanguage();
     const router = useRouter();
     const { toast } = useToast();
     const [user, setUser] = React.useState<any>(null);
@@ -229,13 +233,6 @@ function UserMenu() {
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('profile')}</span>
                   </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="p-0">
-                    <div className="flex items-center justify-between w-full px-2 py-1.5">
-                       <span>Theme</span>
-                       <ThemeToggle />
-                    </div>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>

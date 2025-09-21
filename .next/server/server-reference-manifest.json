@@ -1,5 +1,17 @@
 {
-  "node": {},
+  "node": {
+    "403484bd370d0a2e71f634ac05a48a9e673a8ed461": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/health-chatbot.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
   "encryptionKey": "vQed+xWNon81EU9tVxuj6kkP2ZV/3px3ttjAiWS6fxA="
 }

@@ -1,54 +1,5 @@
 {
   "node": {
-    "403484bd370d0a2e71f634ac05a48a9e673a8ed461": {
-      "workers": {
-        "app/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/health-chatbot.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/dashboard/page": "action-browser"
-      }
-    },
-    "404a2889515a88090e7ac9454f5c6155f8db0321f3": {
-      "workers": {
-        "app/dashboard/medicine-checker/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/medicine-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medicine-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/medicine-dosage-suggester.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/dashboard/medicine-checker/page": "action-browser"
-      }
-    },
-    "40bf2f63165a33ef4f8b3445ebf870db9f5955a232": {
-      "workers": {
-        "app/dashboard/medicine-checker/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/medicine-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medicine-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/medicine-dosage-suggester.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/dashboard/medicine-checker/page": "action-browser"
-      }
-    },
-    "4048b818e77bed60353b0f346a4ff49b6ee5d0fad8": {
-      "workers": {
-        "app/dashboard/medicine-checker/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/medicine-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medicine-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/medicine-dosage-suggester.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/dashboard/symptom-checker/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/symptom-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/symptom-based-disease-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/ai-powered-disease-information.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/speech-to-text.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/dashboard/medicine-checker/page": "action-browser",
-        "app/dashboard/symptom-checker/page": "action-browser"
-      }
-    },
     "40f39c7ee987207991a9dfb568f8701e4d7e8b8b34": {
       "workers": {
         "app/dashboard/symptom-checker/page": {
@@ -82,15 +33,26 @@
         "app/dashboard/symptom-checker/page": "action-browser"
       }
     },
-    "404d7b1710f969ae847fc3196dc9cbbccae9f0cf3b": {
+    "4048b818e77bed60353b0f346a4ff49b6ee5d0fad8": {
       "workers": {
-        "app/dashboard/medication-suggester/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/medication-suggester/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/medication-suggester.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/dashboard/symptom-checker/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/symptom-checker/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/symptom-based-disease-checker.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/ai-powered-disease-information.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/speech-to-text.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/text-to-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         }
       },
       "layer": {
-        "app/dashboard/medication-suggester/page": "action-browser"
+        "app/dashboard/symptom-checker/page": "action-browser"
+      }
+    },
+    "403484bd370d0a2e71f634ac05a48a9e673a8ed461": {
+      "workers": {
+        "app/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/health-chatbot.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/dashboard/page": "action-browser"
       }
     }
   },

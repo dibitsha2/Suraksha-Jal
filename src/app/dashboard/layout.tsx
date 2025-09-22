@@ -100,15 +100,16 @@ function Sidebar() {
             <span className="">Suraksha Jal</span>
           </Link>
         </div>
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto py-2">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:text-primary ${
-                  pathname === item.href ? 'bg-muted text-primary' : 'text-muted-foreground'
-                }`}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
+                  pathname === item.href && 'bg-primary/10 text-primary'
+                )}
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
@@ -146,7 +147,7 @@ function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 items-center gap-4 border-b bg-muted px-4 lg:h-[60px] lg:px-6">
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -165,9 +166,10 @@ function Header() {
                 key={item.href}
                 href={item.href}
                 onClick={handleLinkClick}
-                className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 hover:text-foreground ${
-                  pathname === item.href ? 'bg-muted text-foreground' : 'text-muted-foreground'
-                }`}
+                className={cn(
+                  'mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground',
+                  pathname === item.href && 'bg-muted text-foreground'
+                )}
               >
                 <item.icon className="h-5 w-5" />
                 {item.label}

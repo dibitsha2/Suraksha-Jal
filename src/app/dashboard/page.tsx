@@ -76,9 +76,18 @@ export default function DashboardPage() {
         <h1 className="text-lg font-semibold md:text-2xl font-headline">{t('dashboard')}</h1>
       </div>
       
-      <Card>
-        <CardContent className="flex flex-1 items-center justify-center rounded-lg p-6 min-h-[300px]">
-            <div className="flex flex-col items-center gap-4 text-center">
+      <Card 
+        className="relative overflow-hidden"
+        style={{
+          backgroundImage: "url('https://picsum.photos/seed/welcome/1200/400?blur=5')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+        data-ai-hint="health medical"
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <CardContent className="relative flex flex-1 items-center justify-center rounded-lg p-6 min-h-[300px]">
+            <div className="flex flex-col items-center gap-4 text-center text-white">
             <div className="flex items-center gap-8">
                 <Stethoscope className="h-16 w-16 text-primary" />
                 <Shield className="h-16 w-16 text-primary" />
@@ -86,7 +95,7 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-bold tracking-tight font-headline">
                 {t('welcome')}! Your Health is Our Priority
             </h3>
-            <p className="text-sm text-muted-foreground max-w-sm">
+            <p className="text-sm text-white/80 max-w-sm">
                 {t('checkSymptomsPrompt')}
             </p>
             <div className="flex gap-4 mt-4">

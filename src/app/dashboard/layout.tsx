@@ -92,7 +92,7 @@ function Sidebar() {
   ];
 
   return (
-    <div className="hidden border-r bg-muted md:block">
+    <div className="hidden border-r bg-background md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link href="/dashboard" className="flex items-center gap-2 font-semibold font-headline">
@@ -147,7 +147,7 @@ function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-muted px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -309,3 +309,5 @@ function UserMenu() {
         </DropdownMenu>
     );
 }
+
+    

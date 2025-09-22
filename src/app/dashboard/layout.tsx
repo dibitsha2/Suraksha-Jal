@@ -28,6 +28,7 @@ import {
   FileScan,
   Moon,
   Sun,
+  Check,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,7 @@ import { auth } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 
 
 export default function DashboardLayout({
@@ -192,7 +194,7 @@ function UserMenu() {
     const router = useRouter();
     const { toast } = useToast();
     const [user, setUser] = React.useState<any>(null);
-    const { setTheme } = useTheme();
+    const { theme, setTheme } = useTheme();
 
     React.useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -249,9 +251,18 @@ function UserMenu() {
                     </DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                            <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme('light')}>
+                                <Check className={cn("mr-2 h-4 w-4", theme === 'light' ? "opacity-100" : "opacity-0")} />
+                                Light
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme('dark')}>
+                                <Check className={cn("mr-2 h-4 w-4", theme === 'dark' ? "opacity-100" : "opacity-0")} />
+                                Dark
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme('system')}>
+                                 <Check className={cn("mr-2 h-4 w-4", theme === 'system' ? "opacity-100" : "opacity-0")} />
+                                System
+                            </DropdownMenuItem>
                         </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                 </DropdownMenuSub>

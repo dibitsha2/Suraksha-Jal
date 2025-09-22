@@ -273,9 +273,6 @@ export default function MedicineCheckerPage() {
         language: effectiveLanguage,
       });
       setResult(response);
-      if (isImageSearch && response.usageInfo) {
-          handlePlayback(response.usageInfo);
-      }
     } catch (e) {
       console.error(e);
       setError('An error occurred while getting information. Please try again.');

@@ -196,11 +196,43 @@ function UserMenu() {
     const [user, setUser] = React.useState<any>(null);
     const { theme, setTheme } = useTheme();
 
+    const loadProfile = (currentUser: any) => {
+        if (!currentUser) {
+            setUser(null);
+            return;
+        }
+        try {
+            const userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+            const localProfile = userProfiles[currentUser.uid] || {};
+            
+            // Combine Firebase Auth data with local storage data
+            const combinedUser = {
+                ...currentUser,
+                displayName: localProfile.name || currentUser.displayName,
+                photoURL: localProfile.photoURL || currentUser.photoURL,
+            };
+            setUser(combinedUser);
+        } catch (e) {
+            console.error("Failed to load user profile from local storage", e);
+            setUser(currentUser); // Fallback to just auth data
+        }
+    }
+
     React.useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-            setUser(currentUser);
-        });
-        return () => unsubscribe();
+        const unsubscribe = auth.onAuthStateChanged(loadProfile);
+        
+        // Listen for profile updates from other pages
+        const handleProfileUpdate = () => {
+            if (auth.currentUser) {
+                loadProfile(auth.currentUser);
+            }
+        };
+        window.addEventListener('profileUpdated', handleProfileUpdate);
+
+        return () => {
+            unsubscribe();
+            window.removeEventListener('profileUpdated', handleProfileUpdate);
+        };
     }, []);
 
     const handleLogout = async () => {

@@ -1,5 +1,6 @@
 {
   "/auth/login/page": "app/auth/login/page.js",
+  "/dashboard/health-reminders/page": "app/dashboard/health-reminders/page.js",
   "/dashboard/medication-suggester/page": "app/dashboard/medication-suggester/page.js",
   "/dashboard/medicine-checker/page": "app/dashboard/medicine-checker/page.js",
   "/dashboard/page": "app/dashboard/page.js",

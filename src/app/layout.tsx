@@ -36,7 +36,7 @@ export default function RootLayout({
                 alt="Water background"
                 data-ai-hint="water texture"
                 fill
-                className="object-cover -z-20"
+                className="object-cover -z-20 fixed"
             />
             <div className="fixed inset-0 bg-background/80 -z-10" />
             {children}

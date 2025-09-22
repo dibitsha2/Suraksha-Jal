@@ -1471,6 +1471,14 @@ body {
   background-color: hsl(var(--card) / .8);
 }
 
+.bg-background\/50 {
+  background-color: hsl(var(--background) / .5);
+}
+
+.bg-card\/50 {
+  background-color: hsl(var(--card) / .5);
+}
+
 .bg-\[linear-gradient\(to_right\,\#80808012_1px\,transparent_1px\)\,linear-gradient\(to_bottom\,\#80808012_1px\,transparent_1px\)\] {
   background-image: linear-gradient(to right, #80808012 1px, #0000 1px), linear-gradient(#80808012 1px, #0000 1px);
 }

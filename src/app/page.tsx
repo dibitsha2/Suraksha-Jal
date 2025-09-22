@@ -76,7 +76,7 @@ function PortalSelectionPage() {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl mt-8">
-        <Card className="hover:shadow-lg transition-shadow bg-background/80">
+        <Card className="hover:shadow-lg transition-shadow bg-background/50">
           <CardHeader className="items-center text-center">
             <User className="h-12 w-12 text-primary" />
             <CardTitle className="text-2xl font-headline">User Portal</CardTitle>
@@ -88,7 +88,7 @@ function PortalSelectionPage() {
             </Button>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-shadow bg-background/80">
+        <Card className="hover:shadow-lg transition-shadow bg-background/50">
           <CardHeader className="items-center text-center">
             <BriefcaseMedical className="h-12 w-12 text-primary" />
             <CardTitle className="text-2xl font-headline">Health Worker Portal</CardTitle>

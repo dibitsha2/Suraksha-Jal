@@ -493,6 +493,10 @@ body {
   z-index: 100;
 }
 
+.-z-20 {
+  z-index: -20;
+}
+
 .col-span-full {
   grid-column: 1 / -1;
 }

@@ -211,7 +211,7 @@ export default function ProfilePage() {
         });
 
         // Save extra data to our mock DB (localStorage)
-        const { name, email, photoURL, ...extraData } = data; // email is not needed in extra data
+        const { name, email, ...extraData } = data; // email is not needed in extra data
         saveExtraProfileData(currentUser.uid, extraData);
 
         toast({
@@ -447,3 +447,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

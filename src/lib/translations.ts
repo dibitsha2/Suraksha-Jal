@@ -1,13 +1,13 @@
 
 
 export const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'hi', name: 'हिन्दी (Hindi)' },
   { code: 'as', name: 'অসমীয়া (Assamese)' },
   { code: 'bn', name: 'বাংলা (Bengali)' },
   { code: 'brx', name: 'बोड़ो (Bodo)' },
   { code: 'doi', name: 'डोगरी (Dogri)' },
+  { code: 'en', name: 'English' },
   { code: 'gu', name: 'ગુજરાતી (Gujarati)' },
+  { code: 'hi', name: 'हिन्दी (Hindi)' },
   { code: 'kn', name: 'ಕನ್ನಡ (Kannada)' },
   { code: 'ks', name: 'कश्मीरी (Kashmiri)' },
   { code: 'kok', name: 'कोंकणी (Konkani)' },

@@ -400,14 +400,6 @@ __turbopack_context__.s({
 });
 const languages = [
     {
-        code: 'en',
-        name: 'English'
-    },
-    {
-        code: 'hi',
-        name: 'हिन्दी (Hindi)'
-    },
-    {
         code: 'as',
         name: 'অসমীয়া (Assamese)'
     },
@@ -424,8 +416,16 @@ const languages = [
         name: 'डोगरी (Dogri)'
     },
     {
+        code: 'en',
+        name: 'English'
+    },
+    {
         code: 'gu',
         name: 'ગુજરાતી (Gujarati)'
+    },
+    {
+        code: 'hi',
+        name: 'हिन्दी (Hindi)'
     },
     {
         code: 'kn',

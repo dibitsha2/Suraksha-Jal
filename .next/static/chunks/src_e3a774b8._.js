@@ -1112,9 +1112,6 @@ function MedicineCheckerPage() {
                 language: effectiveLanguage
             });
             setResult(response);
-            if (isImageSearch && response.usageInfo) {
-                handlePlayback(response.usageInfo);
-            }
         } catch (e) {
             console.error(e);
             setError('An error occurred while getting information. Please try again.');
@@ -1164,12 +1161,12 @@ function MedicineCheckerPage() {
                     children: t('medicineChecker')
                 }, void 0, false, {
                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                    lineNumber: 325,
+                    lineNumber: 322,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                lineNumber: 324,
+                lineNumber: 321,
                 columnNumber: 8
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1181,20 +1178,20 @@ function MedicineCheckerPage() {
                                 children: "AI Medicine Checker"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                lineNumber: 329,
+                                lineNumber: 326,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                 children: "Enter the name of a medicine or scan it with your camera to learn what it's used for."
                             }, void 0, false, {
                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                lineNumber: 330,
+                                lineNumber: 327,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                        lineNumber: 328,
+                        lineNumber: 325,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1213,7 +1210,7 @@ function MedicineCheckerPage() {
                                                         children: "Medicine Name"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 342,
+                                                        lineNumber: 339,
                                                         columnNumber: 21
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -1224,7 +1221,7 @@ function MedicineCheckerPage() {
                                                                     className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                    lineNumber: 345,
+                                                                    lineNumber: 342,
                                                                     columnNumber: 29
                                                                 }, void 0),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1236,7 +1233,7 @@ function MedicineCheckerPage() {
                                                                     autoComplete: "off"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                    lineNumber: 346,
+                                                                    lineNumber: 343,
                                                                     columnNumber: 29
                                                                 }, void 0),
                                                                 isSuggestionsVisible && suggestions.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1249,44 +1246,44 @@ function MedicineCheckerPage() {
                                                                                 children: medicine
                                                                             }, index, false, {
                                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                                lineNumber: 358,
+                                                                                lineNumber: 355,
                                                                                 columnNumber: 41
                                                                             }, void 0))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                        lineNumber: 356,
+                                                                        lineNumber: 353,
                                                                         columnNumber: 37
                                                                     }, void 0)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                    lineNumber: 355,
+                                                                    lineNumber: 352,
                                                                     columnNumber: 33
                                                                 }, void 0)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                            lineNumber: 344,
+                                                            lineNumber: 341,
                                                             columnNumber: 25
                                                         }, void 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 343,
+                                                        lineNumber: 340,
                                                         columnNumber: 21
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 371,
+                                                        lineNumber: 368,
                                                         columnNumber: 21
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 341,
+                                                lineNumber: 338,
                                                 columnNumber: 19
                                             }, void 0)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                        lineNumber: 337,
+                                        lineNumber: 334,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1298,12 +1295,12 @@ function MedicineCheckerPage() {
                                                     className: "w-full border-t"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                    lineNumber: 378,
+                                                    lineNumber: 375,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 377,
+                                                lineNumber: 374,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1313,18 +1310,18 @@ function MedicineCheckerPage() {
                                                     children: "Or"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                    lineNumber: 381,
+                                                    lineNumber: 378,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 380,
+                                                lineNumber: 377,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                        lineNumber: 376,
+                                        lineNumber: 373,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1340,14 +1337,14 @@ function MedicineCheckerPage() {
                                                         className: "mr-2"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 388,
+                                                        lineNumber: 385,
                                                         columnNumber: 26
                                                     }, this),
                                                     "Scan with Camera"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 387,
+                                                lineNumber: 384,
                                                 columnNumber: 22
                                             }, this),
                                             isCameraOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1361,7 +1358,7 @@ function MedicineCheckerPage() {
                                                         playsInline: true
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 395,
+                                                        lineNumber: 392,
                                                         columnNumber: 25
                                                     }, this),
                                                     hasCameraPermission === false && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Alert"], {
@@ -1371,20 +1368,20 @@ function MedicineCheckerPage() {
                                                                 children: "Camera Access Required"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                lineNumber: 398,
+                                                                lineNumber: 395,
                                                                 columnNumber: 33
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDescription"], {
                                                                 children: "Please allow camera access in your browser settings to use this feature."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                lineNumber: 399,
+                                                                lineNumber: 396,
                                                                 columnNumber: 33
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 397,
+                                                        lineNumber: 394,
                                                         columnNumber: 30
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1400,14 +1397,14 @@ function MedicineCheckerPage() {
                                                                         className: "mr-2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                        lineNumber: 404,
+                                                                        lineNumber: 401,
                                                                         columnNumber: 33
                                                                     }, this),
                                                                     "Capture"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                lineNumber: 403,
+                                                                lineNumber: 400,
                                                                 columnNumber: 29
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1417,19 +1414,19 @@ function MedicineCheckerPage() {
                                                                 children: "Cancel"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                lineNumber: 407,
+                                                                lineNumber: 404,
                                                                 columnNumber: 29
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 402,
+                                                        lineNumber: 399,
                                                         columnNumber: 26
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 394,
+                                                lineNumber: 391,
                                                 columnNumber: 21
                                             }, this),
                                             capturedImage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1443,7 +1440,7 @@ function MedicineCheckerPage() {
                                                         className: "rounded-md mx-auto"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 414,
+                                                        lineNumber: 411,
                                                         columnNumber: 26
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1451,7 +1448,7 @@ function MedicineCheckerPage() {
                                                         children: 'Image captured. Click "Get Information" to analyze.'
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 415,
+                                                        lineNumber: 412,
                                                         columnNumber: 26
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1465,13 +1462,13 @@ function MedicineCheckerPage() {
                                                         children: "Retake or Type"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 416,
+                                                        lineNumber: 413,
                                                         columnNumber: 26
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 413,
+                                                lineNumber: 410,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("canvas", {
@@ -1479,13 +1476,13 @@ function MedicineCheckerPage() {
                                                 className: "hidden"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 421,
+                                                lineNumber: 418,
                                                 columnNumber: 18
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                        lineNumber: 385,
+                                        lineNumber: 382,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1500,7 +1497,7 @@ function MedicineCheckerPage() {
                                                             className: "mr-2 h-4 w-4 animate-spin"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                            lineNumber: 428,
+                                                            lineNumber: 425,
                                                             columnNumber: 25
                                                         }, this),
                                                         "Checking..."
@@ -1511,7 +1508,7 @@ function MedicineCheckerPage() {
                                                             className: "mr-2 h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                            lineNumber: 433,
+                                                            lineNumber: 430,
                                                             columnNumber: 25
                                                         }, this),
                                                         "Get Information"
@@ -1519,7 +1516,7 @@ function MedicineCheckerPage() {
                                                 }, void 0, true)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 425,
+                                                lineNumber: 422,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1537,19 +1534,19 @@ function MedicineCheckerPage() {
                                                                     className: "mr-2 h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                    lineNumber: 441,
+                                                                    lineNumber: 438,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 "How to Take"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                            lineNumber: 440,
+                                                            lineNumber: 437,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 439,
+                                                        lineNumber: 436,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogContent"], {
@@ -1560,7 +1557,7 @@ function MedicineCheckerPage() {
                                                                         children: "Enter Age for Dosage"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                        lineNumber: 447,
+                                                                        lineNumber: 444,
                                                                         columnNumber: 29
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -1571,13 +1568,13 @@ function MedicineCheckerPage() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                        lineNumber: 448,
+                                                                        lineNumber: 445,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                lineNumber: 446,
+                                                                lineNumber: 443,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Form"], {
@@ -1595,7 +1592,7 @@ function MedicineCheckerPage() {
                                                                                             children: "Age"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                                            lineNumber: 459,
+                                                                                            lineNumber: 456,
                                                                                             columnNumber: 41
                                                                                         }, void 0),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -1606,28 +1603,28 @@ function MedicineCheckerPage() {
                                                                                                 value: field.value ?? ''
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                                                lineNumber: 461,
+                                                                                                lineNumber: 458,
                                                                                                 columnNumber: 45
                                                                                             }, void 0)
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                                            lineNumber: 460,
+                                                                                            lineNumber: 457,
                                                                                             columnNumber: 41
                                                                                         }, void 0),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                                            lineNumber: 463,
+                                                                                            lineNumber: 460,
                                                                                             columnNumber: 41
                                                                                         }, void 0)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                                    lineNumber: 458,
+                                                                                    lineNumber: 455,
                                                                                     columnNumber: 37
                                                                                 }, void 0)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                            lineNumber: 454,
+                                                                            lineNumber: 451,
                                                                             columnNumber: 33
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1638,63 +1635,63 @@ function MedicineCheckerPage() {
                                                                                 className: "mr-2 h-4 w-4 animate-spin"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                                lineNumber: 468,
+                                                                                lineNumber: 465,
                                                                                 columnNumber: 56
                                                                             }, this) : "Get Dosage Info"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                            lineNumber: 467,
+                                                                            lineNumber: 464,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                    lineNumber: 453,
+                                                                    lineNumber: 450,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                                lineNumber: 452,
+                                                                lineNumber: 449,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                        lineNumber: 445,
+                                                        lineNumber: 442,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                                lineNumber: 438,
+                                                lineNumber: 435,
                                                 columnNumber: 18
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                        lineNumber: 424,
+                                        lineNumber: 421,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                lineNumber: 336,
+                                lineNumber: 333,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 335,
+                            lineNumber: 332,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                        lineNumber: 334,
+                        lineNumber: 331,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                lineNumber: 327,
+                lineNumber: 324,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1706,7 +1703,7 @@ function MedicineCheckerPage() {
                             className: "text-destructive"
                         }, void 0, false, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 483,
+                            lineNumber: 480,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1716,7 +1713,7 @@ function MedicineCheckerPage() {
                                     children: "Error"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 485,
+                                    lineNumber: 482,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -1724,24 +1721,24 @@ function MedicineCheckerPage() {
                                     children: error
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 486,
+                                    lineNumber: 483,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 484,
+                            lineNumber: 481,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                    lineNumber: 482,
+                    lineNumber: 479,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                lineNumber: 481,
+                lineNumber: 478,
                 columnNumber: 9
             }, this),
             result && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1754,25 +1751,25 @@ function MedicineCheckerPage() {
                                     className: "h-5 w-5 text-primary"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 496,
+                                    lineNumber: 493,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: "Medicine Information"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 497,
+                                    lineNumber: 494,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 495,
+                            lineNumber: 492,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                        lineNumber: 494,
+                        lineNumber: 491,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1784,7 +1781,7 @@ function MedicineCheckerPage() {
                                     children: result.usageInfo
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 502,
+                                    lineNumber: 499,
                                     columnNumber: 17
                                 }, this),
                                 resultFromImage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1803,35 +1800,35 @@ function MedicineCheckerPage() {
                                         className: "h-5 w-5 text-destructive"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                        lineNumber: 517,
+                                        lineNumber: 514,
                                         columnNumber: 38
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$volume$2d$2$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Volume2$3e$__["Volume2"], {
                                         className: "h-5 w-5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                        lineNumber: 517,
+                                        lineNumber: 514,
                                         columnNumber: 92
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 504,
+                                    lineNumber: 501,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 501,
+                            lineNumber: 498,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                        lineNumber: 500,
+                        lineNumber: 497,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                lineNumber: 493,
+                lineNumber: 490,
                 columnNumber: 9
             }, this),
             dosageResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDialog"], {
@@ -1848,7 +1845,7 @@ function MedicineCheckerPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 529,
+                                    lineNumber: 526,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDialogDescription"], {
@@ -1859,13 +1856,13 @@ function MedicineCheckerPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 530,
+                                    lineNumber: 527,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 528,
+                            lineNumber: 525,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1877,7 +1874,7 @@ function MedicineCheckerPage() {
                                             children: "Dosage:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                            lineNumber: 535,
+                                            lineNumber: 532,
                                             columnNumber: 24
                                         }, this),
                                         " ",
@@ -1885,7 +1882,7 @@ function MedicineCheckerPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 535,
+                                    lineNumber: 532,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1894,7 +1891,7 @@ function MedicineCheckerPage() {
                                             children: "Timing with Food:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                            lineNumber: 536,
+                                            lineNumber: 533,
                                             columnNumber: 24
                                         }, this),
                                         " ",
@@ -1902,7 +1899,7 @@ function MedicineCheckerPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 536,
+                                    lineNumber: 533,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1911,7 +1908,7 @@ function MedicineCheckerPage() {
                                             children: "Time of Day:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                            lineNumber: 537,
+                                            lineNumber: 534,
                                             columnNumber: 24
                                         }, this),
                                         " ",
@@ -1919,7 +1916,7 @@ function MedicineCheckerPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 537,
+                                    lineNumber: 534,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1929,18 +1926,18 @@ function MedicineCheckerPage() {
                                         children: dosageResult.disclaimer
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                        lineNumber: 539,
+                                        lineNumber: 536,
                                         columnNumber: 25
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                    lineNumber: 538,
+                                    lineNumber: 535,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 534,
+                            lineNumber: 531,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDialogFooter"], {
@@ -1948,29 +1945,29 @@ function MedicineCheckerPage() {
                                 children: "OK"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                                lineNumber: 543,
+                                lineNumber: 540,
                                 columnNumber: 21
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                            lineNumber: 542,
+                            lineNumber: 539,
                             columnNumber: 17
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                    lineNumber: 527,
+                    lineNumber: 524,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-                lineNumber: 526,
+                lineNumber: 523,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/dashboard/medicine-checker/page.tsx",
-        lineNumber: 323,
+        lineNumber: 320,
         columnNumber: 5
     }, this);
 }

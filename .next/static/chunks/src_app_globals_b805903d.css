@@ -606,6 +606,10 @@ body {
   margin-top: 2rem;
 }
 
+.ml-2 {
+  margin-left: .5rem;
+}
+
 .block {
   display: block;
 }

@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Languages } from 'lucide-react';
+import { Languages, ChevronRight } from 'lucide-react';
 
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { SurakshaJalLogo } from '@/components/icons';
 import { languages } from '@/lib/translations';
 import { auth } from '@/lib/firebase';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 
 export default function LanguageSelector() {
@@ -48,6 +49,12 @@ export default function LanguageSelector() {
       );
   }
 
+  const primaryLanguages = [
+    languages.find(l => l.code === 'en'),
+    languages.find(l => l.code === 'hi'),
+    languages.find(l => l.code === 'bn'),
+  ].filter(Boolean);
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -61,9 +68,9 @@ export default function LanguageSelector() {
           <p className="text-muted-foreground">Select Your Language</p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {languages.slice(0, 4).map((lang) => ( // Show top 4 for initial selection
-              <Button
+          <div className="flex flex-col gap-4">
+            {primaryLanguages.map((lang) => (
+              lang && <Button
                 key={lang.code}
                 variant="outline"
                 size="lg"
@@ -73,6 +80,20 @@ export default function LanguageSelector() {
                 {lang.name}
               </Button>
             ))}
+             <Button
+                variant="ghost"
+                size="lg"
+                className="text-base h-14 text-muted-foreground"
+                onClick={() => {
+                  // Set a default language before navigating to settings,
+                  // in case the user navigates away from settings page
+                  setLanguage('en'); 
+                  router.push('/dashboard/settings');
+                }}
+              >
+                More Languages
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
           </div>
         </CardContent>
       </Card>

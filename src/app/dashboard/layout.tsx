@@ -26,6 +26,8 @@ import {
   BarChart2,
   MessageCircle,
   FileScan,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import { SurakshaJalLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -36,6 +38,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
+  DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useLanguage } from '@/hooks/use-language';
@@ -43,6 +49,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { auth } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from 'next-themes';
 
 
 export default function DashboardLayout({
@@ -173,7 +180,6 @@ function Header() {
       </div>
       
       <div className="flex items-center gap-4">
-        <ThemeToggle />
         <UserMenu />
       </div>
 
@@ -186,6 +192,7 @@ function UserMenu() {
     const router = useRouter();
     const { toast } = useToast();
     const [user, setUser] = React.useState<any>(null);
+    const { setTheme } = useTheme();
 
     React.useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -234,6 +241,20 @@ function UserMenu() {
                     <span>{t('profile')}</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                        <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                        <span>Toggle theme</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />

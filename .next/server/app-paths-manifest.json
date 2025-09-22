@@ -4,5 +4,6 @@
   "/dashboard/profile/page": "app/dashboard/profile/page.js",
   "/dashboard/settings/page": "app/dashboard/settings/page.js",
   "/dashboard/symptom-checker/page": "app/dashboard/symptom-checker/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js"
 }

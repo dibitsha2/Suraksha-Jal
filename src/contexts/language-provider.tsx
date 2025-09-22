@@ -5,7 +5,7 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { translations, type Language, type Translations } from '@/lib/translations';
 
 interface LanguageContextType {
-  language: Language | 'auto' | null;
+  language: Language | null;
   setLanguage: (language: string) => void;
   t: (key: keyof Translations[Language]) => string;
   effectiveLanguage: Language;
@@ -13,22 +13,14 @@ interface LanguageContextType {
 
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const getLanguageFromLocation = (address: string): Language => {
-    const lowerCaseAddress = address.toLowerCase();
-    if (lowerCaseAddress.includes('bengal')) return 'bn';
-    if (lowerCaseAddress.includes('assam')) return 'as';
-    if (lowerCaseAddress.includes('india')) return 'hi';
-    return 'en';
-}
-
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguageState] = useState<Language | 'auto' | null>(null);
+  const [language, setLanguageState] = useState<Language | null>(null);
   const [effectiveLanguage, setEffectiveLanguage] = useState<Language>('en');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem('language') as Language | 'auto' | null;
-    if (storedLanguage && (translations[storedLanguage as Language] || storedLanguage === 'auto')) {
+    const storedLanguage = localStorage.getItem('language') as Language | null;
+    if (storedLanguage && translations[storedLanguage]) {
       setLanguageState(storedLanguage);
     } else {
       setLanguageState(null);
@@ -37,33 +29,17 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (language === 'auto') {
-      try {
-        const savedProfile = localStorage.getItem('userProfile');
-        if (savedProfile) {
-          const profile = JSON.parse(savedProfile);
-          if (profile.address) {
-            setEffectiveLanguage(getLanguageFromLocation(profile.address));
-            return;
-          }
-        }
-      } catch (e) {
-         console.error("Could not determine language from location", e)
-      }
-      // Fallback to English if auto-detection fails
-      setEffectiveLanguage('en');
-    } else if (language && translations[language as Language]) {
-      setEffectiveLanguage(language as Language);
+    if (language && translations[language]) {
+      setEffectiveLanguage(language);
     } else {
-      // Fallback for null or invalid language
       setEffectiveLanguage('en');
     }
   }, [language]);
 
   const setLanguage = (lang: string) => {
-    if (translations[lang as Language] || lang === 'auto') {
+    if (translations[lang as Language]) {
       localStorage.setItem('language', lang);
-      setLanguageState(lang as Language | 'auto');
+      setLanguageState(lang as Language);
     }
   };
   

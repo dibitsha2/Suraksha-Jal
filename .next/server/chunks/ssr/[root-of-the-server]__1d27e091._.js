@@ -773,20 +773,13 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$translations$2
 ;
 ;
 const LanguageContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createContext"])(undefined);
-const getLanguageFromLocation = (address)=>{
-    const lowerCaseAddress = address.toLowerCase();
-    if (lowerCaseAddress.includes('bengal')) return 'bn';
-    if (lowerCaseAddress.includes('assam')) return 'as';
-    if (lowerCaseAddress.includes('india')) return 'hi';
-    return 'en';
-};
 const LanguageProvider = ({ children })=>{
     const [language, setLanguageState] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [effectiveLanguage, setEffectiveLanguage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('en');
     const [isMounted, setIsMounted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const storedLanguage = localStorage.getItem('language');
-        if (storedLanguage && (__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][storedLanguage] || storedLanguage === 'auto')) {
+        if (storedLanguage && __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][storedLanguage]) {
             setLanguageState(storedLanguage);
         } else {
             setLanguageState(null);
@@ -794,32 +787,16 @@ const LanguageProvider = ({ children })=>{
         setIsMounted(true);
     }, []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        if (language === 'auto') {
-            try {
-                const savedProfile = localStorage.getItem('userProfile');
-                if (savedProfile) {
-                    const profile = JSON.parse(savedProfile);
-                    if (profile.address) {
-                        setEffectiveLanguage(getLanguageFromLocation(profile.address));
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.error("Could not determine language from location", e);
-            }
-            // Fallback to English if auto-detection fails
-            setEffectiveLanguage('en');
-        } else if (language && __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][language]) {
+        if (language && __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][language]) {
             setEffectiveLanguage(language);
         } else {
-            // Fallback for null or invalid language
             setEffectiveLanguage('en');
         }
     }, [
         language
     ]);
     const setLanguage = (lang)=>{
-        if (__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][lang] || lang === 'auto') {
+        if (__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$translations$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["translations"][lang]) {
             localStorage.setItem('language', lang);
             setLanguageState(lang);
         }
@@ -840,7 +817,7 @@ const LanguageProvider = ({ children })=>{
         children: children
     }, void 0, false, {
         fileName: "[project]/src/contexts/language-provider.tsx",
-        lineNumber: 79,
+        lineNumber: 55,
         columnNumber: 5
     }, this);
 };

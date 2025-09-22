@@ -65,10 +65,6 @@ export default function SettingsPage() {
             onValueChange={handleLanguageChange}
             className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
           >
-            <div className="flex items-center space-x-2">
-                <RadioGroupItem value="auto" id="auto" />
-                <Label htmlFor="auto" className="font-semibold">Auto-detect</Label>
-            </div>
             {filteredLanguages.map((lang) => (
               <div key={lang.code} className="flex items-center space-x-2">
                 <RadioGroupItem value={lang.code} id={lang.code} />

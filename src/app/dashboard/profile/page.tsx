@@ -104,8 +104,7 @@ export default function ProfilePage() {
         form.reset({
             name: currentUser.displayName || '',
             email: currentUser.email || '',
-            // Load photo from our local storage mock if available, otherwise Firebase
-            photoURL: extraData.photoURL || currentUser.photoURL || '',
+            photoURL: currentUser.photoURL || extraData.photoURL || '',
             ...extraData,
         });
     }
@@ -206,24 +205,21 @@ export default function ProfilePage() {
     }
 
     try {
-        // Update Firebase profile with fields that fit (like displayName)
         await updateProfile(currentUser, {
             displayName: data.name,
-            // We do NOT save the long data.photoURL to Firebase Auth here.
+            photoURL: data.photoURL,
         });
 
-        // Save all data, including the long photoURL, to our mock DB (localStorage)
-        const { email, ...extraData } = data; // email is not needed in extra data
+        // Save extra data to our mock DB (localStorage)
+        const { name, email, photoURL, ...extraData } = data; // email is not needed in extra data
         saveExtraProfileData(currentUser.uid, extraData);
-
 
         toast({
             title: 'Profile Updated',
             description: 'Your information has been saved successfully.',
         });
-        // Force a re-render or state update in the layout if needed
+        
         window.dispatchEvent(new Event('profileUpdated'));
-
 
     } catch (error) {
        console.error('Failed to save profile:', error);
@@ -238,7 +234,6 @@ export default function ProfilePage() {
   const handlePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (e.g., limit to 2MB)
       if (file.size > 2 * 1024 * 1024) {
           toast({
               variant: 'destructive',

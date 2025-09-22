@@ -207,23 +207,21 @@ function UserMenu() {
             const userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
             const localProfile = userProfiles[currentUser.uid] || {};
             
-            // Combine Firebase Auth data with local storage data
             const combinedUser = {
-                ...currentUser,
+                uid: currentUser.uid,
                 displayName: localProfile.name || currentUser.displayName,
-                photoURL: localProfile.photoURL || currentUser.photoURL,
+                photoURL: currentUser.photoURL, // Always prefer Firebase Auth photoURL
             };
             setUser(combinedUser);
         } catch (e) {
             console.error("Failed to load user profile from local storage", e);
-            setUser(currentUser); // Fallback to just auth data
+            setUser(currentUser); 
         }
     }
 
     React.useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(loadProfile);
         
-        // Listen for profile updates from other pages
         const handleProfileUpdate = () => {
             if (auth.currentUser) {
                 loadProfile(auth.currentUser);

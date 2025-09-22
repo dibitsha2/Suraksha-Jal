@@ -1467,6 +1467,10 @@ body {
   background-color: #ffffff1a;
 }
 
+.bg-card\/80 {
+  background-color: hsl(var(--card) / .8);
+}
+
 .bg-\[linear-gradient\(to_right\,\#80808012_1px\,transparent_1px\)\,linear-gradient\(to_bottom\,\#80808012_1px\,transparent_1px\)\] {
   background-image: linear-gradient(to right, #80808012 1px, #0000 1px), linear-gradient(#80808012 1px, #0000 1px);
 }

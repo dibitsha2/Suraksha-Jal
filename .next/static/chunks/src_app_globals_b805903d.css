@@ -1349,6 +1349,10 @@ body {
   border-color: hsl(var(--primary) / .5);
 }
 
+.border-primary\/20 {
+  border-color: hsl(var(--primary) / .2);
+}
+
 .border-l-transparent {
   border-left-color: #0000;
 }
@@ -2763,6 +2767,10 @@ body {
 
 .dark\:border-input:is(.dark *) {
   border-color: hsl(var(--input));
+}
+
+.dark\:border-border:is(.dark *) {
+  border-color: hsl(var(--border));
 }
 
 .dark\:bg-amber-900\/20:is(.dark *) {

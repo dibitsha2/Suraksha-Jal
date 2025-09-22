@@ -81,7 +81,7 @@ export default function HealthWorkerProfilePage() {
         form.reset({
             name: currentUser.displayName || '',
             email: currentUser.email || '',
-            photoURL: currentUser.photoURL || '',
+            photoURL: extraData.photoURL || currentUser.photoURL || '',
             ...extraData,
         });
     }
@@ -98,11 +98,10 @@ export default function HealthWorkerProfilePage() {
     try {
         await updateProfile(currentUser, {
             displayName: data.name,
-            photoURL: data.photoURL,
         });
 
         // Save non-standard Firebase fields to our mock DB (localStorage)
-        const { name, photoURL, email, ...extraData } = data;
+        const { name, email, ...extraData } = data;
         saveExtraProfileData(currentUser.uid, extraData);
 
 
@@ -127,6 +126,14 @@ export default function HealthWorkerProfilePage() {
   const handlePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+            variant: 'destructive',
+            title: 'Image Too Large',
+            description: 'Please select an image smaller than 2MB.'
+        });
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         form.setValue('photoURL', reader.result as string, { shouldValidate: true });
@@ -237,5 +244,3 @@ export default function HealthWorkerProfilePage() {
     </div>
   );
 }
-
-    

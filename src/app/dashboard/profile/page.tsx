@@ -104,7 +104,8 @@ export default function ProfilePage() {
         form.reset({
             name: currentUser.displayName || '',
             email: currentUser.email || '',
-            photoURL: currentUser.photoURL || '',
+            // Load photo from our local storage mock if available, otherwise Firebase
+            photoURL: extraData.photoURL || currentUser.photoURL || '',
             ...extraData,
         });
     }
@@ -205,13 +206,14 @@ export default function ProfilePage() {
     }
 
     try {
+        // Update Firebase profile with fields that fit (like displayName)
         await updateProfile(currentUser, {
             displayName: data.name,
-            photoURL: data.photoURL,
+            // We do NOT save the long data.photoURL to Firebase Auth here.
         });
 
-        // Save non-standard Firebase fields to our mock DB (localStorage)
-        const { name, photoURL, email, ...extraData } = data;
+        // Save all data, including the long photoURL, to our mock DB (localStorage)
+        const { email, ...extraData } = data; // email is not needed in extra data
         saveExtraProfileData(currentUser.uid, extraData);
 
 
@@ -236,6 +238,15 @@ export default function ProfilePage() {
   const handlePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Check file size (e.g., limit to 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+          toast({
+              variant: 'destructive',
+              title: 'Image Too Large',
+              description: 'Please select an image smaller than 2MB.'
+          });
+          return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         form.setValue('photoURL', reader.result as string, { shouldValidate: true });

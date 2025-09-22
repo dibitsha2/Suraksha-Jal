@@ -51,7 +51,7 @@ const buttonVariants = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
         variant: {
             default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-1 hover:shadow-lg",
             destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:-translate-y-1 hover:shadow-lg",
-            outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:shadow-lg",
+            outline: "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:shadow-lg",
             secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:-translate-y-1 hover:shadow-lg",
             ghost: "hover:bg-accent hover:text-accent-foreground",
             link: "text-primary underline-offset-4 hover:underline"

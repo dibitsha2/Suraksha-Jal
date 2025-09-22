@@ -31,14 +31,6 @@ export default function RootLayout({
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <LanguageProvider>
-            <Image
-                src="https://picsum.photos/seed/bg/1920/1080"
-                alt="Water background"
-                data-ai-hint="water texture"
-                fill
-                className="object-cover -z-20 fixed"
-            />
-            <div className="fixed inset-0 bg-background/80 -z-10" />
             {children}
             <Toaster />
             <Analytics />

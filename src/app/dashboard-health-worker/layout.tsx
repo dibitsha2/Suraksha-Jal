@@ -40,7 +40,7 @@ export default function DashboardHealthWorkerLayout({
       <Sidebar />
       <div className="flex flex-col">
         <Header />
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-transparent">
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
           {children}
         </main>
       </div>
@@ -58,7 +58,7 @@ function Sidebar() {
   ];
 
   return (
-    <div className="hidden border-r bg-background/50 md:block">
+    <div className="hidden border-r bg-muted md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link href="/dashboard-health-worker" className="flex items-center gap-2 font-semibold font-headline">
@@ -102,7 +102,7 @@ function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-background/50 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">

@@ -50,13 +50,13 @@ export default function LocalReportsPage() {
 
   useEffect(() => {
     try {
-      const savedProfile = localStorage.getItem('userProfile');
-      if (savedProfile) {
-        const profile = JSON.parse(savedProfile);
-        if (profile.address) {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userProfiles = JSON.parse(localStorage.getItem('userProfiles') || '{}');
+        const profile = userProfiles[user.uid];
+
+        if (profile && profile.address) {
             setUserLocation(profile.address);
         }
-      }
     } catch (error) {
         console.error('Failed to load user profile for local reports:', error);
     }
@@ -98,7 +98,8 @@ export default function LocalReportsPage() {
                 report.location.toLowerCase().includes(primaryLocation)
             );
             if(userLocationReports.length > 0) {
-                reportsToFilter = userLocationReports;
+                const otherReports = allReports.filter(report => !report.location.toLowerCase().includes(primaryLocation));
+                reportsToFilter = [...userLocationReports, ...otherReports];
             }
         }
     }

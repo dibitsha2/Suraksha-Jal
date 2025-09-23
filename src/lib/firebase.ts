@@ -6,7 +6,7 @@ const firebaseConfig = {
   projectId: "suraksha-jal-2-0",
   appId: "1:389862731723:web:0b7f8c5b0c473133f30965",
   storageBucket: "suraksha-jal-2-0.appspot.com",
-  apiKey: "your_firebase_api_key_here",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "suraksha-jal-2-0.firebaseapp.com",
   messagingSenderId: "389862731723",
 };

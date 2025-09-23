@@ -20,7 +20,7 @@ const firebaseConfig = {
     projectId: "suraksha-jal",
     appId: "1:806914489596:web:e91264c1a0e7f832b96b79",
     storageBucket: "suraksha-jal.firebasestorage.app",
-    apiKey: ("TURBOPACK compile-time value", "AIzaSyCdpyvRwYHjKZRyqG9cjDkQ6nVB9CLpxZo"),
+    apiKey: ("TURBOPACK compile-time value", "AIzaSyAovMx6i5PddTEbcXowU-f9tGBHts0U25U"),
     authDomain: "suraksha-jal.firebaseapp.com",
     messagingSenderId: "806914489596"
 };

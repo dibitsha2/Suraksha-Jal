@@ -34,6 +34,14 @@ const medicineInformationPrompt = ai.definePrompt({
   name: 'medicineInformationPrompt',
   input: {schema: MedicineInformationInputSchema},
   output: {schema: MedicineInformationOutputSchema},
+  config: {
+    safetySettings: [
+        {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold: 'BLOCK_NONE',
+        },
+    ],
+  },
   prompt: `You are a pharmacist and medical expert. A user wants to know about a specific medicine. Provide accurate and easy-to-understand information about what the medicine is used for. Be clear and concise.
   
   {{#if image}}

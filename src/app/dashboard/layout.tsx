@@ -46,7 +46,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useLanguage } from '@/hooks/use-language';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
 import { auth } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
@@ -156,6 +156,10 @@ function Header() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
+           <SheetHeader className="sr-only">
+             <SheetTitle>Navigation Menu</SheetTitle>
+             <SheetDescription>A list of links to navigate the app.</SheetDescription>
+           </SheetHeader>
           <nav className="grid gap-2 text-lg font-medium">
             <Link href="#" className="flex items-center gap-2 text-lg font-semibold mb-4">
               <SurakshaJalLogo className="h-6 w-6 text-primary" />

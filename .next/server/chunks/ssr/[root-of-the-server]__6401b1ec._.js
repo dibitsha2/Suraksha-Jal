@@ -280,6 +280,14 @@ const medicineInformationPrompt = __TURBOPACK__imported__module__$5b$project$5d2
     output: {
         schema: MedicineInformationOutputSchema
     },
+    config: {
+        safetySettings: [
+            {
+                category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                threshold: 'BLOCK_NONE'
+            }
+        ]
+    },
     prompt: `You are a pharmacist and medical expert. A user wants to know about a specific medicine. Provide accurate and easy-to-understand information about what the medicine is used for. Be clear and concise.
   
   {{#if image}}

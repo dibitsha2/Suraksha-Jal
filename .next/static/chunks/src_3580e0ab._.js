@@ -311,7 +311,7 @@ const firebaseConfig = {
     appId: "1:389862731723:web:0b7f8c5b0c473133f30965",
     storageBucket: "suraksha-jal-2-0.appspot.com",
     // IMPORTANT: Replace this with your actual Firebase Web API Key
-    apiKey: ("TURBOPACK compile-time value", "AIzaSyBpZyT72vkbRUCR4_WyKn30xx6DEsWFC6Y"),
+    apiKey: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.AIzaSyBpZyT72vkbRUCR4_WyKn30xx6DEsWFC6Y,
     authDomain: "suraksha-jal-2-0.firebaseapp.com",
     messagingSenderId: "389862731723"
 };

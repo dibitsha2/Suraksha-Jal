@@ -11,6 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { googleAI } from '@genkit-ai/googleai';
 
 const MedicineInformationInputSchema = z.object({
   medicineName: z.string().optional().describe('The name of the medicine to get information about.'),
@@ -34,6 +35,7 @@ const medicineInformationPrompt = ai.definePrompt({
   name: 'medicineInformationPrompt',
   input: {schema: MedicineInformationInputSchema},
   output: {schema: MedicineInformationOutputSchema},
+  model: googleAI.model('gemini-pro-vision'),
   config: {
     safetySettings: [
         {
